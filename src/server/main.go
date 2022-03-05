@@ -3,7 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"github.com/florian-glombik/workplace-reservation/src/api"
+	api2 "github.com/florian-glombik/workplace-reservation/src/server/api"
 	_ "github.com/go-sql-driver/mysql"
 	"net/http"
 )
@@ -31,7 +31,7 @@ func main() {
 	}
 	defer insert.Close()
 
-	srv := api.NewServer()
+	srv := api2.NewServer()
 	err = http.ListenAndServe(":8080", srv)
 	if err != nil {
 		panic(err.Error())
