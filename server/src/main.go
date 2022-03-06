@@ -3,7 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	api2 "github.com/florian-glombik/workplace-reservation/src/server/api"
+	api2 "github.com/florian-glombik/workplace-reservation/src/api"
 	_ "github.com/go-sql-driver/mysql"
 	"net/http"
 )
