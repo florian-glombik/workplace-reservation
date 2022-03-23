@@ -1,0 +1,6 @@
+.page-header {
+    display: flex;
+    align-items: center;
+    background: #d2d0d0;
+    padding-left: 1rem;
+}
