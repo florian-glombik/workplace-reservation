@@ -25,7 +25,7 @@ export type User = {
   name: string
 }
 
-const weekDays: string[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+const weekDays: string[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
 export class Workplaces extends React.Component {
   workplaces: Workplace[] = [{
@@ -34,33 +34,32 @@ export class Workplaces extends React.Component {
     reservations: []
   }, {
     id: "id2",
-    name: "ubuntu",
+    name: "mint",
     reservations: []
   }]
 
   render() {
-    return <div>
+    return <table>
+      <tr>
+        <th>Weekday</th>
+        {
+         this.workplaces.map(workplace => {
+           return <th>{workplace.name}</th>
+         })
+        }
+      </tr>
       {
         weekDays.map(day => {
-          return <div>
-            {day}
+          return <tr>
+            <td>{day}</td>
             {
               this.workplaces.map(workplace => {
-                return <button>{workplace.id}</button>
+                return <td><button>{workplace.id}</button></td>
               })
             }
-          </div>
+          </tr>
         })
       }
-    </div>
-    // return <div>
-    //   <ul>
-    //     {
-    //       this.workplaces.map(workplace => {
-    //         return <li key={workplace.id}>{workplace.id}: {workplace.name}`</li>
-    //       })
-    //     }
-    //   </ul>
-    // </div>
+    </table>
   }
 }
