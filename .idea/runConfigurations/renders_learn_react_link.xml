@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="renders learn react link" type="JavaScriptTestRunnerJest" nameIsGenerated="true">
+    <node-interpreter value="project" />
+    <node-options value="" />
+    <jest-package value="$USER_HOME$/node_modules/jest" />
+    <working-dir value="$PROJECT_DIR$/webapp" />
+    <envs />
+    <scope-kind value="TEST" />
+    <test-file value="$PROJECT_DIR$/webapp/src/App.test.tsx" />
+    <test-names>
+      <test-name value="renders learn react link" />
+    </test-names>
+    <method v="2" />
+  </configuration>
+</component>
