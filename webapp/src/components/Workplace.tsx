@@ -39,27 +39,31 @@ export class Workplaces extends React.Component {
   }]
 
   render() {
-    return <table>
-      <tr>
-        <th>Weekday</th>
+    return (
+        <table>
+        <tr>
+          <th>Weekday</th>
+          {
+           this.workplaces.map(workplace => (
+             <th>{workplace.name}</th>
+           ))
+          }
+        </tr>
         {
-         this.workplaces.map(workplace => {
-           return <th>{workplace.name}</th>
-         })
+          weekDays.map(day => {
+            return (
+              <tr>
+                <td>{day}</td>
+                {
+                  this.workplaces.map(workplace => (
+                    <td><button>{workplace.id}</button></td>
+                  ))
+                }
+              </tr>
+            )
+          })
         }
-      </tr>
-      {
-        weekDays.map(day => {
-          return <tr>
-            <td>{day}</td>
-            {
-              this.workplaces.map(workplace => {
-                return <td><button>{workplace.id}</button></td>
-              })
-            }
-          </tr>
-        })
-      }
-    </table>
+      </table>
+    )
   }
 }
