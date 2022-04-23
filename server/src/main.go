@@ -3,39 +3,53 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"github.com/florian-glombik/workplace-reservation/src/api"
 	_ "github.com/go-sql-driver/mysql"
-	"net/http"
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/github"
 )
 
 func main() {
 
-	db, err := sql.Open("mysql", "root:eist@tcp(localhost:3306)/workplacereservation")
+	db, err := sql.Open("postgres", "postgres://localhost:5432/database?sslmode=enable")
 	if err != nil {
 		fmt.Println("error validating sql.Open arguments")
 		panic(err.Error())
 	}
-	defer db.Close()
+	driver, err := postgres.WithInstance(db, &postgres.Config{})
+	m, err := migrate.NewWithDatabaseInstance(
+		"file:///migrations",
+		"postgres", driver)
+	m.Up() // or m.Step(2) if you want to explicitly set the number of migrations to run
 
-	err = db.Ping()
-	if err != nil {
-		fmt.Println("error verifying connection with db.Ping")
-		panic(err.Error())
-	}
+	//db, err := sql.Open("mysql", "root:eist@tcp(localhost:3306)/workplacereservation")
+	//if err != nil {
+	//	fmt.Println("error validating sql.Open arguments")
+	//	panic(err.Error())
+	//}
+	//defer db.Close()
+	//
+	//err = db.Ping()
+	//if err != nil {
+	//	fmt.Println("error verifying connection with db.Ping")
+	//	panic(err.Error())
+	//}
+	//
+	//fmt.Println("Successful connection to database")
+	//
+	//insert, err := db.Query("INSERT INTO `workplaceReservation`.`students` (`id`, `firstname`, `lastname`) VALUES ('2', 'Ben', 'Ford');")
+	//if err != nil {
+	//	panic(err.Error())
+	//}
+	//defer insert.Close()
+	//
+	//srv := api.NewServer()
+	//err = http.ListenAndServe(":8080", srv)
+	//if err != nil {
+	//	panic(err.Error())
+	//}
 
-	fmt.Println("Successful connection to database")
-
-	insert, err := db.Query("INSERT INTO `workplaceReservation`.`students` (`id`, `firstname`, `lastname`) VALUES ('2', 'Ben', 'Ford');")
-	if err != nil {
-		panic(err.Error())
-	}
-	defer insert.Close()
-
-	srv := api.NewServer()
-	err = http.ListenAndServe(":8080", srv)
-	if err != nil {
-		panic(err.Error())
-	}
 	//http.HandleFunc("/", func(responseWriter http.ResponseWriter, response *http.Request) {
 	//	responseWriter.Write([]byte("hello world 1111" + uuid.NewString()))
 	//})
