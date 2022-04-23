@@ -1,27 +1,35 @@
 package main
 
 import (
-	"database/sql"
-	"fmt"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/github"
+	"log"
 )
 
 func main() {
 
-	db, err := sql.Open("postgres", "postgres://localhost:5432/database?sslmode=enable")
+	m, err := migrate.New(
+		"file://db/migrations",
+		"postgres://postgres:postgres@localhost:5432/example?sslmode=disable")
 	if err != nil {
-		fmt.Println("error validating sql.Open arguments")
-		panic(err.Error())
+		log.Fatal(err)
 	}
-	driver, err := postgres.WithInstance(db, &postgres.Config{})
-	m, err := migrate.NewWithDatabaseInstance(
-		"file:///migrations",
-		"postgres", driver)
-	m.Up() // or m.Step(2) if you want to explicitly set the number of migrations to run
+	if err := m.Up(); err != nil {
+		log.Fatal(err)
+	}
+
+	//db, err := sql.Open("postgres", "postgres://localhost:5432/database?sslmode=enable")
+	//if err != nil {
+	//	fmt.Println("error validating sql.Open arguments")
+	//	panic(err.Error())
+	//}
+	//driver, err := postgres.WithInstance(db, &postgres.Config{})
+	//m, err := migrate.NewWithDatabaseInstance(
+	//	"file:///migrations",
+	//	"postgres", driver)
+	//m.Up() // or m.Step(2) if you want to explicitly set the number of migrations to run
 
 	//db, err := sql.Open("mysql", "root:eist@tcp(localhost:3306)/workplacereservation")
 	//if err != nil {
