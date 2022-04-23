@@ -40,5 +40,5 @@ For the Go Server: Make sure to sync the imports/modules
 For the Client/Webapp: Make sure to execute `npm install` within the folder `workplace-reservation/webapp`
 
 The project is based on Go and React. I use [GoLand](https://www.jetbrains.com/de-de/go/) as IDE and included my project
-configurations within this file, which might save you some time getting started with the project in case you do not
+configurations within this repository, which might save you some time getting started with the project in case you do not
 prefer another IDE.
