@@ -2,7 +2,7 @@
 ## Get Started
 ### Prerequisite Installations
 Make sure to install:
-- [docker](https://www.docker.com/get-started/) _keeps our PostgresSQL database_ <br>
+- [docker](https://www.docker.com/get-started/) _handles our PostgresSQL database_ <br>
   _(If you do not want to install docker you can also run a [PostgreSQL](https://www.postgresql.org/) database without docker
     on port `5432`_
 
