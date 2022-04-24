@@ -31,6 +31,7 @@ Make sure to install:
 - [docker](https://www.docker.com/get-started/) _keeps our PostgresSQL database_
 - [npm](https://www.npmjs.com/) _- used as package manager, e.g. for importing [React](https://reactjs.org/)_
 - [migrate](https://github.com/golang-migrate/migrate/blob/master/cmd/migrate/README.md) _- framework used for database migrations_
+- [sqlc](https://docs.sqlc.dev/en/latest/overview/install.html) _- used for generation of Go code from SQL queries_
 
 ### Before First Startup
 You will need to download the used packages and frameworks.
@@ -39,6 +40,11 @@ For the Go Server: Make sure to sync the imports/modules
 
 For the Client/Webapp: Make sure to execute `npm install` within the folder `workplace-reservation/webapp`
 
+
+
+<br>
+<br>
+<br>
 The project is based on Go and React. I use [GoLand](https://www.jetbrains.com/de-de/go/) as IDE and included my project
 configurations within this repository, which might save you some time getting started with the project in case you do not
 prefer another IDE.
