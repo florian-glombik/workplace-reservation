@@ -4,7 +4,9 @@
 Make sure to install:
 - [docker](https://www.docker.com/get-started/) _handles our PostgresSQL database_ <br>
   _(If you do not want to install docker you can also run a [PostgreSQL](https://www.postgresql.org/) database without docker
-    on port `5432`_
+    on port `5432`, but be aware that the following setup description might not work without modifications for you.)_
+- [sqlc](https://docs.sqlc.dev/en/latest/overview/install.html) _- used for generation of Go code from SQL queries_
+
 
 ### Create the Database
 Within this step I describe the process of creating a PostgreSQL when using docker.
@@ -38,6 +40,13 @@ make migrate_up
 ```
 
 ### Start the Application
+We are using sqlc to generate code for the SQL queries. We need to generate the code before running the application.
+Execute the following command within the `server` folder:
+```
+make sqlc
+```
+
+
 TODO
 
 ## Developer Setup Guide
