@@ -21,6 +21,22 @@ _Make sure to exchange `<user-name>` and `<password>` with your custom values be
 docker run --name postgres14 -p 5432:5432 -e POSTGRES_USER=<user-name> -e POSTGRES_PASSWORD=<password> -d postgres:14-alpine
 ```
 
+We have now set up our Postgres instance within the docker container, but still need to create the database.
+To do so, navigate to the folder `server`. Within this folder execute the following commands:
+<br>
+_If you did not name your container `postgres14` the predefined `create_db`/`dop_db` commands will not work.
+Make sure to adjust the commands in `server/Makefile` properly to match the name of your Postgres docker container._
+
+Create the database within the container:
+```
+make create_db
+```
+
+Add the database schema by running a migration:
+```
+make migrate_up
+```
+
 ### Start the Application
 TODO
 
