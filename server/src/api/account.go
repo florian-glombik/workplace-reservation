@@ -28,9 +28,7 @@ func (server *Server) createAccount(context *gin.Context) {
 		Email:    request.Email,
 	}
 
-	var query = db.New(server.database)
-
-	account, err := query.CreateUser(context, arg)
+	account, err := server.queries.CreateUser(context, arg)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse("The user could not be created.", err))
 		return

@@ -8,12 +8,12 @@ import (
 
 type Server struct {
 	database *sql.DB
-	*db.Queries
-	router *gin.Engine
+	queries  *db.Queries
+	router   *gin.Engine
 }
 
 func NewServer(database *sql.DB) *Server {
-	server := &Server{database: database}
+	server := &Server{database: database, queries: db.New(database)}
 	router := gin.Default()
 
 	router.POST("/accounts", server.createAccount)
