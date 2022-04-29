@@ -1,24 +1,44 @@
 package main
 
 import (
+	"database/sql"
+	"github.com/florian-glombik/workplace-reservation/src/api"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/github"
+	_ "github.com/lib/pq"
 	"log"
+)
+
+const (
+	databaseDriver = "postgres"
+	databaseSource = "postgresql://root:root@localhost:5432/workplace_reservation?sslmode=disable"
+	serverAddress  = "0.0.0.0:8080"
 )
 
 func main() {
 
-	m, err := migrate.New(
-		"file://db/migrations",
-		"postgres://postgres:postgres@localhost:5432/example?sslmode=disable")
+	databaseConnection, err := sql.Open(databaseDriver, databaseSource)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Cannot establish database connection:", err)
 	}
-	if err := m.Up(); err != nil {
-		log.Fatal(err)
+
+	server := api.NewServer(databaseConnection)
+
+	err = server.Start(serverAddress)
+	if err != nil {
+		log.Fatal("Cannot start server:", err)
 	}
+
+	//m, err := migrate.New(
+	//	"file://db/migrations",
+	//	"postgres://postgres:postgres@localhost:5432/example?sslmode=disable")
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//if err := m.Up(); err != nil {
+	//	log.Fatal(err)
+	//}
 
 	//db, err := sql.Open("postgres", "postgres://localhost:5432/database?sslmode=enable")
 	//if err != nil {
