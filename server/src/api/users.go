@@ -1,16 +1,18 @@
 package api
 
 import (
+	"database/sql"
 	db "github.com/florian-glombik/workplace-reservation/db/sqlc"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"net/http"
 )
 
 type CreateAccountRequest struct {
-	User_Id  int32  `json:"user_Id" binding:"required"`
-	Username string `json:"username" binding:"required"`
-	Password string `json:"password" binding:"required"`
-	Email    string `json:"email" binding:"required"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Password  string `json:"password" binding:"required"`
+	Email     string `json:"email" binding:"required"`
 }
 
 func (server *Server) createAccount(context *gin.Context) {
@@ -22,10 +24,11 @@ func (server *Server) createAccount(context *gin.Context) {
 	}
 
 	arg := db.CreateUserParams{
-		UserID:   request.User_Id,
-		Username: request.Username,
-		Password: request.Password,
-		Email:    request.Email,
+		ID:        uuid.NewString(),
+		FirstName: sql.NullString{String: request.FirstName, Valid: true},
+		LastName:  sql.NullString{String: request.LastName, Valid: true},
+		Password:  request.Password,
+		Email:     request.Email,
 	}
 
 	account, err := server.queries.CreateUser(context, arg)
