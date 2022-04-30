@@ -3,29 +3,38 @@ package api
 import (
 	"database/sql"
 	db "github.com/florian-glombik/workplace-reservation/db/sqlc"
+	"github.com/florian-glombik/workplace-reservation/src/util"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
-	"net/mail"
 )
 
-type CreateAccountRequest struct {
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Password  string `json:"password" binding:"required"`
-	Email     string `json:"email" binding:"required"`
+type CreateUserRequest struct {
+	FirstName string `json:"firstName" binding:"alphanum"`
+	LastName  string `json:"lastName" binding:"alphanum"`
+	Password  string `json:"password" binding:"required,min=3"`
+	Email     string `json:"email" binding:"required,email"`
+}
+
+// CreateUserResponse does not return the hashed password
+type CreateUserResponse struct {
+	ID        string
+	FirstName sql.NullString
+	LastName  sql.NullString
+	Email     string
 }
 
 func (server *Server) createUser(context *gin.Context) {
-	var request CreateAccountRequest
+	var request CreateUserRequest
 
 	if err := context.ShouldBindJSON(&request); err != nil {
 		context.JSON(http.StatusBadRequest, errorResponse("The request could not be parsed.", err))
 		return
 	}
 
-	if _, err := mail.ParseAddress(request.Email); err != nil {
-		context.JSON(http.StatusBadRequest, errorResponse("Invalid email", err))
+	hashedPassword, err := util.HashPassword(request.Password)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, "Problems occurred on saving the user credential.")
 		return
 	}
 
@@ -33,17 +42,23 @@ func (server *Server) createUser(context *gin.Context) {
 		ID:        uuid.NewString(),
 		FirstName: sql.NullString{String: request.FirstName, Valid: true},
 		LastName:  sql.NullString{String: request.LastName, Valid: true},
-		Password:  request.Password,
+		Password:  hashedPassword,
 		Email:     request.Email,
 	}
 
-	account, err := server.queries.CreateUser(context, arg)
+	newUser, err := server.queries.CreateUser(context, arg)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse("The user could not be created.", err))
 		return
 	}
 
-	context.JSON(http.StatusOK, account)
+	response := CreateUserResponse{
+		ID:        newUser.ID,
+		FirstName: newUser.FirstName,
+		LastName:  newUser.LastName,
+		Email:     newUser.Email,
+	}
+	context.JSON(http.StatusOK, response)
 }
 
 type GetUserRequest struct {
