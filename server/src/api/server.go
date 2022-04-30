@@ -2,6 +2,7 @@ package api
 
 import (
 	"database/sql"
+	"fmt"
 	db "github.com/florian-glombik/workplace-reservation/db/sqlc"
 	"github.com/florian-glombik/workplace-reservation/src/token"
 	"github.com/gin-gonic/gin"
@@ -16,9 +17,11 @@ type Server struct {
 
 func NewServer(database *sql.DB) *Server {
 	// TODO load secret key from config file
-	tokenGenerator, err := token.NewJWTGenerator("dlgdjflgjdflkgj")
+	tokenGenerator, err := token.NewJWTGenerator("dlgdjflgjsadfjlsjdfljsldjflsjddflkgj")
+	// TODO improve logging
 	if err != nil {
 		//fmt.Errorf("cannot instantiate token generator: %w", err)
+		fmt.Println("cannot instantiate token generator: %w", err)
 		return nil
 	}
 
