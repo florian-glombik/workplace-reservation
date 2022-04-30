@@ -3,28 +3,48 @@ package api
 import (
 	"database/sql"
 	db "github.com/florian-glombik/workplace-reservation/db/sqlc"
+	"github.com/florian-glombik/workplace-reservation/src/token"
 	"github.com/gin-gonic/gin"
 )
 
 type Server struct {
-	database *sql.DB
-	queries  *db.Queries
-	router   *gin.Engine
+	database       *sql.DB
+	queries        *db.Queries
+	tokenGenerator token.Generator
+	router         *gin.Engine
 }
 
 func NewServer(database *sql.DB) *Server {
-	server := &Server{database: database, queries: db.New(database)}
-	router := gin.Default()
+	// TODO load secret key from config file
+	tokenGenerator, err := token.NewJWTGenerator("dlgdjflgjdflkgj")
+	if err != nil {
+		//fmt.Errorf("cannot instantiate token generator: %w", err)
+		return nil
+	}
 
-	router.POST("/users", server.createUser)
-	router.GET("/users", server.getUser)
+	server := &Server{
+		database:       database,
+		queries:        db.New(database),
+		tokenGenerator: tokenGenerator,
+	}
 
-	server.router = router
+	server.setupRouter()
 	return server
 }
 
 func (server *Server) Start(address string) error {
 	return server.router.Run(address)
+}
+
+func (server *Server) setupRouter() {
+	router := gin.Default()
+
+	router.POST("/users", server.createUser)
+	router.POST("/users/login", server.loginUser)
+
+	router.GET("/users", server.getUserById)
+
+	server.router = router
 }
 
 func errorResponse(description string, err error) gin.H {
