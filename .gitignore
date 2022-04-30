@@ -14,6 +14,7 @@
 # auto generated files
 go.sum
 sqlc/
+package-lock.json
 
 # custom configuration files
 dataSources.xml
