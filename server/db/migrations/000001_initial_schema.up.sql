@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS workplaces
     id          UUID PRIMARY KEY UNIQUE NOT NULL,
     name        VARCHAR(50),
     description VARCHAR(255),
-    office_id   VARCHAR(36),
+    office_id   UUID,
     FOREIGN KEY (office_id) REFERENCES offices (id)
 );
 
