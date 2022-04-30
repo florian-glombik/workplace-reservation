@@ -15,7 +15,7 @@ type CreateAccountRequest struct {
 	Email     string `json:"email" binding:"required"`
 }
 
-func (server *Server) createAccount(context *gin.Context) {
+func (server *Server) createUser(context *gin.Context) {
 	var request CreateAccountRequest
 
 	if err := context.ShouldBindJSON(&request); err != nil {
@@ -32,6 +32,29 @@ func (server *Server) createAccount(context *gin.Context) {
 	}
 
 	account, err := server.queries.CreateUser(context, arg)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse("The user could not be created.", err))
+		return
+	}
+
+	context.JSON(http.StatusOK, account)
+}
+
+type GetUserRequest struct {
+	UserId string `json:"userId" binding:"required"`
+}
+
+func (server *Server) getUser(context *gin.Context) {
+	var request GetUserRequest
+
+	if err := context.ShouldBindJSON(&request); err != nil {
+		context.JSON(http.StatusBadRequest, errorResponse("The request could not be parsed.", err))
+		return
+	}
+
+	arg := request.UserId
+
+	account, err := server.queries.GetUser(context, arg)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse("The user could not be created.", err))
 		return
