@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
+	"net/mail"
 )
 
 type CreateAccountRequest struct {
@@ -20,6 +21,11 @@ func (server *Server) createUser(context *gin.Context) {
 
 	if err := context.ShouldBindJSON(&request); err != nil {
 		context.JSON(http.StatusBadRequest, errorResponse("The request could not be parsed.", err))
+		return
+	}
+
+	if _, err := mail.ParseAddress(request.Email); err != nil {
+		context.JSON(http.StatusBadRequest, errorResponse("Invalid email", err))
 		return
 	}
 
