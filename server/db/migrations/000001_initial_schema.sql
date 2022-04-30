@@ -1,0 +1,4 @@
+DROP TABLE IF EXISTS reservations;
+DROP TABLE IF EXISTS workplaces;
+DROP TABLE IF EXISTS offices;
+DROP TABLE IF EXISTS users;

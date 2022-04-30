@@ -7,7 +7,7 @@ start_db:
 migrate_up:
 	migrate -path db/migrations -database "postgresql://root:root@localhost:5432/workplace_reservation?sslmode=disable" -verbose up
 migrate_down:
-	migrate -path db/migrations -database "postgresql://root:root@localhost:5432/workplace_reservation?sslmode=disable" -verbose down
+	yes | migrate -path db/migrations -database "postgresql://root:root@localhost:5432/workplace_reservation?sslmode=disable" -verbose down
 sqlc:
 	sqlc generate
 
