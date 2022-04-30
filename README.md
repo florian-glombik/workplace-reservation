@@ -5,6 +5,12 @@ Make sure to install:
 - [docker](https://www.docker.com/get-started/) _handles our PostgresSQL database_ <br>
   _(If you do not want to install docker you can also run a [PostgreSQL](https://www.postgresql.org/) database without docker
     on port `5432`, but be aware that the following setup description might not work without modifications for you.)_
+- [migrate](https://github.com/golang-migrate/migrate/blob/master/cmd/migrate/README.md) _- framework used for database migrations_ <br>
+  <details>
+  <summary>Linux distribution</summary>
+  
+  There might be issues when working on a custom Linux distribution, this [installation process](https://stackoverflow.com/a/66621758/16540383) might work for you
+  </details>
 - [sqlc](https://docs.sqlc.dev/en/latest/overview/install.html) _- used for generation of Go code from SQL queries_
 
 
@@ -56,6 +62,11 @@ Make sure to install:
 - [docker](https://www.docker.com/get-started/) _keeps our PostgresSQL database_
 - [npm](https://www.npmjs.com/) _- used as package manager, e.g. for importing [React](https://reactjs.org/)_
 - [migrate](https://github.com/golang-migrate/migrate/blob/master/cmd/migrate/README.md) _- framework used for database migrations_
+  <details>
+  <summary>Linux distribution</summary>
+  
+  There might be issues when working on a custom Linux distribution, this [installation process](https://stackoverflow.com/a/66621758/16540383) might work for you
+  </details>
 - [sqlc](https://docs.sqlc.dev/en/latest/overview/install.html) _- used for generation of Go code from SQL queries_
 
 ### Before First Startup
