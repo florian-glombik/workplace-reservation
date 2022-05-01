@@ -85,7 +85,12 @@ func (server *Server) getUserById(context *gin.Context) {
 
 	account, err := server.queries.GetUserById(context, arg)
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, errorResponse("The user could not be created.", err))
+		if err == sql.ErrNoRows {
+			context.JSON(http.StatusNotFound, errorResponse("error: ", err))
+			return
+		}
+
+		context.JSON(http.StatusInternalServerError, errorResponse("error: ", err))
 		return
 	}
 
@@ -125,7 +130,7 @@ func (server *Server) loginUser(context *gin.Context) {
 		return
 	}
 
-	accessToken, err := server.tokenGenerator.CreateToken(user.ID, time.Duration(3600))
+	accessToken, err := server.tokenGenerator.CreateToken(user.ID, time.Duration(99999999999))
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse("error: ", err))
 		return

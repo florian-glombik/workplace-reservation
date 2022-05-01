@@ -2,10 +2,19 @@ package api
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	db "github.com/florian-glombik/workplace-reservation/db/sqlc"
 	"github.com/florian-glombik/workplace-reservation/src/token"
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"strings"
+)
+
+const (
+	authorizationHeaderKey  = "authorization"
+	authorizationTypeBearer = "bearer"
+	authorizationPayloadKey = "authorization_payload"
 )
 
 type Server struct {
@@ -45,9 +54,47 @@ func (server *Server) setupRouter() {
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
 
-	router.GET("/users", server.getUserById)
+	authRoutes := router.Group("/").Use(authorize(server.tokenGenerator))
+
+	authRoutes.GET("/users", server.getUserById)
 
 	server.router = router
+}
+
+func authorize(tokenGenerator token.Generator) gin.HandlerFunc {
+	return func(context *gin.Context) {
+		authorizationHeader := context.GetHeader(authorizationHeaderKey)
+		if len(authorizationHeader) == 0 {
+			err := errors.New("authorization header is not provided")
+			context.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse("error: ", err))
+			return
+		}
+
+		fields := strings.Fields(authorizationHeader)
+		if len(fields) != 2 {
+			err := errors.New("invalid authorization header format")
+			context.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse("error: ", err))
+			return
+		}
+
+		authorizationType := strings.ToLower(fields[0])
+		if authorizationType != authorizationTypeBearer {
+			err := fmt.Errorf("unsupported authorization type %s", authorizationType)
+			context.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse("error: ", err))
+			return
+		}
+
+		accessToken := fields[1]
+		payload, err := tokenGenerator.VerifyToken(accessToken)
+		if err != nil {
+			context.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse("error: ", err))
+			return
+		}
+
+		context.Set(authorizationPayloadKey, payload)
+		context.Next()
+	}
+
 }
 
 func errorResponse(description string, err error) gin.H {
