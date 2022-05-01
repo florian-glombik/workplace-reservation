@@ -130,7 +130,7 @@ func (server *Server) loginUser(context *gin.Context) {
 		return
 	}
 
-	accessToken, err := server.tokenGenerator.CreateToken(user.ID, time.Duration(99999999999))
+	accessToken, err := server.tokenGenerator.CreateToken(user.ID, time.Minute*60)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse("error: ", err))
 		return
