@@ -54,14 +54,14 @@ func (server *Server) setupRouter() {
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
 
-	authRoutes := router.Group("/").Use(authorize(server.tokenGenerator))
+	authRoutes := router.Group("/").Use(authenticate(server.tokenGenerator))
 
 	authRoutes.GET("/users", server.getUserById)
 
 	server.router = router
 }
 
-func authorize(tokenGenerator token.Generator) gin.HandlerFunc {
+func authenticate(tokenGenerator token.Generator) gin.HandlerFunc {
 	return func(context *gin.Context) {
 		authorizationHeader := context.GetHeader(authorizationHeaderKey)
 		if len(authorizationHeader) == 0 {
