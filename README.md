@@ -58,7 +58,7 @@ Make sure to install:
   
   There might be issues when working on a custom Linux distribution, this [installation process](https://stackoverflow.com/a/66621758/16540383) might work for you
   </details>
-- [sqlc](https://docs.sqlc.dev/en/latest/overview/install.html) _- used for generation of Go code from SQL queries_
+- [sqlc](https://docs.sqlc.dev/en/latest/overview/install.html) _- used for generation of Go code from SQL queries; there is currently (1.13) no support for Postgres sqlc for Windows_
 
 ### Before First Startup
 You will need to download the used packages and frameworks.
