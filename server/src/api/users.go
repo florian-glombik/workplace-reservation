@@ -83,7 +83,7 @@ func (server *Server) getUserById(context *gin.Context) {
 
 	arg := request.UserId
 
-	account, err := server.queries.GetUserById(context, arg)
+	user, err := server.queries.GetUserById(context, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			context.JSON(http.StatusNotFound, errorResponse("error: ", err))
@@ -94,7 +94,7 @@ func (server *Server) getUserById(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, account)
+	context.JSON(http.StatusOK, getUserResponse(user))
 }
 
 type loginUserRequest struct {
