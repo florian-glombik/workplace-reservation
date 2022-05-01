@@ -1,8 +1,20 @@
 import './Login.css'
+import { useState } from 'react'
+
+const login = (details: any) => {
+  console.log(details)
+}
 
 export const Login = () => {
+  const [details, setDetails] = useState({ email: '', password: '' })
+
+  const loginHandler = (e: any) => {
+    e.preventDefault() // page shall not re-render
+    login(details)
+  }
+
   return (
-    <div className="d-flex justify-content-center">
+    <form className="d-flex justify-content-center" onSubmit={loginHandler}>
       <div style={{ maxWidth: '20rem' }}>
         {' '}
         <div className="form-group mt-3">
@@ -13,6 +25,8 @@ export const Login = () => {
             id="exampleInputEmail1"
             aria-describedby="emailHelp"
             placeholder="Enter email"
+            onChange={(e) => setDetails({ ...details, email: e.target.value })}
+            value={details.email}
           />
         </div>
         <div className="form-group mt-3">
@@ -22,6 +36,10 @@ export const Login = () => {
             className="form-control"
             id="exampleInputPassword1"
             placeholder="Password"
+            onChange={(e) =>
+              setDetails({ ...details, password: e.target.value })
+            }
+            value={details.password}
           />
         </div>
         <div className="d-flex justify-content-between mt-4">
@@ -33,6 +51,6 @@ export const Login = () => {
           </button>
         </div>
       </div>
-    </div>
+    </form>
   )
 }
