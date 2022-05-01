@@ -68,6 +68,8 @@ For the Go Server: Make sure to sync the imports/modules
 For the Client/Webapp: Make sure to execute `npm install` within the folder `workplace-reservation/webapp`
 
 
+### Client
+Make sure to use [prettier](https://www.jetbrains.com/help/idea/prettier.html)
 
 <br>
 <br>
