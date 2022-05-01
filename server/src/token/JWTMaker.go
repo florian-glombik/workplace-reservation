@@ -3,6 +3,7 @@ package token
 import (
 	"fmt"
 	"github.com/golang-jwt/jwt"
+	"github.com/google/uuid"
 	"time"
 )
 
@@ -19,8 +20,8 @@ func NewJWTGenerator(secretKey string) (Generator, error) {
 	return &JWTMaker{secretKey}, nil
 }
 
-func (maker *JWTMaker) CreateToken(username string, duration time.Duration) (string, error) {
-	payload, err := NewPayload(username, duration)
+func (maker *JWTMaker) CreateToken(userId uuid.UUID, duration time.Duration) (string, error) {
+	payload, err := NewPayload(userId, duration)
 	if err != nil {
 		return "", err
 	}
