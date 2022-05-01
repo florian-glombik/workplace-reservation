@@ -87,7 +87,8 @@ func authenticate(tokenGenerator token.Generator) gin.HandlerFunc {
 		accessToken := fields[1]
 		payload, err := tokenGenerator.VerifyToken(accessToken)
 		if err != nil {
-			context.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse("error: ", err))
+			// the error shall not be shown to the user as it would leak which part of the decoded token is invalid
+			context.AbortWithStatusJSON(http.StatusUnauthorized, "Invalid token")
 			return
 		}
 
