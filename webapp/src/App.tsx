@@ -1,16 +1,18 @@
 import React from 'react'
 import './App.css'
-import { Header } from './components/Header'
 import { Login } from './components/Login'
 import { Workplace, Workplaces } from './components/Workplace'
 import {BrowserRouter, Route, Router, Routes} from "react-router-dom";
 import {ProtectedRoute} from "./components/ProtectedRoute";
+import {Registration} from "./components/Registration";
+import {Header} from "./components/Header";
 
 let workplaces: Workplace[] = []
 
 function App() {
   return (
       <BrowserRouter>
+          <Header />
           <Routes>
               <Route
                   path='/'
@@ -23,6 +25,10 @@ function App() {
               <Route
                   path='/login'
                   element={<Login/>}
+              />
+              <Route
+                  path='/registration'
+                  element={<Registration/>}
               />
           </Routes>
       </BrowserRouter>

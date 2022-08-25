@@ -74,7 +74,7 @@ export const Login = () => {
                 </div>
               </form>
               <p className={'d-flex justify-content-center mt-4'}>
-                Need an Account? &nbsp; <a href={'#'} className={'line'}>Register</a>
+                Need an Account? &nbsp; <a href={'registration'} className={'line'}>Register</a>
                 {/*TODO put router link here*/}
               </p>
             </div>
