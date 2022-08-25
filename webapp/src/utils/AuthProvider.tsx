@@ -6,26 +6,26 @@ import { useLocalStorage } from './LocalStorageUtil'
 const AuthContext = createContext()
 
 export const AuthProvider = ({ children }: any) => {
-  const [user, setUser] = useLocalStorage('user', null)
+  const [jwtToken, setJwtToken] = useLocalStorage('jwtToken', null)
   const navigate = useNavigate()
 
   const login = async (data: any) => {
-    setUser(data)
+    setJwtToken(data)
     navigate('/', { replace: true })
   }
 
   const logout = () => {
-    setUser(null)
+    setJwtToken(null)
     navigate('/login', { replace: true })
   }
 
   const value = useMemo(
     () => ({
-      user,
+      user: jwtToken,
       login,
       logout,
     }),
-    [user]
+    [jwtToken]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

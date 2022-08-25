@@ -8,8 +8,6 @@ import { Registration } from './components/Registration'
 import { Header } from './components/Header'
 import { AuthProvider } from './utils/AuthProvider'
 
-let workplaces: Workplace[] = []
-
 function App() {
   return (
     <BrowserRouter>

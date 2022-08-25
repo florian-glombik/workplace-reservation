@@ -38,7 +38,6 @@ export const Login = () => {
             <input
               type="email"
               id="eMailInput"
-              // ref={userRef.current}
               onChange={(e) =>
                 setDetails({ ...details, email: e.target.value })
               }
