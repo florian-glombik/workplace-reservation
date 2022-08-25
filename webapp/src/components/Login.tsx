@@ -1,8 +1,10 @@
 import './Login.css'
-import { useState, useRef, useEffect } from 'react'
-import { AuthProvider, useAuth } from '../utils/AuthProvider'
+import { useEffect, useState } from 'react'
+import { useAuth } from '../utils/AuthProvider'
 import axios from 'axios'
 import { BASE_URL } from '../config'
+import Button from '@mui/material/Button'
+import { Box, TextField } from '@material-ui/core'
 
 const logLogin = (details: any) => {
   console.log(details)
@@ -35,50 +37,42 @@ export const Login = () => {
   }
 
   return (
-    <div>
-      <form className="d-flex justify-content-center" onSubmit={handleLogin}>
-        <div style={{ maxWidth: '20rem' }}>
+    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+      <Box sx={{ maxWidth: '20rem' }} style={{ maxWidth: '20rem' }}>
+        <form onSubmit={handleLogin}>
           <p>{errMsg}</p>
           <h1>Sign In</h1>
-          <div className="form-group mt-3">
-            <label htmlFor="eMailInput">Email address</label>
-            <input
-              type="email"
-              id="eMailInput"
+          <Box mt={2}>
+            <TextField
+              label={'E-Mail'}
+              variant={'outlined'}
               onChange={(e) =>
                 setDetails({ ...details, email: e.target.value })
               }
-              value={details.email}
               required
-              className="form-control"
-              placeholder="E-Mail"
               autoFocus
             />
-          </div>
-          <div className="form-group mt-3">
-            <label htmlFor="passwordInput">Password</label>
-            <input
-              type="password"
-              id="passwordInput"
+          </Box>
+          <Box mt={2}>
+            <TextField
+              label={'Password'}
+              variant={'outlined'}
               onChange={(e) =>
                 setDetails({ ...details, password: e.target.value })
               }
-              value={details.password}
               required
-              className="form-control"
-              placeholder="Password"
             />
-          </div>
-          <button type="submit" className="btn btn-primary mt-4">
-            Login
-          </button>
-        </div>
-      </form>
-      <p className={'d-flex justify-content-center mt-4'}>
+          </Box>
+          <Box mt={2} mb={3}>
+            <Button type="submit" variant={'contained'}>
+              Login
+            </Button>
+          </Box>
+        </form>
         <a href={'registration'} className={'line'}>
           Don't have an account? Register
         </a>
-      </p>
-    </div>
+      </Box>
+    </Box>
   )
 }
