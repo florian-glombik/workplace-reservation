@@ -1,6 +1,8 @@
 import './Login.css'
 import { useState, useRef, useEffect } from 'react'
 import { AuthProvider, useAuth } from '../utils/AuthProvider'
+import axios from 'axios'
+import { BASE_URL } from '../config'
 
 const logLogin = (details: any) => {
   console.log(details)
@@ -24,6 +26,11 @@ export const Login = () => {
     e.preventDefault() // page shall not re-render
     logLogin(details)
     setSuccess(true)
+
+    setErrMsg('there is an error')
+
+    const jwtToken = await axios.get(BASE_URL + 'login')
+    console.log(jwtToken.data)
     login({ user: 'test' })
   }
 
