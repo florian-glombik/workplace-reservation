@@ -38,7 +38,7 @@ export const Login = () => {
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-      <Box sx={{ maxWidth: '20rem' }} style={{ maxWidth: '20rem' }}>
+      <Box>
         <form onSubmit={handleLogin}>
           <p>{errMsg}</p>
           <h1>Sign In</h1>
@@ -49,7 +49,7 @@ export const Login = () => {
               onChange={(e) =>
                 setDetails({ ...details, email: e.target.value })
               }
-              required
+              fullWidth
               autoFocus
             />
           </Box>
@@ -60,7 +60,8 @@ export const Login = () => {
               onChange={(e) =>
                 setDetails({ ...details, password: e.target.value })
               }
-              required
+              fullWidth
+              type={'password'}
             />
           </Box>
           <Box mt={2} mb={3}>
