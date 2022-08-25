@@ -72,8 +72,6 @@ For the Client/Webapp: Make sure to execute `npm install` within the folder `wor
 Make sure to use [prettier](https://www.jetbrains.com/help/idea/prettier.html)
 
 <br>
-<br>
-<br>
 The project is based on Go and React. I use [GoLand](https://www.jetbrains.com/de-de/go/) as IDE and included my project
 configurations within this repository, which might save you some time getting started with the project in case you do not
 prefer another IDE.
