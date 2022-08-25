@@ -14,12 +14,12 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <Header />
         <Routes>
           <Route
             path="/"
             element={
               <ProtectedRoute>
+                <Header />
                 <Workplaces />
               </ProtectedRoute>
             }

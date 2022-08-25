@@ -7,7 +7,7 @@ const logLogin = (details: any) => {
 }
 
 export const Login = () => {
-  //@ts-ignore
+  // @ts-ignore
   const { login } = useAuth()
   const [details, setDetails] = useState({ email: '', password: '' })
 
@@ -24,6 +24,7 @@ export const Login = () => {
     e.preventDefault() // page shall not re-render
     logLogin(details)
     setSuccess(true)
+    login({ user: 'test' })
   }
 
   return (
