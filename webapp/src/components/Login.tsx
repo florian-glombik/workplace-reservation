@@ -1,27 +1,18 @@
 import './Login.css'
 import { useState, useRef, useEffect } from 'react'
+import {AuthProvider} from "../utils/AuthProvider";
 
 const logLogin = (details: any) => {
   console.log(details)
 }
 
 export const Login = () => {
-  const userRef = useRef();
-  const errRef = useRef<HTMLInputElement | null>();
-
-  useEffect(() => {
-    const test = userRef.current
-    console.log(test)
-    // userRef.current.focus();
-  }, [])
-
   const [details, setDetails] = useState({ email: '', password: '' })
 
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
   const [errMsg, setErrMsg] = useState('');
   const [success, setSuccess] = useState(false);
-
 
   useEffect(() => {
     setErrMsg('');
