@@ -82,8 +82,8 @@ export const Login = () => {
                   </button>
                 </div>
               </form>
-              <p className={'mt-4'}>
-                Need an Account? <a href={'#'} className={'line'}>Register</a>
+              <p className={'d-flex justify-content-center mt-4'}>
+                Need an Account? &nbsp; <a href={'#'} className={'line'}>Register</a>
                 {/*TODO put router link here*/}
               </p>
             </div>
