@@ -77,3 +77,6 @@ Make sure to use [prettier](https://www.jetbrains.com/help/idea/prettier.html)
 The project is based on Go and React. I use [GoLand](https://www.jetbrains.com/de-de/go/) as IDE and included my project
 configurations within this repository, which might save you some time getting started with the project in case you do not
 prefer another IDE.
+
+If you are using GoLand the prettier configuration will look like this: ![goLandPrettierConfiguration.png](goLandPrettierConfiguration.png)
+You will need to install the [prettier plugin](https://plugins.jetbrains.com/plugin/10456-prettier) and restart the GoLand before this selection appears.
