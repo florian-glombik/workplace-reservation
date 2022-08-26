@@ -6,6 +6,7 @@ import (
 	"fmt"
 	db "github.com/florian-glombik/workplace-reservation/db/sqlc"
 	"github.com/florian-glombik/workplace-reservation/src/token"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strings"
@@ -50,6 +51,16 @@ func (server *Server) Start(address string) error {
 
 func (server *Server) setupRouter() {
 	router := gin.Default()
+
+	corsConfig := cors.DefaultConfig()
+
+	corsConfig.AllowOrigins = []string{"http://localhost:3000"}
+	// To be able to send tokens to the server.
+	corsConfig.AllowCredentials = true
+	// OPTIONS method for ReactJS
+	corsConfig.AddAllowMethods("OPTIONS")
+	// Register the middleware
+	router.Use(cors.New(corsConfig))
 
 	router.POST("/users", server.createUser)
 	router.POST("/users/login", server.loginUser)
