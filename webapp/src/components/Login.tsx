@@ -29,11 +29,10 @@ export const Login = () => {
     e.preventDefault() // page shall not re-render
     logLogin(details)
 
-    setSuccess(true)
-
     try {
-      const response = await axios.get(BASE_URL + 'login')
+      const response = await axios.post(BASE_URL + 'users/login', details)
       console.log(response)
+
       login({ user: 'test' })
     } catch (error: any) {
       toast.error(error.message, {
@@ -47,8 +46,7 @@ export const Login = () => {
       })
     }
 
-    // console.log(jwtToken.data)
-    login({ user: 'test' })
+    // login({ user: 'test' })
   }
 
   return (
