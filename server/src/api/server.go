@@ -111,5 +111,5 @@ func authenticate(tokenGenerator token.Generator) gin.HandlerFunc {
 }
 
 func errorResponse(description string, err error) gin.H {
-	return gin.H{description: err.Error()}
+	return gin.H{"message": description, "reason": err.Error()}
 }

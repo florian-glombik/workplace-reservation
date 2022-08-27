@@ -5,60 +5,38 @@ import Button from '@mui/material/Button'
 import axios from 'axios'
 import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
+import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 
 export const Registration = () => {
-  const [details, setDetails] = useState({
-    username: 'sf',
-    firstName: 'sdf',
-    lastName: 'df',
-    password: 'sdf',
-    email: 'sdsdff@sdf.de',
-  })
+  // const [details, setDetails] = useState({
+  //   username: 'sf',
+  //   firstName: 'sdf',
+  //   lastName: 'df',
+  //   password: 'sdf',
+  //   email: 'sdsdff@sdf.de',
+  // })
 
-  // "username": "abc",
-  //   "firstName": "Test",
-  //   "lastName": "LastName",
-  //   "password": "test",
-  //   "email": "test+3@test.de"
+  const [details, setDetails] = useState({
+    username: '',
+    firstName: '',
+    lastName: '',
+    password: '',
+    email: '',
+  })
 
   const handleRegistration = async (e: any) => {
     e.preventDefault() // page shall not re-render
 
-    setDetails({
-      username: 'sf',
-      firstName: 'sdf',
-      lastName: 'df',
-      password: 'sdf',
-      email: 'sdsdff@sdf.de',
-    })
+    console.log({ details })
 
-    let response
     try {
-      response = await axios.post(BASE_URL + 'users', details)
-      console.log(response)
+      await axios.post(BASE_URL + 'users', details)
     } catch (error: any) {
-      console.log(error)
-      toast.error(error.message, {
-        position: 'top-right',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      })
+      toast.error(getDisplayResponseMessage(error))
       return
     }
 
-    toast.success('The account was successfully created!', {
-      position: 'top-right',
-      autoClose: 5000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      progress: undefined,
-    })
+    toast.success('The account was successfully created!')
   }
 
   return (

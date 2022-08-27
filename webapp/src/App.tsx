@@ -28,8 +28,13 @@ function App() {
           <Route path="/registration" element={<Registration />} />
         </Routes>
       </AuthProvider>
-
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+      />
     </BrowserRouter>
   )
 }

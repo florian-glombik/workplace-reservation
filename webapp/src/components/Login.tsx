@@ -1,11 +1,12 @@
 import './Login.css'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useAuth } from '../utils/AuthProvider'
 import axios from 'axios'
 import { BASE_URL } from '../config'
 import Button from '@mui/material/Button'
 import { Box, TextField } from '@material-ui/core'
 import { toast } from 'react-toastify'
+import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 
 const logLogin = (details: any) => {
   console.log(details)
@@ -26,15 +27,7 @@ export const Login = () => {
 
       login({ user: 'test' })
     } catch (error: any) {
-      toast.error(error.message, {
-        position: 'top-right',
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      })
+      toast.error(getDisplayResponseMessage(error))
     }
   }
 

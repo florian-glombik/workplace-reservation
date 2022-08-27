@@ -6,29 +6,28 @@ import (
 	"github.com/florian-glombik/workplace-reservation/src/util"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"github.com/lib/pq"
 	"net/http"
 	"time"
 )
 
 type CreateUserRequest struct {
-	Username  string `json:"username" binding:"alphanum"`
-	FirstName string `json:"firstName" binding:"alphanum"`
-	LastName  string `json:"lastName" binding:"alphanum"`
+	Username  string `json:"username" binding:"omitempty,alphanum"`
+	FirstName string `json:"firstName" binding:"omitempty,alphanum"`
+	LastName  string `json:"lastName" binding:"omitempty,alphanum"`
 	Password  string `json:"password" binding:"required,min=3"`
 	Email     string `json:"email" binding:"required,email"`
 }
 
-// CreateUserResponse does not return the hashed password
-type userResponse struct {
+type userWithoutHashedPassword struct {
 	ID        string
 	FirstName sql.NullString
 	LastName  sql.NullString
 	Email     string
 }
 
-// sensible information (such as the hashed password) shall not be sent to the client
-func getUserResponse(user db.User) userResponse {
-	return userResponse{
+func getUserResponse(user db.User) userWithoutHashedPassword {
+	return userWithoutHashedPassword{
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		Email:     user.Email,
@@ -60,7 +59,15 @@ func (server *Server) createUser(context *gin.Context) {
 	}
 
 	newUser, err := server.queries.CreateUser(context, arg)
+
 	if err != nil {
+		pqErr := err.(*pq.Error)
+
+		if pqErr.Code == pq.ErrorCode("23505") {
+			context.JSON(http.StatusForbidden, errorResponse("E-Mail is already in use!", err))
+			return
+		}
+
 		context.JSON(http.StatusInternalServerError, errorResponse("The user could not be created.", err))
 		return
 	}
@@ -103,8 +110,8 @@ type loginUserRequest struct {
 }
 
 type loginUserResponse struct {
-	AccessToken string       `json:"accessToken"`
-	User        userResponse `json:"userResponse"`
+	AccessToken string                    `json:"accessToken"`
+	User        userWithoutHashedPassword `json:"userWithoutHashedPassword"`
 }
 
 func (server *Server) loginUser(context *gin.Context) {
