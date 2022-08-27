@@ -8,14 +8,6 @@ import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 
 export const Registration = () => {
-  // const [details, setDetails] = useState({
-  //   username: 'sf',
-  //   firstName: 'sdf',
-  //   lastName: 'df',
-  //   password: 'sdf',
-  //   email: 'sdsdff@sdf.de',
-  // })
-
   const [details, setDetails] = useState({
     username: '',
     firstName: '',
@@ -26,8 +18,6 @@ export const Registration = () => {
 
   const handleRegistration = async (e: any) => {
     e.preventDefault() // page shall not re-render
-
-    console.log({ details })
 
     try {
       await axios.post(BASE_URL + 'users', details)
@@ -62,7 +52,9 @@ export const Registration = () => {
               onChange={(e) =>
                 setDetails({ ...details, email: e.target.value })
               }
+              type={'email'}
               fullWidth
+              required
             />
           </Box>
           <Box mt={2}>
@@ -74,6 +66,8 @@ export const Registration = () => {
               }
               fullWidth
               type={'password'}
+              required
+              inputProps={{ minLength: 3 }}
             />
           </Box>
           <Box mt={2} mb={3}>

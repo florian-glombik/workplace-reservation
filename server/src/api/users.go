@@ -5,6 +5,7 @@ import (
 	db "github.com/florian-glombik/workplace-reservation/db/sqlc"
 	"github.com/florian-glombik/workplace-reservation/src/util"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
 	"net/http"
@@ -38,6 +39,14 @@ func (server *Server) createUser(context *gin.Context) {
 	var request CreateUserRequest
 
 	if err := context.ShouldBindJSON(&request); err != nil {
+		validationErr := err.(validator.ValidationErrors)
+
+		invalidInputTag := validationErr[0].Tag()
+		if invalidInputTag == "email" {
+			context.JSON(http.StatusBadRequest, errorResponse("Invalid E-Mail Address! Make sure to follow the format 'example@example.com' - include a '.' after the '@'", err))
+			return
+		}
+
 		context.JSON(http.StatusBadRequest, errorResponse("The request could not be parsed.", err))
 		return
 	}
