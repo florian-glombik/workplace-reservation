@@ -13,6 +13,7 @@ import (
 )
 
 const ErrRequestCouldNotBeParsed = "The request could not be parsed."
+const UnexpectedErrContactMessage = "An unexpected error has occurred. Please contact CONTACT_PERSON to contribute in resolving the problem as soon as possible."
 
 type CreateUserRequest struct {
 	Username  string `json:"username" binding:"omitempty,alphanum"`
@@ -128,7 +129,7 @@ type loginUserResponse struct {
 func (server *Server) loginUser(context *gin.Context) {
 	var request loginUserRequest
 	if err := context.ShouldBindJSON(&request); err != nil {
-		context.JSON(http.StatusBadRequest, errorResponse("Could not parse the request", err))
+		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
 		return
 	}
 
@@ -138,7 +139,7 @@ func (server *Server) loginUser(context *gin.Context) {
 			context.JSON(http.StatusNotFound, errorResponse("There is no user with the entered E-Mail.", err))
 			return
 		}
-		context.JSON(http.StatusInternalServerError, errorResponse("The user could not be found by using the E-Mail.", err))
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
 		return
 	}
 
