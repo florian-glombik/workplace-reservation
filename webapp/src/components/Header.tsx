@@ -1,6 +1,6 @@
 import './Header.css'
 import { useAuth } from '../utils/AuthProvider'
-import { Link, Typography } from '@material-ui/core'
+import { Box, Button, Link, Typography } from '@material-ui/core'
 
 type HeaderProps = {
   showLogoutButton?: boolean
@@ -17,17 +17,27 @@ export const Header = (props: HeaderProps) => {
 
   // TODO use AppBar instead
   return (
-    <header className="page-header d-flex justify-content-between">
-      <Typography variant={'h4'}>
-        <Link href={'/'} underline={'none'}>
-          Workplace Reservation
-        </Link>
-      </Typography>
+    <Box
+      sx={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        bgcolor: 'text.disabled',
+      }}
+    >
+      <Box sx={{ m: 2 }}>
+        <Typography variant={'h4'}>
+          <Link href={'/'} underline={'none'}>
+            Workplace Reservation
+          </Link>
+        </Typography>
+      </Box>
       {showLogoutButton && (
-        <button className={'btn btn-primary m-2'} onClick={handleLogout}>
-          Logout
-        </button>
+        <Box sx={{ m: 2 }}>
+          <Button variant={'contained'} onClick={handleLogout}>
+            Logout
+          </Button>
+        </Box>
       )}
-    </header>
+    </Box>
   )
 }
