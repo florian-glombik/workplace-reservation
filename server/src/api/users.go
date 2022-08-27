@@ -12,6 +12,8 @@ import (
 	"time"
 )
 
+const ErrRequestCouldNotBeParsed = "The request could not be parsed."
+
 type CreateUserRequest struct {
 	Username  string `json:"username" binding:"omitempty,alphanum"`
 	FirstName string `json:"firstName" binding:"omitempty,alphanum"`
@@ -47,7 +49,7 @@ func (server *Server) createUser(context *gin.Context) {
 			return
 		}
 
-		context.JSON(http.StatusBadRequest, errorResponse("The request could not be parsed.", err))
+		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
 		return
 	}
 
@@ -93,7 +95,7 @@ func (server *Server) getUserById(context *gin.Context) {
 	var request GetUserByIdRequest
 
 	if err := context.ShouldBindJSON(&request); err != nil {
-		context.JSON(http.StatusBadRequest, errorResponse("The request could not be parsed.", err))
+		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
 		return
 	}
 
@@ -102,11 +104,11 @@ func (server *Server) getUserById(context *gin.Context) {
 	user, err := server.queries.GetUserById(context, arg)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			context.JSON(http.StatusNotFound, errorResponse("error: ", err))
+			context.JSON(http.StatusNotFound, errorResponse("User not found!", err))
 			return
 		}
 
-		context.JSON(http.StatusInternalServerError, errorResponse("error: ", err))
+		context.JSON(http.StatusInternalServerError, errorResponse("Retrieving the user was not successful.", err))
 		return
 	}
 
@@ -126,29 +128,29 @@ type loginUserResponse struct {
 func (server *Server) loginUser(context *gin.Context) {
 	var request loginUserRequest
 	if err := context.ShouldBindJSON(&request); err != nil {
-		context.JSON(http.StatusBadRequest, errorResponse("error: ", err))
+		context.JSON(http.StatusBadRequest, errorResponse("Could not parse the request", err))
 		return
 	}
 
 	user, err := server.queries.GetUserByMail(context, request.Email)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			context.JSON(http.StatusNotFound, errorResponse("error: ", err))
+			context.JSON(http.StatusNotFound, errorResponse("There is no user with the entered E-Mail.", err))
 			return
 		}
-		context.JSON(http.StatusInternalServerError, errorResponse("error: ", err))
+		context.JSON(http.StatusInternalServerError, errorResponse("The user could not be found by using the E-Mail.", err))
 		return
 	}
 
 	err = util.CheckPassword(user.Password, request.Password)
 	if err != nil {
-		context.JSON(http.StatusUnauthorized, errorResponse("error: ", err))
+		context.JSON(http.StatusUnauthorized, errorResponse("Login was not successful, make sure to double check the E-Mail and password!", err))
 		return
 	}
 
 	accessToken, err := server.tokenGenerator.CreateToken(user.ID, time.Minute*60)
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, errorResponse("error: ", err))
+		context.JSON(http.StatusInternalServerError, errorResponse("The access token could not be generated.", err))
 		return
 	}
 
