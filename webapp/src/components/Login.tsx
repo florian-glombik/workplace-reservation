@@ -9,10 +9,6 @@ import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { Header } from './Header'
 
-const logLogin = (details: any) => {
-  console.log(details)
-}
-
 export const Login = () => {
   // @ts-ignore
   const { login } = useAuth()
@@ -20,13 +16,14 @@ export const Login = () => {
 
   const handleLogin = async (e: any) => {
     e.preventDefault() // page shall not re-render
-    logLogin(details)
-
     try {
       const response = await axios.post(BASE_URL + 'users/login', details)
-      console.log(response)
 
-      login({ user: 'test' })
+      login(
+        response.data.accessToken,
+        response.data.user,
+        response.data.user.email
+      )
     } catch (error: any) {
       toast.error(getDisplayResponseMessage(error))
     }

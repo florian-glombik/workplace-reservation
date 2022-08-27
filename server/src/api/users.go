@@ -24,10 +24,10 @@ type CreateUserRequest struct {
 }
 
 type userWithoutHashedPassword struct {
-	ID        string
-	FirstName sql.NullString
-	LastName  sql.NullString
-	Email     string
+	ID        string         `json:"id"`
+	FirstName sql.NullString `json:"firstName"`
+	LastName  sql.NullString `json:"lastName"`
+	Email     string         `json:"email"`
 }
 
 func getUserResponse(user db.User) userWithoutHashedPassword {
@@ -123,7 +123,7 @@ type loginUserRequest struct {
 
 type loginUserResponse struct {
 	AccessToken string                    `json:"accessToken"`
-	User        userWithoutHashedPassword `json:"userWithoutHashedPassword"`
+	User        userWithoutHashedPassword `json:"user"`
 }
 
 func (server *Server) loginUser(context *gin.Context) {
