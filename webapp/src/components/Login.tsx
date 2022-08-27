@@ -16,15 +16,6 @@ export const Login = () => {
   const { login } = useAuth()
   const [details, setDetails] = useState({ email: '', password: '' })
 
-  const [user, setUser] = useState('')
-  const [password, setPassword] = useState('')
-  const [errMsg, setErrMsg] = useState('')
-  const [success, setSuccess] = useState(false)
-
-  useEffect(() => {
-    setErrMsg('')
-  }, [user, password])
-
   const handleLogin = async (e: any) => {
     e.preventDefault() // page shall not re-render
     logLogin(details)
@@ -45,50 +36,45 @@ export const Login = () => {
         progress: undefined,
       })
     }
-
-    // login({ user: 'test' })
   }
 
   return (
-    <div>
-      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Box>
-          <form onSubmit={handleLogin}>
-            <p>{errMsg}</p>
-            <h1>Sign In</h1>
-            <Box mt={2}>
-              <TextField
-                label={'E-Mail'}
-                variant={'outlined'}
-                onChange={(e) =>
-                  setDetails({ ...details, email: e.target.value })
-                }
-                fullWidth
-                autoFocus
-              />
-            </Box>
-            <Box mt={2}>
-              <TextField
-                label={'Password'}
-                variant={'outlined'}
-                onChange={(e) =>
-                  setDetails({ ...details, password: e.target.value })
-                }
-                fullWidth
-                type={'password'}
-              />
-            </Box>
-            <Box mt={2} mb={3}>
-              <Button type="submit" variant={'contained'}>
-                Login
-              </Button>
-            </Box>
-          </form>
-          <a href={'registration'} className={'line'}>
-            Don't have an account? Register
-          </a>
-        </Box>
+    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+      <Box>
+        <form onSubmit={handleLogin}>
+          <h1>Sign In</h1>
+          <Box mt={2}>
+            <TextField
+              label={'E-Mail'}
+              variant={'outlined'}
+              onChange={(e) =>
+                setDetails({ ...details, email: e.target.value })
+              }
+              fullWidth
+              autoFocus
+            />
+          </Box>
+          <Box mt={2}>
+            <TextField
+              label={'Password'}
+              variant={'outlined'}
+              onChange={(e) =>
+                setDetails({ ...details, password: e.target.value })
+              }
+              fullWidth
+              type={'password'}
+            />
+          </Box>
+          <Box mt={2} mb={3}>
+            <Button type="submit" variant={'contained'}>
+              Login
+            </Button>
+          </Box>
+        </form>
+        <a href={'registration'} className={'line'}>
+          Don't have an account? Register
+        </a>
       </Box>
-    </div>
+    </Box>
   )
 }
