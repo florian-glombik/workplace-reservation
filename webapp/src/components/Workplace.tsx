@@ -1,4 +1,12 @@
 import React from 'react'
+import {
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+} from '@material-ui/core'
 
 export type Workplace = {
   id: string
@@ -51,26 +59,30 @@ export class Workplaces extends React.Component {
 
   render() {
     return (
-      <table>
-        <tr>
-          <th>Weekday</th>
-          {this.workplaces.map((workplace) => (
-            <th>{workplace.name}</th>
-          ))}
-        </tr>
-        {weekDays.map((day) => {
-          return (
-            <tr>
-              <td>{day}</td>
-              {this.workplaces.map((workplace) => (
-                <td>
-                  <button>{workplace.id}</button>
-                </td>
-              ))}
-            </tr>
-          )
-        })}
-      </table>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Weekday</TableCell>
+            {this.workplaces.map((workplace) => (
+              <TableCell>{workplace.name}</TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {weekDays.map((day) => {
+            return (
+              <TableRow>
+                <TableCell>{day}</TableCell>
+                {this.workplaces.map((workplace) => (
+                  <TableCell>
+                    <Button variant={'contained'}>{workplace.id}</Button>
+                  </TableCell>
+                ))}
+              </TableRow>
+            )
+          })}
+        </TableBody>
+      </Table>
     )
   }
 }
