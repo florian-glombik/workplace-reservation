@@ -62,19 +62,21 @@ export class Workplaces extends React.Component {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Weekday</TableCell>
+            <TableCell key={'weekday'}>Weekday</TableCell>
             {this.workplaces.map((workplace) => (
-              <TableCell>{workplace.name}</TableCell>
+              <TableCell key={`workplace-${workplace.id}`}>
+                {workplace.name}
+              </TableCell>
             ))}
           </TableRow>
         </TableHead>
         <TableBody>
           {weekDays.map((day) => {
             return (
-              <TableRow>
-                <TableCell>{day}</TableCell>
+              <TableRow key={`worplace-reservations-${day}`}>
+                <TableCell key={`day-${day}`}>{day}</TableCell>
                 {this.workplaces.map((workplace) => (
-                  <TableCell>
+                  <TableCell key={`reservation-${day}-${workplace.id}`}>
                     <Button variant={'contained'}>{workplace.id}</Button>
                   </TableCell>
                 ))}
