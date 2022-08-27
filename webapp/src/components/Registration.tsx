@@ -6,6 +6,7 @@ import axios from 'axios'
 import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
+import { Header } from './Header'
 
 export const Registration = () => {
   const [details, setDetails] = useState({
@@ -30,53 +31,56 @@ export const Registration = () => {
   }
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-      <Box>
-        <form onSubmit={handleRegistration}>
-          <h1>Registration</h1>
-          <Box mt={2}>
-            <TextField
-              label={'Username'}
-              variant={'outlined'}
-              onChange={(e) =>
-                setDetails({ ...details, username: e.target.value })
-              }
-              fullWidth
-              autoFocus
-            />
-          </Box>
-          <Box mt={2}>
-            <TextField
-              label={'E-Mail'}
-              variant={'outlined'}
-              onChange={(e) =>
-                setDetails({ ...details, email: e.target.value })
-              }
-              type={'email'}
-              fullWidth
-              required
-            />
-          </Box>
-          <Box mt={2}>
-            <TextField
-              label={'Password'}
-              variant={'outlined'}
-              onChange={(e) =>
-                setDetails({ ...details, password: e.target.value })
-              }
-              fullWidth
-              type={'password'}
-              required
-              inputProps={{ minLength: 3 }}
-            />
-          </Box>
-          <Box mt={2} mb={3}>
-            <Button type="submit" variant={'contained'}>
-              Register
-            </Button>
-          </Box>
-        </form>
+    <div>
+      <Header showLogoutButton={false} />
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Box>
+          <form onSubmit={handleRegistration}>
+            <h1>Registration</h1>
+            <Box mt={2}>
+              <TextField
+                label={'Username'}
+                variant={'outlined'}
+                onChange={(e) =>
+                  setDetails({ ...details, username: e.target.value })
+                }
+                fullWidth
+                autoFocus
+              />
+            </Box>
+            <Box mt={2}>
+              <TextField
+                label={'E-Mail'}
+                variant={'outlined'}
+                onChange={(e) =>
+                  setDetails({ ...details, email: e.target.value })
+                }
+                type={'email'}
+                fullWidth
+                required
+              />
+            </Box>
+            <Box mt={2}>
+              <TextField
+                label={'Password'}
+                variant={'outlined'}
+                onChange={(e) =>
+                  setDetails({ ...details, password: e.target.value })
+                }
+                fullWidth
+                type={'password'}
+                required
+                inputProps={{ minLength: 3 }}
+              />
+            </Box>
+            <Box mt={2} mb={3}>
+              <Button type="submit" variant={'contained'}>
+                Register
+              </Button>
+            </Box>
+          </form>
+        </Box>
       </Box>
-    </Box>
+    </div>
   )
 }

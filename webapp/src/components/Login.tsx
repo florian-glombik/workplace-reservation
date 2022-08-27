@@ -7,6 +7,7 @@ import Button from '@mui/material/Button'
 import { Box, TextField } from '@material-ui/core'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
+import { Header } from './Header'
 
 const logLogin = (details: any) => {
   console.log(details)
@@ -32,42 +33,45 @@ export const Login = () => {
   }
 
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-      <Box>
-        <form onSubmit={handleLogin}>
-          <h1>Sign In</h1>
-          <Box mt={2}>
-            <TextField
-              label={'E-Mail'}
-              variant={'outlined'}
-              onChange={(e) =>
-                setDetails({ ...details, email: e.target.value })
-              }
-              fullWidth
-              autoFocus
-            />
-          </Box>
-          <Box mt={2}>
-            <TextField
-              label={'Password'}
-              variant={'outlined'}
-              onChange={(e) =>
-                setDetails({ ...details, password: e.target.value })
-              }
-              fullWidth
-              type={'password'}
-            />
-          </Box>
-          <Box mt={2} mb={3}>
-            <Button type="submit" variant={'contained'}>
-              Login
-            </Button>
-          </Box>
-        </form>
-        <a href={'registration'} className={'line'}>
-          Don't have an account? Register
-        </a>
+    <div>
+      <Header showLogoutButton={false} />
+      <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+        <Box>
+          <form onSubmit={handleLogin}>
+            <h1>Sign In</h1>
+            <Box mt={2}>
+              <TextField
+                label={'E-Mail'}
+                variant={'outlined'}
+                onChange={(e) =>
+                  setDetails({ ...details, email: e.target.value })
+                }
+                fullWidth
+                autoFocus
+              />
+            </Box>
+            <Box mt={2}>
+              <TextField
+                label={'Password'}
+                variant={'outlined'}
+                onChange={(e) =>
+                  setDetails({ ...details, password: e.target.value })
+                }
+                fullWidth
+                type={'password'}
+              />
+            </Box>
+            <Box mt={2} mb={3}>
+              <Button type="submit" variant={'contained'}>
+                Login
+              </Button>
+            </Box>
+          </form>
+          <a href={'registration'} className={'line'}>
+            Don't have an account? Register
+          </a>
+        </Box>
       </Box>
-    </Box>
+    </div>
   )
 }
