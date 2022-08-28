@@ -8,6 +8,8 @@ import (
 	"github.com/florian-glombik/workplace-reservation/src/token"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 	"net/http"
 	"strings"
 )
@@ -54,8 +56,10 @@ func (server *Server) setupRouter() {
 
 	corsConfig := cors.DefaultConfig()
 
+	ClientAddress := "http://localhost:3000"
+
 	//TODO move client address to config file
-	corsConfig.AllowOrigins = []string{"http://localhost:3000"}
+	corsConfig.AllowOrigins = []string{ClientAddress}
 	// To be able to send tokens to the server.
 	corsConfig.AllowCredentials = true
 	// OPTIONS method for ReactJS
@@ -63,12 +67,19 @@ func (server *Server) setupRouter() {
 	// Register the middleware
 	router.Use(cors.New(corsConfig))
 
-	router.POST("/users", server.createUser)
-	router.POST("/users/login", server.loginUser)
+	v1 := router.Group("/api/v1")
+	{
+		users := v1.Group("/users")
+		{
+			users.POST("", server.createUser)
+		}
+	}
 
-	authRoutes := router.Group("/").Use(authenticate(server.tokenGenerator))
-
-	authRoutes.GET("/users", server.getUserById)
+	//router.POST("/users", server.createUser)
+	//router.POST("/users/login", server.loginUser)
+	//authRoutes := router.Group("/").Use(authenticate(server.tokenGenerator))
+	//authRoutes.GET("/users", server.getUserById)
+	router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	server.router = router
 }

@@ -38,6 +38,18 @@ func getUserResponse(user db.User) userWithoutHashedPassword {
 	}
 }
 
+// ShowAccount
+// @Summary      Create a new account
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param        email   path      string  true "test"
+// @Param        password   path      string  true  "Account ID"
+// @Param        username   path      string  false  "Account ID"
+// @Param        firstName   path      string  false  "Account ID"
+// @Param        lastName   path      string  false  "Account ID"
+// @Description  get string by ID
+// @Router       /users [post]
 func (server *Server) createUser(context *gin.Context) {
 	var request CreateUserRequest
 
