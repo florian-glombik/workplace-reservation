@@ -28,9 +28,9 @@ CREATE TABLE IF NOT EXISTS reservations
 (
     id                    UUID PRIMARY KEY UNIQUE NOT NULL,
     start_date            TIMESTAMPTZ             NOT NULL,
-    end_date              TIMESTAMPTZ,
-    reserving_user_email  VARCHAR(62)             NOT NULL,
+    end_date              TIMESTAMPTZ             NOT NULL,
+    reserving_user_id     UUID                    NOT NULL,
     reserved_workplace_id UUID                    NOT NULL,
-    FOREIGN KEY (reserving_user_email) REFERENCES users (email),
+    FOREIGN KEY (reserving_user_id) REFERENCES users (id),
     FOREIGN KEY (reserved_workplace_id) REFERENCES workplaces (id)
 );

@@ -73,7 +73,7 @@ func (server *Server) setupRouter() {
 	authRoutes := router.Group("/").Use(authenticate(server.tokenGenerator))
 
 	router.POST("/workplace/create", server.createWorkplace)
-	//router.POST("/workplace/reserve", server.reserveWorkplace)
+	router.POST("/workplace/reserve", server.reserveWorkplace)
 	authRoutes.GET("/users", server.getUserById)
 
 	router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
