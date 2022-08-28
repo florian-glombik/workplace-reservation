@@ -49,11 +49,11 @@ func (server *Server) reserveWorkplace(context *gin.Context) {
 		return
 	}
 
-	conflictSqlQueryParams := db.RetrieveReservationConflictsParams{
+	retrieveReservationsSqlParams := db.RetrieveReservationsInTimespanParams{
 		StartDate:   request.StartReservation,
 		StartDate_2: request.EndReservation,
 	}
-	reservationConflicts, err := server.queries.RetrieveReservationConflicts(context, conflictSqlQueryParams)
+	reservationConflicts, err := server.queries.RetrieveReservationsInTimespan(context, retrieveReservationsSqlParams)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
 		return
@@ -79,4 +79,34 @@ func (server *Server) reserveWorkplace(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, reservation)
+}
+
+type getReservationsRequest struct {
+	Start time.Time `json:"start" binding:"required"`
+	End   time.Time `json:"end" binding:"required"`
+}
+
+// GetReservations
+// @Summary      Returns all reservations of the specified timespan
+// @Tags         reservation
+// @Router       /workplace/reservations [get]
+func (server *Server) getReservations(context *gin.Context) {
+	var request getReservationsRequest
+
+	if err := context.ShouldBindJSON(&request); err != nil {
+		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
+		return
+	}
+
+	retrieveReservationsSqlParams := db.RetrieveReservationsInTimespanParams{
+		StartDate:   request.Start,
+		StartDate_2: request.End,
+	}
+	existingReservations, err := server.queries.RetrieveReservationsInTimespan(context, retrieveReservationsSqlParams)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		return
+	}
+
+	context.JSON(http.StatusOK, existingReservations)
 }
