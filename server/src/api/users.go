@@ -43,11 +43,11 @@ func getUserResponse(user db.User) userWithoutHashedPassword {
 // @Tags         accounts
 // @Accept       json
 // @Produce      json
-// @Param        email   path      string  true "test"
-// @Param        password   path      string  true  "Account ID"
-// @Param        username   path      string  false  "Account ID"
-// @Param        firstName   path      string  false  "Account ID"
-// @Param        lastName   path      string  false  "Account ID"
+// @Param        email   	path      string  true	 "TODO"
+// @Param        password   path      string  true 	 "TODO"
+// @Param        username   path      string  false  "TODO"
+// @Param        firstName  path      string  false  "TODO"
+// @Param        lastName   path      string  false  "TODO"
 // @Description  get string by ID
 // @Router       /users [post]
 func (server *Server) createUser(context *gin.Context) {
@@ -138,6 +138,10 @@ type loginUserResponse struct {
 	User        userWithoutHashedPassword `json:"user"`
 }
 
+// ShowAccount
+// @Summary      Login with existing user
+// @Tags         accounts
+// @Router       /users/login [post]
 func (server *Server) loginUser(context *gin.Context) {
 	var request loginUserRequest
 	if err := context.ShouldBindJSON(&request); err != nil {

@@ -58,7 +58,7 @@ func (server *Server) setupRouter() {
 
 	ClientAddress := "http://localhost:3000"
 
-	//TODO move client address to config file
+	// TODO move client address to config file
 	corsConfig.AllowOrigins = []string{ClientAddress}
 	// To be able to send tokens to the server.
 	corsConfig.AllowCredentials = true
@@ -67,18 +67,13 @@ func (server *Server) setupRouter() {
 	// Register the middleware
 	router.Use(cors.New(corsConfig))
 
-	v1 := router.Group("/api/v1")
-	{
-		users := v1.Group("/users")
-		{
-			users.POST("", server.createUser)
-		}
-	}
+	router.POST("/users", server.createUser)
+	router.POST("/users/login", server.loginUser)
 
-	//router.POST("/users", server.createUser)
-	//router.POST("/users/login", server.loginUser)
-	//authRoutes := router.Group("/").Use(authenticate(server.tokenGenerator))
-	//authRoutes.GET("/users", server.getUserById)
+	authRoutes := router.Group("/").Use(authenticate(server.tokenGenerator))
+
+	authRoutes.GET("/users", server.getUserById)
+
 	router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	server.router = router

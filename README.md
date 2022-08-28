@@ -78,3 +78,6 @@ prefer another IDE.
 
 If you are using GoLand the prettier configuration will look like this: ![goLandPrettierConfiguration.png](goLandPrettierConfiguration.png)
 You will need to install the [prettier plugin](https://plugins.jetbrains.com/plugin/10456-prettier) and restart the GoLand before this selection appears.
+
+### Server
+Once you have started the server you can find a visual representation of the [Swagger API](http://localhost:8080/swagger/index.html).
