@@ -3,6 +3,7 @@ package api
 import (
 	"errors"
 	db "github.com/florian-glombik/workplace-reservation/db/sqlc"
+	"github.com/florian-glombik/workplace-reservation/src/token"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
@@ -40,13 +41,13 @@ func (server *Server) reserveWorkplace(context *gin.Context) {
 		return
 	}
 
-	//authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
-	//reservationMadeForOtherUser := request.UserId != authPayload.UserId
-	//if reservationMadeForOtherUser {
-	//	err := errors.New("not authenticated as user for whom the reservation shall be done, authorized as user with id: " + authPayload.Id.String())
-	//	context.JSON(http.StatusUnauthorized, errorResponse("Not authenticated as user for whom the workplace shall be reserved.", err))
-	//	return
-	//}
+	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
+	reservationMadeForOtherUser := request.UserId != authPayload.UserId
+	if reservationMadeForOtherUser {
+		err := errors.New("not authenticated as user for whom the reservation shall be done, authorized as user with id: " + authPayload.Id.String())
+		context.JSON(http.StatusUnauthorized, errorResponse("Not authenticated as user for whom the workplace shall be reserved.", err))
+		return
+	}
 
 	conflictSqlQueryParams := db.RetrieveReservationConflictsParams{
 		StartDate:   request.StartReservation,
