@@ -19,11 +19,7 @@ export const Login = () => {
     try {
       const response = await axios.post(BASE_URL + 'users/login', details)
 
-      login(
-        response.data.accessToken,
-        response.data.user,
-        response.data.user.email
-      )
+      login(response.data.accessToken, response.data.user)
     } catch (error: any) {
       toast.error(getDisplayResponseMessage(error))
     }

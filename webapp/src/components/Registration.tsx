@@ -27,6 +27,7 @@ export const Registration = () => {
       return
     }
 
+    // TODO lead user to login page
     toast.success('The account was successfully created!')
   }
 

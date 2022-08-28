@@ -13,4 +13,4 @@ sqlc:
 generate_api:
 	swag init
 
-.PHONY: create_db drop_db start_db migrate_up migrate_down sqlc server
+.PHONY: create_db drop_db start_db migrate_up migrate_down sqlc server generate_api

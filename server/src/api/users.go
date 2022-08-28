@@ -24,7 +24,7 @@ type CreateUserRequest struct {
 }
 
 type userWithoutHashedPassword struct {
-	ID        string         `json:"id"`
+	ID        uuid.UUID      `json:"id"`
 	FirstName sql.NullString `json:"firstName"`
 	LastName  sql.NullString `json:"lastName"`
 	Email     string         `json:"email"`
@@ -32,6 +32,7 @@ type userWithoutHashedPassword struct {
 
 func getUserResponse(user db.User) userWithoutHashedPassword {
 	return userWithoutHashedPassword{
+		ID:        user.ID,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		Email:     user.Email,
@@ -73,7 +74,7 @@ func (server *Server) createUser(context *gin.Context) {
 	}
 
 	// TODO how to insert null in database?
-	arg := db.CreateUserParams{
+	createUserSqlParams := db.CreateUserParams{
 		ID:        uuid.New(),
 		Username:  sql.NullString{String: request.Username, Valid: true},
 		FirstName: sql.NullString{String: request.FirstName, Valid: true},
@@ -82,12 +83,12 @@ func (server *Server) createUser(context *gin.Context) {
 		Email:     request.Email,
 	}
 
-	newUser, err := server.queries.CreateUser(context, arg)
+	newUser, err := server.queries.CreateUser(context, createUserSqlParams)
 
 	if err != nil {
 		pqErr := err.(*pq.Error)
 
-		if pqErr.Code == pq.ErrorCode("23505") {
+		if pqErr.Code == ("23505") {
 			context.JSON(http.StatusForbidden, errorResponse("E-Mail is already in use!", err))
 			return
 		}
@@ -104,6 +105,10 @@ type GetUserByIdRequest struct {
 	UserId uuid.UUID `json:"userId" binding:"required"`
 }
 
+// getUserById
+// @Summary      Get user information by id if logged in
+// @Tags         accounts
+// @Router       /users [get]
 func (server *Server) getUserById(context *gin.Context) {
 	var request GetUserByIdRequest
 
@@ -112,9 +117,9 @@ func (server *Server) getUserById(context *gin.Context) {
 		return
 	}
 
-	arg := request.UserId
+	getUserByIdSqlParams := request.UserId
 
-	user, err := server.queries.GetUserById(context, arg)
+	user, err := server.queries.GetUserById(context, getUserByIdSqlParams)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			context.JSON(http.StatusNotFound, errorResponse("User not found!", err))

@@ -7,15 +7,15 @@ import (
 	"time"
 )
 
-const MIN_SECRET_KEY_SIZE = 32
+const MinSecretKeySize = 32
 
 type JWTMaker struct {
 	secretKey string
 }
 
 func NewJWTGenerator(secretKey string) (Generator, error) {
-	if len(secretKey) < MIN_SECRET_KEY_SIZE {
-		return nil, fmt.Errorf("invalid key size: must be at least %d characters but was %d", MIN_SECRET_KEY_SIZE, len(secretKey))
+	if len(secretKey) < MinSecretKeySize {
+		return nil, fmt.Errorf("invalid key size: must be at least %d characters but was %d", MinSecretKeySize, len(secretKey))
 	}
 	return &JWTMaker{secretKey}, nil
 }
