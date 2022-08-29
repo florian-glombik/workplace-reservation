@@ -45,11 +45,12 @@ func (server *Server) reserveWorkplace(context *gin.Context) {
 		return
 	}
 
-	retrieveReservationsSqlParams := db.RetrieveReservationsInTimespanParams{
-		StartDate:   request.StartReservation,
-		StartDate_2: request.EndReservation,
+	workplaceReservationsSqlParams := db.RetrieveWorkplaceReservationsInTimespanParams{
+		ReservedWorkplaceID: request.WorkplaceId,
+		StartDate:           request.StartReservation,
+		StartDate_2:         request.EndReservation,
 	}
-	reservationConflicts, err := server.queries.RetrieveReservationsInTimespan(context, retrieveReservationsSqlParams)
+	reservationConflicts, err := server.queries.RetrieveWorkplaceReservationsInTimespan(context, workplaceReservationsSqlParams)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
 		return
