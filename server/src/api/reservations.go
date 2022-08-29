@@ -10,16 +10,12 @@ import (
 	"time"
 )
 
-type User struct {
-	Id   string
-	Name string
-}
-
 type Reservation struct {
-	Id string
-	User
-	start string
-	end   string
+	Id                  string    `json:"id"`
+	ReservingUserId     uuid.UUID `json:"reservingUserId"`
+	ReservedWorkplaceId uuid.UUID `json:"reservedWorkplaceId"`
+	Start               time.Time `json:"start"`
+	End                 time.Time `json:"end"`
 }
 
 type reserveWorkplaceRequest struct {

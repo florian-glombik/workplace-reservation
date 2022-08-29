@@ -15,9 +15,9 @@ import { useAuth } from '../utils/AuthProvider'
 export type Workplace = {
   id: string
   name?: string
+  description?: string
   reservations: Reservation[]
   office?: Office
-  description?: string
 }
 
 export type Reservation = {
@@ -51,6 +51,8 @@ const weekDays: string[] = [
 export const Workplaces = () => {
   // @ts-ignore
   const token = useAuth().jwtToken
+
+  let reservations: Reservation[] = []
 
   let workplaces: Workplace[] = [
     {

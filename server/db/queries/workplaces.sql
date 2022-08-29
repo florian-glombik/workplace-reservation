@@ -6,5 +6,15 @@ VALUES ($1, $2, $3, $4) RETURNING *;
 SELECT * FROM workplaces
 WHERE id = $1;
 
--- name: GetAllWorkplaces :many
+-- name: GetWorkplaces :many
 SELECT * FROM workplaces;
+
+-- name: RetrieveWorkplaceReservationsInTimespan :many
+SELECT *
+FROM reservations
+WHERE
+    reserved_workplace_id=$1
+    AND(
+        start_date BETWEEN $2 AND $3
+        OR end_date BETWEEN $2 AND $3
+    );

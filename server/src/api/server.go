@@ -73,6 +73,7 @@ func (server *Server) setupRouter() {
 
 	authRoutes := router.Group("/").Use(authenticate(server.tokenGenerator))
 
+	authRoutes.GET("/workplaces", server.getWorkplaces)
 	authRoutes.POST("/workplace/create", server.createWorkplace)
 	authRoutes.POST("/workplace/reserve", server.reserveWorkplace)
 	authRoutes.GET("/workplace/reservations", server.getReservations)
