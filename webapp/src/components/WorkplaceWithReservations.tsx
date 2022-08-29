@@ -19,7 +19,7 @@ export type WorkplaceWithReservations = {
   id: string
   name?: string
   description?: string
-  reservations: Reservation[]
+  reservations: Reservation[] | null | undefined
 }
 
 export type Reservation = {
@@ -102,7 +102,7 @@ export const Workplaces = () => {
     {
       id: 'id2',
       name: 'mint',
-      reservations: [],
+      reservations: null,
     },
   ]
 
