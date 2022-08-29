@@ -1,5 +1,4 @@
 import {
-  Button,
   Table,
   TableBody,
   TableCell,
@@ -13,31 +12,33 @@ import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useAuth } from '../utils/AuthProvider'
 import { useEffect, useState } from 'react'
 import startOfWeek from 'date-fns/startOfWeek'
-import { addDays, endOfWeek } from 'date-fns'
+import {
+  addDays,
+  endOfDay,
+  endOfWeek,
+  isWithinInterval,
+  startOfDay,
+} from 'date-fns'
+import { Button } from '@mui/material'
+
+export type NullString = {
+  String: string
+  Valid: boolean
+}
 
 export type WorkplaceWithReservations = {
   id: string
-  name?: string
-  description?: string
-  reservations: Reservation[] | null | undefined
+  name: NullString
+  description: NullString
+  reservations: Reservation[] | null
 }
 
 export type Reservation = {
-  id: string
-  user: User
-  start: string
-  end: string
-}
-
-export type Office = {
-  id: string
-  name?: string
-  description?: string
-}
-
-export type User = {
-  id: string
-  name: string
+  ID: string
+  StartDate: string
+  EndDate: string
+  ReservedWorkplaceId: string
+  ReservingUserId: string
 }
 
 const weekDays: string[] = [
@@ -55,6 +56,8 @@ const weekStartsOnMonday = { weekStartsOn: 1 }
 export const Workplaces = () => {
   // @ts-ignore
   const token = useAuth().jwtToken
+  // @ts-ignore
+  const loggedInUser = useAuth().user
 
   const [today] = useState(Date.now())
   //@ts-ignore
@@ -62,15 +65,13 @@ export const Workplaces = () => {
   //@ts-ignore
   const endOfTheWeek = endOfWeek(today, weekStartsOnMonday)
 
-  const [workplaces1, setWorkplaces1] = useState<WorkplaceWithReservations[]>(
-    []
-  )
+  const [workplaces, setWorkplaces] = useState<WorkplaceWithReservations[]>([])
 
   useEffect(() => {
-    console.log(loadWorkplaces())
+    updateWorkplaces()
   }, [])
 
-  const loadWorkplaces = async () => {
+  const updateWorkplaces = async () => {
     const requestConfig: AxiosRequestConfig = {
       headers: {
         Authorization: 'Bearer ' + token,
@@ -84,36 +85,81 @@ export const Workplaces = () => {
     await axios
       .get(BASE_URL + 'workplaces', requestConfig)
       .then((response) => response.data)
-      .then((data) => {
-        console.log(JSON.stringify(data))
-        setWorkplaces1(data)
+      .then((data) => setWorkplaces(data))
+      .catch((error) => toast.error(getDisplayResponseMessage(error)))
+  }
+
+  const logWorkplaces = () => {
+    console.log({ workplaces })
+  }
+
+  function isWorkplaceReserved(
+    dayToCheck: Date,
+    reservations: Reservation[] | null
+  ): boolean {
+    if (!reservations) {
+      return false
+    }
+
+    const startOfDayToCheck = startOfDay(dayToCheck)
+    const endOfDayToCheck = endOfDay(dayToCheck)
+
+    for (let reservation of reservations) {
+      console.log({ startOfDayToCheck })
+      console.log({ reservation })
+      console.log(new Date(reservation.StartDate))
+
+      const startDateExistingReservation = new Date(reservation.StartDate)
+      const endDateExistingReservation = new Date(reservation.EndDate)
+      const reservationNotPossible =
+        isWithinInterval(startOfDayToCheck, {
+          start: startDateExistingReservation,
+          end: endDateExistingReservation,
+        }) ||
+        isWithinInterval(endOfDayToCheck, {
+          start: startDateExistingReservation,
+          end: endDateExistingReservation,
+        })
+      if (reservationNotPossible) {
+        return true
+      }
+    }
+
+    return false
+  }
+
+  function revokeReservation() {}
+
+  function reserveWorkplace(
+    workplaceId: string,
+    userId: string,
+    startReservation: Date,
+    endReservation: Date
+  ) {
+    const data = {
+      workplaceId: workplaceId,
+      userId: userId,
+      startReservation: startReservation.toISOString(),
+      endReservation: endReservation.toISOString(),
+    }
+    const requestConfig = {
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    }
+
+    axios
+      .post(BASE_URL + 'workplace/reserve', data, requestConfig)
+      .then(() => {
+        toast.success('Reservation was successful!')
+        updateWorkplaces()
       })
       .catch((error) => toast.error(getDisplayResponseMessage(error)))
   }
 
-  let reservations: Reservation[] = []
-
-  let workplaces: WorkplaceWithReservations[] = [
-    {
-      id: 'id1',
-      name: 'ubuntu',
-      reservations: [],
-    },
-    {
-      id: 'id2',
-      name: 'mint',
-      reservations: null,
-    },
-  ]
-
-  const logWorkplaces = () => {
-    console.log({ workplaces1 })
-    console.log({ workplaces })
-  }
-
   return (
     <div>
-      <Button onClick={loadWorkplaces}>LoadWorkplaces</Button>
+      <Button onClick={updateWorkplaces}>LoadWorkplaces</Button>
       <Button onClick={logWorkplaces}>Show Workplaces</Button>
       <Table>
         <TableHead>
@@ -122,7 +168,7 @@ export const Workplaces = () => {
             <TableCell>Weekday</TableCell>
             {workplaces.map((workplace) => (
               <TableCell key={`workplace-${workplace.id}`}>
-                {workplace.name}
+                {workplace.name.String}
               </TableCell>
             ))}
           </TableRow>
@@ -135,11 +181,34 @@ export const Workplaces = () => {
               <TableRow key={`worplace-reservations-${day}`}>
                 <TableCell>{currentDay.getDate()}</TableCell>
                 <TableCell>{day}</TableCell>
-                {workplaces.map((workplace) => (
-                  <TableCell key={`reservation-${day}-${workplace.id}`}>
-                    <Button variant={'contained'}>{workplace.id}</Button>
-                  </TableCell>
-                ))}
+                {workplaces.map((workplace) => {
+                  const reservedBy = isWorkplaceReserved(
+                    currentDay,
+                    workplace.reservations
+                  )
+                  const startOfCurrentDay = startOfDay(currentDay)
+                  const endOfCurrentDay = endOfDay(currentDay)
+
+                  return (
+                    <TableCell key={`reservation-${day}-${workplace.id}`}>
+                      <Button
+                        variant={reservedBy ? 'outlined' : 'contained'}
+                        disabled={reservedBy}
+                        color={reservedBy ? 'error' : 'success'}
+                        onClick={() =>
+                          reserveWorkplace(
+                            workplace.id,
+                            loggedInUser.id,
+                            startOfCurrentDay,
+                            endOfCurrentDay
+                          )
+                        }
+                      >
+                        {reservedBy ? 'Taken' : 'Available'}
+                      </Button>
+                    </TableCell>
+                  )
+                })}
               </TableRow>
             )
           })}

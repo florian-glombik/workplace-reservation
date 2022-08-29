@@ -87,6 +87,7 @@ func (server *Server) setupRouter() {
 func authenticate(tokenGenerator token.Generator) gin.HandlerFunc {
 	return func(context *gin.Context) {
 		authorizationHeader := context.GetHeader(authorizationHeaderKey)
+
 		if len(authorizationHeader) == 0 {
 			err := errors.New("authorization header is not provided")
 			context.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err.Error(), err))
