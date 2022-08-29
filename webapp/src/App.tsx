@@ -1,7 +1,7 @@
 import React from 'react'
 import './App.css'
 import { Login } from './components/Login'
-import { Workplaces } from './components/Workplace'
+import { Workplaces } from './components/WorkplaceWithReservations'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { Registration } from './components/Registration'

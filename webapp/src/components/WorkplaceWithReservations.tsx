@@ -11,13 +11,15 @@ import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useAuth } from '../utils/AuthProvider'
+import { useEffect, useState } from 'react'
+import startOfWeek from 'date-fns/startOfWeek'
+import { addDays, endOfWeek } from 'date-fns'
 
-export type Workplace = {
+export type WorkplaceWithReservations = {
   id: string
   name?: string
   description?: string
   reservations: Reservation[]
-  office?: Office
 }
 
 export type Reservation = {
@@ -48,13 +50,50 @@ const weekDays: string[] = [
   'Sunday',
 ]
 
+const weekStartsOnMonday = { weekStartsOn: 1 }
+
 export const Workplaces = () => {
   // @ts-ignore
   const token = useAuth().jwtToken
 
+  const [today] = useState(Date.now())
+  //@ts-ignore
+  const startOfTheWeek = startOfWeek(today, weekStartsOnMonday)
+  //@ts-ignore
+  const endOfTheWeek = endOfWeek(today, weekStartsOnMonday)
+
+  const [workplaces1, setWorkplaces1] = useState<WorkplaceWithReservations[]>(
+    []
+  )
+
+  useEffect(() => {
+    console.log(loadWorkplaces())
+  }, [])
+
+  const loadWorkplaces = async () => {
+    const requestConfig: AxiosRequestConfig = {
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+      params: {
+        start: startOfTheWeek.toISOString(),
+        end: endOfTheWeek.toISOString(),
+      },
+    }
+
+    await axios
+      .get(BASE_URL + 'workplaces', requestConfig)
+      .then((response) => response.data)
+      .then((data) => {
+        console.log(JSON.stringify(data))
+        setWorkplaces1(data)
+      })
+      .catch((error) => toast.error(getDisplayResponseMessage(error)))
+  }
+
   let reservations: Reservation[] = []
 
-  let workplaces: Workplace[] = [
+  let workplaces: WorkplaceWithReservations[] = [
     {
       id: 'id1',
       name: 'ubuntu',
@@ -67,38 +106,19 @@ export const Workplaces = () => {
     },
   ]
 
-  const loadWorkplaces = async (e: any) => {
-    e.preventDefault()
-
-    let data = {
-      start: '2022-08-22T22:36:40+00:00',
-      end: '2022-09-22T22:36:40+00:00',
-    }
-    let config: AxiosRequestConfig = {
-      headers: {
-        Authorization: 'Bearer ' + token,
-      },
-      params: data,
-    }
-
-    try {
-      let response = await axios.get(
-        BASE_URL + 'workplace/reservations',
-        config
-      )
-
-      console.log({ response })
-    } catch (error: any) {
-      toast.error(getDisplayResponseMessage(error))
-    }
+  const logWorkplaces = () => {
+    console.log({ workplaces1 })
+    console.log({ workplaces })
   }
 
   return (
     <div>
       <Button onClick={loadWorkplaces}>LoadWorkplaces</Button>
+      <Button onClick={logWorkplaces}>Show Workplaces</Button>
       <Table>
         <TableHead>
           <TableRow>
+            <TableCell>Date</TableCell>
             <TableCell>Weekday</TableCell>
             {workplaces.map((workplace) => (
               <TableCell key={`workplace-${workplace.id}`}>
@@ -108,9 +128,12 @@ export const Workplaces = () => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {weekDays.map((day) => {
+          {weekDays.map((day, index) => {
+            const currentDay = addDays(startOfTheWeek, index)
+
             return (
               <TableRow key={`worplace-reservations-${day}`}>
+                <TableCell>{currentDay.getDate()}</TableCell>
                 <TableCell>{day}</TableCell>
                 {workplaces.map((workplace) => (
                   <TableCell key={`reservation-${day}-${workplace.id}`}>
