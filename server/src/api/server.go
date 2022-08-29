@@ -63,7 +63,8 @@ func (server *Server) setupRouter() {
 	// To be able to send tokens to the server.
 	corsConfig.AllowCredentials = true
 	// OPTIONS method for ReactJS
-	corsConfig.AddAllowMethods("OPTIONS")
+	corsConfig.AddAllowMethods("OPTIONS, GET")
+	corsConfig.AddAllowHeaders("Access-Control-Allow-Headers", "*")
 	// Register the middleware
 	router.Use(cors.New(corsConfig))
 
@@ -87,21 +88,21 @@ func authenticate(tokenGenerator token.Generator) gin.HandlerFunc {
 		authorizationHeader := context.GetHeader(authorizationHeaderKey)
 		if len(authorizationHeader) == 0 {
 			err := errors.New("authorization header is not provided")
-			context.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse("error: ", err))
+			context.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err.Error(), err))
 			return
 		}
 
 		fields := strings.Fields(authorizationHeader)
 		if len(fields) != 2 {
 			err := errors.New("invalid authorization header format")
-			context.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse("error: ", err))
+			context.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err.Error(), err))
 			return
 		}
 
 		authorizationType := strings.ToLower(fields[0])
 		if authorizationType != authorizationTypeBearer {
 			err := fmt.Errorf("unsupported authorization type %s", authorizationType)
-			context.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse("error: ", err))
+			context.AbortWithStatusJSON(http.StatusUnauthorized, errorResponse(err.Error(), err))
 			return
 		}
 

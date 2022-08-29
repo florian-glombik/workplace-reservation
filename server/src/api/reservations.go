@@ -81,26 +81,26 @@ func (server *Server) reserveWorkplace(context *gin.Context) {
 	context.JSON(http.StatusOK, reservation)
 }
 
-type getReservationsRequest struct {
-	Start time.Time `json:"start" binding:"required"`
-	End   time.Time `json:"end" binding:"required"`
-}
-
 // GetReservations
 // @Summary      Returns all reservations of the specified timespan
 // @Tags         reservation
 // @Router       /workplace/reservations [get]
 func (server *Server) getReservations(context *gin.Context) {
-	var request getReservationsRequest
 
-	if err := context.ShouldBindJSON(&request); err != nil {
-		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
+	startTime, err := time.Parse(time.RFC3339, context.Request.URL.Query().Get("start"))
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse("'start' not in RFC3339 format!", err))
+		return
+	}
+	endTime, err := time.Parse(time.RFC3339, context.Request.URL.Query().Get("end"))
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse("'end' not in RFC3339 format!", err))
 		return
 	}
 
 	retrieveReservationsSqlParams := db.RetrieveReservationsInTimespanParams{
-		StartDate:   request.Start,
-		StartDate_2: request.End,
+		StartDate:   startTime,
+		StartDate_2: endTime,
 	}
 	existingReservations, err := server.queries.RetrieveReservationsInTimespan(context, retrieveReservationsSqlParams)
 	if err != nil {

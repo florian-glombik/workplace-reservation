@@ -18,7 +18,6 @@ export const Login = () => {
     e.preventDefault() // page shall not re-render
     try {
       const response = await axios.post(BASE_URL + 'users/login', details)
-
       login(response.data.accessToken, response.data.user)
     } catch (error: any) {
       toast.error(getDisplayResponseMessage(error))
