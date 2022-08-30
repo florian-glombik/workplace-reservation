@@ -138,7 +138,6 @@ export const Workplaces = () => {
         requestConfig
       )
       .then(() => {
-        toast.success('Reservation was cancelled!')
         updateWorkplaces()
       })
       .catch((error) => toast.error(getDisplayResponseMessage(error)))
@@ -165,7 +164,6 @@ export const Workplaces = () => {
     axios
       .post(BASE_URL + 'workplace/reserve', data, requestConfig)
       .then(() => {
-        toast.success('Reservation was successful!')
         updateWorkplaces()
       })
       .catch((error) => toast.error(getDisplayResponseMessage(error)))
