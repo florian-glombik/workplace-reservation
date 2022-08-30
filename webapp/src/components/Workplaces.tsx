@@ -1,19 +1,34 @@
-import { Table, TableBody, TableHead, TableRow } from '@material-ui/core'
+import {
+  ExpansionPanel,
+  ExpansionPanelDetails,
+  ExpansionPanelSummary,
+  Table,
+  TableBody,
+  TableHead,
+  TableRow,
+} from '@material-ui/core'
 import axios, { AxiosRequestConfig } from 'axios'
 import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useAuth } from '../utils/AuthProvider'
 import { useEffect, useState } from 'react'
-import startOfWeek from 'date-fns/startOfWeek'
 import {
   addDays,
   endOfDay,
-  endOfWeek,
+  format,
   isWithinInterval,
   startOfDay,
 } from 'date-fns'
 import { Button, TableCell, Typography } from '@mui/material'
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
+import withStyles from '@material-ui/core/styles/withStyles'
+
+const IconLeftExpansionPanelSummary = withStyles({
+  expandIcon: {
+    order: -1,
+  },
+})(ExpansionPanelSummary)
 
 export type NullString = {
   String: string
@@ -47,19 +62,23 @@ const weekDays: string[] = [
   'Sunday',
 ]
 
-const weekStartsOnMonday = { weekStartsOn: 1 }
+const ACCORDION_LABEL_DATE_FORMAT = 'dd-MM-yy'
 
-export const Workplaces = () => {
+type WorkplacesProps = {
+  startOfTheWeek: Date
+  endOfTheWeek: Date
+  defaultExpanded: boolean
+}
+
+export const Workplaces = ({
+  startOfTheWeek,
+  endOfTheWeek,
+  defaultExpanded,
+}: WorkplacesProps) => {
   // @ts-ignore
   const token = useAuth().jwtToken
   // @ts-ignore
   const loggedInUser = useAuth().user
-
-  const [today] = useState(Date.now())
-  //@ts-ignore
-  const startOfTheWeek = startOfWeek(today, weekStartsOnMonday)
-  //@ts-ignore
-  const endOfTheWeek = endOfWeek(today, weekStartsOnMonday)
 
   const [workplaces, setWorkplaces] = useState<Workplaces[]>([])
 
@@ -87,11 +106,6 @@ export const Workplaces = () => {
       .catch((error) => toast.error(getDisplayResponseMessage(error)))
   }
 
-  const logWorkplaces = () => {
-    console.log({ workplaces })
-  }
-
-  /** */
   function getConflictingReservingUserIfExists(
     dayToCheck: Date,
     reservations: Reservation[] | null
@@ -191,76 +205,82 @@ export const Workplaces = () => {
   }
 
   return (
-    <div>
-      <Button onClick={updateWorkplaces}>LoadWorkplaces</Button>
-      <Button onClick={logWorkplaces}>Show Workplaces</Button>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Date</TableCell>
-            <TableCell>Weekday</TableCell>
-            {workplaces.map((workplace) => (
-              <TableCell key={`workplace-${workplace.id}`}>
-                {workplace.name.String}
-              </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {weekDays.map((day, index) => {
-            const currentDay = addDays(startOfTheWeek, index)
+    <ExpansionPanel defaultExpanded={defaultExpanded}>
+      <IconLeftExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+        <Typography>
+          {format(startOfTheWeek, ACCORDION_LABEL_DATE_FORMAT)} -{' '}
+          {format(endOfTheWeek, ACCORDION_LABEL_DATE_FORMAT)}
+        </Typography>
+      </IconLeftExpansionPanelSummary>
+      <ExpansionPanelDetails>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Date</TableCell>
+              <TableCell>Weekday</TableCell>
+              {workplaces.map((workplace) => (
+                <TableCell key={`workplace-${workplace.id}`}>
+                  {workplace.name.String}
+                </TableCell>
+              ))}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {weekDays.map((day, index) => {
+              const currentDay = addDays(startOfTheWeek, index)
 
-            return (
-              <TableRow key={`worplace-reservations-${day}`}>
-                <TableCell>{currentDay.getDate()}</TableCell>
-                <TableCell>{day}</TableCell>
-                {workplaces.map((workplace) => {
-                  const reservation: Reservation | null =
-                    getConflictingReservingUserIfExists(
-                      currentDay,
-                      workplace.reservations
+              return (
+                <TableRow key={`worplace-reservations-${day}`}>
+                  <TableCell>{currentDay.getDate()}</TableCell>
+                  <TableCell>{day}</TableCell>
+                  {workplaces.map((workplace) => {
+                    const reservation: Reservation | null =
+                      getConflictingReservingUserIfExists(
+                        currentDay,
+                        workplace.reservations
+                      )
+                    const startOfCurrentDay = startOfDay(currentDay)
+                    const endOfCurrentDay = endOfDay(currentDay)
+
+                    const isReserved = reservation != null
+                    const isReservedByCurrentUser =
+                      reservation?.ReservingUserID === loggedInUser.id
+
+                    return (
+                      <TableCell key={`reservation-${day}-${workplace.id}`}>
+                        <Button
+                          variant={isReserved ? 'outlined' : 'contained'}
+                          disabled={isReserved && !isReservedByCurrentUser}
+                          color={isReserved ? 'error' : 'success'}
+                          onClick={
+                            isReservedByCurrentUser
+                              ? () => cancelReservation(reservation!.ID)
+                              : () =>
+                                  reserveWorkplace(
+                                    workplace.id,
+                                    loggedInUser.id,
+                                    startOfCurrentDay,
+                                    endOfCurrentDay
+                                  )
+                          }
+                        >
+                          <Typography noWrap>
+                            {getButtonLabel(
+                              isReserved,
+                              isReservedByCurrentUser,
+                              reservation
+                            )}
+                          </Typography>
+                        </Button>
+                      </TableCell>
                     )
-                  const startOfCurrentDay = startOfDay(currentDay)
-                  const endOfCurrentDay = endOfDay(currentDay)
-
-                  const isReserved = reservation != null
-                  const isReservedByCurrentUser =
-                    reservation?.ReservingUserID === loggedInUser.id
-
-                  return (
-                    <TableCell key={`reservation-${day}-${workplace.id}`}>
-                      <Button
-                        variant={isReserved ? 'outlined' : 'contained'}
-                        disabled={isReserved && !isReservedByCurrentUser}
-                        color={isReserved ? 'error' : 'success'}
-                        onClick={
-                          isReservedByCurrentUser
-                            ? () => cancelReservation(reservation!.ID)
-                            : () =>
-                                reserveWorkplace(
-                                  workplace.id,
-                                  loggedInUser.id,
-                                  startOfCurrentDay,
-                                  endOfCurrentDay
-                                )
-                        }
-                      >
-                        <Typography noWrap>
-                          {getButtonLabel(
-                            isReserved,
-                            isReservedByCurrentUser,
-                            reservation
-                          )}
-                        </Typography>
-                      </Button>
-                    </TableCell>
-                  )
-                })}
-              </TableRow>
-            )
-          })}
-        </TableBody>
-      </Table>
-    </div>
+                  })}
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      </ExpansionPanelDetails>
+    </ExpansionPanel>
   )
 }
