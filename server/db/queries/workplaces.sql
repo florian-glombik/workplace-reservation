@@ -9,7 +9,6 @@ WHERE id = $1;
 -- name: GetWorkplaces :many
 SELECT * FROM workplaces;
 
--- name: RetrieveWorkplaceReservationsInTimespan :many
 SELECT *
 FROM reservations
 WHERE
@@ -18,3 +17,17 @@ WHERE
         start_date BETWEEN $2 AND $3
         OR end_date BETWEEN $2 AND $3
     );
+
+-- name: RetrieveWorkplaceReservationsInTimespan :many
+SELECT reservationsInTimespan.*, users.username, users.email
+FROM users
+RIGHT JOIN
+   (SELECT *
+   FROM reservations
+   WHERE
+           reserved_workplace_id=$1
+     AND(
+           start_date BETWEEN $2 AND $3
+           OR end_date BETWEEN $2 AND $3
+       )) AS reservationsInTimespan
+ON reservationsInTimespan.reserving_user_id = users.id;

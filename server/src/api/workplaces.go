@@ -43,10 +43,10 @@ func (server *Server) createWorkplace(context *gin.Context) {
 }
 
 type WorkplaceWithReservations struct {
-	ID           uuid.UUID        `json:"id"`
-	Name         sql.NullString   `json:"name"`
-	Description  sql.NullString   `json:"description"`
-	Reservations []db.Reservation `json:"reservations"`
+	ID           uuid.UUID                                       `json:"id"`
+	Name         sql.NullString                                  `json:"name"`
+	Description  sql.NullString                                  `json:"description"`
+	Reservations []db.RetrieveWorkplaceReservationsInTimespanRow `json:"reservations"`
 }
 
 type GetWorkplacesResponse struct {

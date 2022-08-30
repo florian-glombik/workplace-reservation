@@ -39,6 +39,8 @@ export type Reservation = {
   EndDate: string
   ReservedWorkplaceID: string
   ReservingUserID: string
+  Username: NullString
+  Email: string
 }
 
 const weekDays: string[] = [
@@ -85,7 +87,9 @@ export const Workplaces = () => {
     await axios
       .get(BASE_URL + 'workplaces', requestConfig)
       .then((response) => response.data)
-      .then((data) => setWorkplaces(data))
+      .then((data) => {
+        setWorkplaces(data)
+      })
       .catch((error) => toast.error(getDisplayResponseMessage(error)))
   }
 
@@ -141,6 +145,29 @@ export const Workplaces = () => {
         updateWorkplaces()
       })
       .catch((error) => toast.error(getDisplayResponseMessage(error)))
+  }
+
+  function getReservingUsername(reservation: Reservation): string {
+    if (reservation.Username.Valid) {
+      return reservation.Username.String
+    }
+    return reservation.Email
+  }
+
+  function getButtonLabel(
+    isReserved: boolean,
+    isReservedByCurrentUser: boolean,
+    reservation: Reservation | null
+  ): string {
+    if (!isReserved) {
+      return 'Reserve'
+    }
+
+    if (isReservedByCurrentUser) {
+      return 'Cancel'
+    }
+
+    return getReservingUsername(reservation!)
   }
 
   function reserveWorkplace(
@@ -224,11 +251,11 @@ export const Workplaces = () => {
                                 )
                         }
                       >
-                        {isReserved
-                          ? isReservedByCurrentUser
-                            ? 'Cancel'
-                            : 'Taken'
-                          : 'Reserve'}
+                        {getButtonLabel(
+                          isReserved,
+                          isReservedByCurrentUser,
+                          reservation
+                        )}
                       </Button>
                     </TableCell>
                   )
