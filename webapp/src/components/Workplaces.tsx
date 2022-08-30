@@ -19,7 +19,7 @@ import {
   isWithinInterval,
   startOfDay,
 } from 'date-fns'
-import { Button } from '@mui/material'
+import { Button, Typography } from '@mui/material'
 
 export type NullString = {
   String: string
@@ -251,11 +251,13 @@ export const Workplaces = () => {
                                 )
                         }
                       >
-                        {getButtonLabel(
-                          isReserved,
-                          isReservedByCurrentUser,
-                          reservation
-                        )}
+                        <Typography noWrap>
+                          {getButtonLabel(
+                            isReserved,
+                            isReservedByCurrentUser,
+                            reservation
+                          )}
+                        </Typography>
                       </Button>
                     </TableCell>
                   )
