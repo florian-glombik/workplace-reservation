@@ -1,10 +1,4 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
-} from '@material-ui/core'
+import { Table, TableBody, TableHead, TableRow } from '@material-ui/core'
 import axios, { AxiosRequestConfig } from 'axios'
 import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
@@ -19,7 +13,7 @@ import {
   isWithinInterval,
   startOfDay,
 } from 'date-fns'
-import { Button, Typography } from '@mui/material'
+import { Button, TableCell, Typography } from '@mui/material'
 
 export type NullString = {
   String: string

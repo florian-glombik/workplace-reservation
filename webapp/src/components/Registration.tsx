@@ -7,6 +7,7 @@ import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { Header } from './Header'
+import { useNavigate } from 'react-router-dom'
 
 export const Registration = () => {
   const [details, setDetails] = useState({
@@ -16,6 +17,8 @@ export const Registration = () => {
     password: '',
     email: '',
   })
+
+  const navigate = useNavigate()
 
   const handleRegistration = async (e: any) => {
     e.preventDefault() // page shall not re-render
@@ -27,8 +30,8 @@ export const Registration = () => {
       return
     }
 
-    // TODO lead user to login page
     toast.success('The account was successfully created!')
+    navigate('/login')
   }
 
   return (
