@@ -7,3 +7,13 @@ SELECT *
 FROM reservations
 WHERE start_date BETWEEN $1 AND $2
     OR end_date BETWEEN $1 AND $2;
+
+-- name: GetReservationById :one
+SELECT *
+FROM reservations
+WHERE id=$1;
+
+-- name: DeleteReservation :execresult
+DELETE
+FROM reservations
+WHERE id=$1;

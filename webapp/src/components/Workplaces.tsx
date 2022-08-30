@@ -26,7 +26,7 @@ export type NullString = {
   Valid: boolean
 }
 
-export type WorkplaceWithReservations = {
+export type Workplaces = {
   id: string
   name: NullString
   description: NullString
@@ -37,8 +37,8 @@ export type Reservation = {
   ID: string
   StartDate: string
   EndDate: string
-  ReservedWorkplaceId: string
-  ReservingUserId: string
+  ReservedWorkplaceID: string
+  ReservingUserID: string
 }
 
 const weekDays: string[] = [
@@ -65,7 +65,7 @@ export const Workplaces = () => {
   //@ts-ignore
   const endOfTheWeek = endOfWeek(today, weekStartsOnMonday)
 
-  const [workplaces, setWorkplaces] = useState<WorkplaceWithReservations[]>([])
+  const [workplaces, setWorkplaces] = useState<Workplaces[]>([])
 
   useEffect(() => {
     updateWorkplaces()
@@ -93,22 +93,19 @@ export const Workplaces = () => {
     console.log({ workplaces })
   }
 
-  function isWorkplaceReserved(
+  /** */
+  function getConflictingReservingUserIfExists(
     dayToCheck: Date,
     reservations: Reservation[] | null
-  ): boolean {
+  ): Reservation | null {
     if (!reservations) {
-      return false
+      return null
     }
 
     const startOfDayToCheck = startOfDay(dayToCheck)
     const endOfDayToCheck = endOfDay(dayToCheck)
 
     for (let reservation of reservations) {
-      console.log({ startOfDayToCheck })
-      console.log({ reservation })
-      console.log(new Date(reservation.StartDate))
-
       const startDateExistingReservation = new Date(reservation.StartDate)
       const endDateExistingReservation = new Date(reservation.EndDate)
       const reservationNotPossible =
@@ -121,14 +118,31 @@ export const Workplaces = () => {
           end: endDateExistingReservation,
         })
       if (reservationNotPossible) {
-        return true
+        return reservation
       }
     }
 
-    return false
+    return null
   }
 
-  function revokeReservation() {}
+  function cancelReservation(reservationId: string) {
+    const requestConfig = {
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+    }
+
+    axios
+      .delete(
+        BASE_URL + 'workplace/reservations/' + reservationId,
+        requestConfig
+      )
+      .then(() => {
+        toast.success('Reservation was cancelled!')
+        updateWorkplaces()
+      })
+      .catch((error) => toast.error(getDisplayResponseMessage(error)))
+  }
 
   function reserveWorkplace(
     workplaceId: string,
@@ -182,29 +196,41 @@ export const Workplaces = () => {
                 <TableCell>{currentDay.getDate()}</TableCell>
                 <TableCell>{day}</TableCell>
                 {workplaces.map((workplace) => {
-                  const reservedBy = isWorkplaceReserved(
-                    currentDay,
-                    workplace.reservations
-                  )
+                  const reservation: Reservation | null =
+                    getConflictingReservingUserIfExists(
+                      currentDay,
+                      workplace.reservations
+                    )
                   const startOfCurrentDay = startOfDay(currentDay)
                   const endOfCurrentDay = endOfDay(currentDay)
+
+                  const isReserved = reservation != null
+                  const isReservedByCurrentUser =
+                    reservation?.ReservingUserID === loggedInUser.id
 
                   return (
                     <TableCell key={`reservation-${day}-${workplace.id}`}>
                       <Button
-                        variant={reservedBy ? 'outlined' : 'contained'}
-                        disabled={reservedBy}
-                        color={reservedBy ? 'error' : 'success'}
-                        onClick={() =>
-                          reserveWorkplace(
-                            workplace.id,
-                            loggedInUser.id,
-                            startOfCurrentDay,
-                            endOfCurrentDay
-                          )
+                        variant={isReserved ? 'outlined' : 'contained'}
+                        disabled={isReserved && !isReservedByCurrentUser}
+                        color={isReserved ? 'error' : 'success'}
+                        onClick={
+                          isReservedByCurrentUser
+                            ? () => cancelReservation(reservation!.ID)
+                            : () =>
+                                reserveWorkplace(
+                                  workplace.id,
+                                  loggedInUser.id,
+                                  startOfCurrentDay,
+                                  endOfCurrentDay
+                                )
                         }
                       >
-                        {reservedBy ? 'Taken' : 'Available'}
+                        {isReserved
+                          ? isReservedByCurrentUser
+                            ? 'Cancel'
+                            : 'Taken'
+                          : 'Reserve'}
                       </Button>
                     </TableCell>
                   )

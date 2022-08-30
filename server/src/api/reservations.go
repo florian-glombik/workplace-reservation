@@ -6,7 +6,9 @@ import (
 	"github.com/florian-glombik/workplace-reservation/src/token"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	uuidConversion "github.com/satori/go.uuid"
 	"net/http"
+	"path"
 	"time"
 )
 
@@ -29,7 +31,7 @@ type reserveWorkplaceRequest struct {
 // @Summary      Reserving a workplace for the requested timespan
 // @Tags         reservation
 // @Router       /workplace/reserve [post]
-func (server *Server) reserveWorkplace(context *gin.Context) {
+func (server *Server) createReservation(context *gin.Context) {
 	var request reserveWorkplaceRequest
 
 	if err := context.ShouldBindJSON(&request); err != nil {
@@ -83,7 +85,6 @@ func (server *Server) reserveWorkplace(context *gin.Context) {
 // @Tags         reservation
 // @Router       /workplace/reservations [get]
 func (server *Server) getReservations(context *gin.Context) {
-
 	startTime, err := time.Parse(time.RFC3339, context.Request.URL.Query().Get("start"))
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse("'start' not in RFC3339 format!", err))
@@ -106,4 +107,35 @@ func (server *Server) getReservations(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, existingReservations)
+}
+
+// DeleteReservation
+// @Summary      Deletes a reservation
+// @Tags         reservation
+// @Router       /workplace/reservation [delete]
+func (server *Server) deleteReservation(context *gin.Context) {
+	reservationIdString := path.Base(context.Request.URL.String())
+	parsedUuid, err := uuidConversion.FromString(reservationIdString)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, errorResponse("Invalid reservation uuid", err))
+		return
+	}
+	reservationUUID := uuid.UUID(parsedUuid)
+
+	reservationToBeDeleted, err := server.queries.GetReservationById(context, reservationUUID)
+	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
+	reservationOfOtherUser := reservationToBeDeleted.ReservingUserID != authPayload.UserId
+	if reservationOfOtherUser {
+		err := errors.New("you can only cancel your own reservations")
+		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
+		return
+	}
+
+	result, err := server.queries.DeleteReservation(context, reservationUUID)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse("Reservation could not be deleted", err))
+		return
+	}
+
+	context.JSON(http.StatusOK, result)
 }
