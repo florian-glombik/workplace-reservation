@@ -9,9 +9,9 @@ const AuthContext = createContext()
 export type Account = {
   id: string
   email: string
+  username: NullString
   firstName: NullString
   lastName: NullString
-  username: NullString
 }
 
 export const AuthProvider = ({ children }: any) => {
@@ -37,6 +37,7 @@ export const AuthProvider = ({ children }: any) => {
       user: user,
       login,
       logout,
+      setUser,
     }),
     [jwtToken, user]
   )

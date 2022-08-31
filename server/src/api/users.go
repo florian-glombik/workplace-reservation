@@ -26,14 +26,16 @@ type CreateUserRequest struct {
 
 type userWithoutHashedPassword struct {
 	ID        uuid.UUID      `json:"id"`
+	Email     string         `json:"email"`
+	Username  sql.NullString `json:"username"`
 	FirstName sql.NullString `json:"firstName"`
 	LastName  sql.NullString `json:"lastName"`
-	Email     string         `json:"email"`
 }
 
 func getUserResponse(user db.User) userWithoutHashedPassword {
 	return userWithoutHashedPassword{
 		ID:        user.ID,
+		Username:  user.Username,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
 		Email:     user.Email,
@@ -213,17 +215,33 @@ func (server *Server) editUser(context *gin.Context) {
 		return
 	}
 
-	user, err := server.queries.GetUserByMail(context, request.Email)
+	updateUserSqlParams := db.UpdateUserParams{
+		ID:        request.ID,
+		Username:  sql.NullString{String: request.Username, Valid: true},
+		Email:     request.Email,
+		FirstName: sql.NullString{String: request.FirstName, Valid: true},
+		LastName:  sql.NullString{String: request.LastName, Valid: true},
+		Password:  userToBeUpdated.Password,
+	}
+	err = server.queries.UpdateUser(context, updateUserSqlParams)
+	if err != nil {
+		pqErr := err.(*pq.Error)
+
+		//duplicate key value violates unique constraint "users_email_key"
+		if pqErr.Code == ("23505") {
+			context.JSON(http.StatusForbidden, errorResponse("E-Mail is already in use!", err))
+			return
+		}
+
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		return
+	}
+
+	updatedUser, err := server.queries.GetUserById(context, request.ID)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
 		return
 	}
-	emailIsAlreadyTaken := user.Email != ""
-	if emailIsAlreadyTaken {
-		context.JSON(http.StatusForbidden, errorResponse("The email address "+user.Email+" is already in use!", err))
-		return
-	}
 
-	// TODO write query
-	context.JSON(http.StatusOK, user)
+	context.JSON(http.StatusOK, getUserResponse(updatedUser))
 }

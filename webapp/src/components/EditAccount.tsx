@@ -6,19 +6,18 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
-import { useNavigate } from 'react-router-dom'
-import { Account, useAuth } from '../utils/AuthProvider'
+import { useAuth } from '../utils/AuthProvider'
 
 export const EditAccount = () => {
-  const navigate = useNavigate()
   // @ts-ignore
-  const { jwtToken, user } = useAuth()
+  const { jwtToken, user, setUser } = useAuth()
   const [noChangesMade, setNoChangesMade] = useState(true)
   const [details, setDetails] = useState({
-    username: user.username,
+    id: user.id,
+    email: user.email,
+    username: user.username.String,
     firstName: user.firstName.String,
     lastName: user.lastName.String,
-    email: user.email,
   })
 
   const updateChangesMade = () => {
@@ -36,16 +35,13 @@ export const EditAccount = () => {
       },
     }
 
-    // TODO adjust request that is sent!
-
-    try {
-      await axios.patch(BASE_URL + 'users/edit', details, requestConfig)
-    } catch (error: any) {
-      toast.error(getDisplayResponseMessage(error))
-      return
-    }
-
-    toast.success('The account was successfully updated!')
+    axios
+      .patch(BASE_URL + 'users/edit', details, requestConfig)
+      .then((response) => {
+        setUser(response.data)
+        toast.success('The account was successfully updated!')
+      })
+      .catch((error) => toast.error(getDisplayResponseMessage(error)))
   }
 
   return (
