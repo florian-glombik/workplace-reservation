@@ -34,6 +34,11 @@ export const Header = () => {
     handleClose()
   }
 
+  const handleEditAccount = () => {
+    handleClose()
+    navigate('/account/edit')
+  }
+
   const handleClose = () => {
     setAnchorEl(null)
   }
@@ -82,7 +87,7 @@ export const Header = () => {
                 onClose={handleClose}
               >
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
+                <MenuItem onClick={handleEditAccount}>Edit account</MenuItem>
               </Menu>
             </div>
           )}
