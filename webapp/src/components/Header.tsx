@@ -39,6 +39,11 @@ export const Header = () => {
     navigate('/account/edit')
   }
 
+  const handleReoccurringReservations = () => {
+    handleClose()
+    navigate('/reservations/reoccurring')
+  }
+
   const handleClose = () => {
     setAnchorEl(null)
   }
@@ -91,6 +96,9 @@ export const Header = () => {
                 onClose={handleClose}
               >
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                <MenuItem onClick={handleReoccurringReservations}>
+                  Reoccurring Reservations
+                </MenuItem>
                 <MenuItem onClick={handleEditAccount}>Edit account</MenuItem>
               </Menu>
             </div>

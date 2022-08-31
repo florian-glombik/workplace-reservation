@@ -11,6 +11,7 @@ import { ToastContainer } from 'react-toastify'
 import { WorkplaceAccordions } from './components/WorkplaceAccordions'
 import { PageNotFound } from './components/PageNotFound'
 import { EditAccount } from './components/EditAccount'
+import { ReoccurringReservations } from './components/ReoccurringReservations'
 
 function App() {
   return (
@@ -23,6 +24,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <WorkplaceAccordions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={'/reservations/reoccurring'}
+            element={
+              <ProtectedRoute>
+                <ReoccurringReservations />
               </ProtectedRoute>
             }
           />
