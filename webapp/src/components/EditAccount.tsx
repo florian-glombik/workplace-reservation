@@ -39,6 +39,7 @@ export const EditAccount = () => {
       .patch(BASE_URL + 'users/edit', details, requestConfig)
       .then((response) => {
         setUser(response.data)
+        setNoChangesMade(true)
         toast.success('The account was successfully updated!')
       })
       .catch((error) => toast.error(getDisplayResponseMessage(error)))
