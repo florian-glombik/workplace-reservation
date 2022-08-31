@@ -1,15 +1,17 @@
 import { createContext, useContext, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocalStorage } from './LocalStorageUtil'
+import { NullString } from '../components/Workplaces'
 
 //@ts-ignore
 const AuthContext = createContext()
 
-type User = {
+export type Account = {
   id: string
   email: string
-  firstName: any
-  lastName: any
+  firstName: NullString
+  lastName: NullString
+  username: NullString
 }
 
 export const AuthProvider = ({ children }: any) => {
@@ -17,7 +19,7 @@ export const AuthProvider = ({ children }: any) => {
   const [user, setUser] = useLocalStorage('user', null)
   const navigate = useNavigate()
 
-  const login = async (jwtToken: string, user: User) => {
+  const login = async (jwtToken: string, user: Account) => {
     setJwtToken(jwtToken)
     setUser(user)
     navigate('/', { replace: true })

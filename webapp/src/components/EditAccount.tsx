@@ -2,40 +2,56 @@ import './Login.css'
 import { useState } from 'react'
 import { Box, TextField } from '@material-ui/core'
 import Button from '@mui/material/Button'
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useNavigate } from 'react-router-dom'
+import { Account, useAuth } from '../utils/AuthProvider'
 
 export const EditAccount = () => {
   const navigate = useNavigate()
+  // @ts-ignore
+  const { jwtToken, user } = useAuth()
+  const [noChangesMade, setNoChangesMade] = useState(true)
   const [details, setDetails] = useState({
-    username: '',
-    firstName: '',
-    lastName: '',
-    password: '',
-    email: '',
+    username: user.username,
+    firstName: user.firstName.String,
+    lastName: user.lastName.String,
+    email: user.email,
   })
 
-  const handleRegistration = async (e: any) => {
+  const updateChangesMade = () => {
+    setNoChangesMade(
+      user.username == details.username || user.email == details.username
+    )
+  }
+
+  const saveChanges = async (e: any) => {
     e.preventDefault() // page shall not re-render
 
+    const requestConfig: AxiosRequestConfig = {
+      headers: {
+        Authorization: 'Bearer ' + jwtToken,
+      },
+    }
+
+    // TODO adjust request that is sent!
+
     try {
-      await axios.post(BASE_URL + 'users', details)
+      await axios.patch(BASE_URL + 'users/edit', details, requestConfig)
     } catch (error: any) {
       toast.error(getDisplayResponseMessage(error))
       return
     }
 
-    toast.success('The account was successfully created!')
-    navigate('/login')
+    toast.success('The account was successfully updated!')
   }
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
       <Box>
-        <form onSubmit={handleRegistration}>
+        <form onSubmit={saveChanges} onChange={updateChangesMade}>
           <h1>Edit Account</h1>
           <Box mt={2}>
             <TextField
@@ -45,6 +61,7 @@ export const EditAccount = () => {
                 setDetails({ ...details, username: e.target.value })
               }
               fullWidth
+              defaultValue={details.username}
               autoFocus
             />
           </Box>
@@ -57,22 +74,16 @@ export const EditAccount = () => {
               }
               type={'email'}
               fullWidth
-            />
-          </Box>
-          <Box mt={2}>
-            <TextField
-              label={'Password'}
-              variant={'outlined'}
-              onChange={(e) =>
-                setDetails({ ...details, password: e.target.value })
-              }
-              fullWidth
-              type={'password'}
-              inputProps={{ minLength: 3 }}
+              defaultValue={details.email}
+              required
             />
           </Box>
           <Box mt={2} mb={3}>
-            <Button type="submit" variant={'contained'}>
+            <Button
+              type="submit"
+              variant={'contained'}
+              disabled={noChangesMade}
+            >
               Save changes
             </Button>
           </Box>

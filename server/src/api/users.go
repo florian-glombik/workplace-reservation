@@ -3,6 +3,7 @@ package api
 import (
 	"database/sql"
 	db "github.com/florian-glombik/workplace-reservation/db/sqlc"
+	"github.com/florian-glombik/workplace-reservation/src/token"
 	"github.com/florian-glombik/workplace-reservation/src/util"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
@@ -182,4 +183,47 @@ func (server *Server) loginUser(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, response)
+}
+
+type editUserRequest struct {
+	ID        uuid.UUID `json:"id" binding:"required"`
+	Email     string    `json:"email" binding:"required,email"`
+	Username  string    `json:"username" binding:"omitempty,alphanum"`
+	FirstName string    `json:"firstName" binding:"omitempty,alphanum"`
+	LastName  string    `json:"lastName" binding:"omitempty,alphanum"`
+	Password  string    `json:"password" binding:"omitempty,min=3"`
+}
+
+// EditUser
+// @Summary
+// @Tags         accounts
+// @Router       /users/edit [patch]
+func (server *Server) editUser(context *gin.Context) {
+	var request editUserRequest
+	if err := context.ShouldBindJSON(&request); err != nil {
+		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
+		return
+	}
+
+	userToBeUpdated, err := server.queries.GetUserById(context, request.ID)
+	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
+	accountOfOtherUser := userToBeUpdated.ID != authPayload.UserId
+	if accountOfOtherUser {
+		context.JSON(http.StatusForbidden, errorResponse("You cannot update accounts of other users!", err))
+		return
+	}
+
+	user, err := server.queries.GetUserByMail(context, request.Email)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		return
+	}
+	emailIsAlreadyTaken := user.Email != ""
+	if emailIsAlreadyTaken {
+		context.JSON(http.StatusForbidden, errorResponse("The email address "+user.Email+" is already in use!", err))
+		return
+	}
+
+	// TODO write query
+	context.JSON(http.StatusOK, user)
 }
