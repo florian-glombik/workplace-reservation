@@ -1,37 +1,37 @@
 import './Header.css'
 import { useAuth } from '../utils/AuthProvider'
-import { Box, Button, Link, Typography } from '@material-ui/core'
+import { Box, Typography } from '@material-ui/core'
 import {
   AppBar,
-  FormControlLabel,
-  FormGroup,
+  Button,
   IconButton,
   Menu,
   MenuItem,
-  Switch,
   Toolbar,
 } from '@mui/material'
-import MenuIcon from '@mui/icons-material/Menu'
 import { AccountCircle } from '@mui/icons-material'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
-type HeaderProps = {
-  showLogoutButton?: boolean
-}
-
-export const Header = (props: HeaderProps) => {
+export const Header = () => {
   //@ts-ignore
   const { logout, user } = useAuth()
-  const { showLogoutButton = true } = props
   const [anchorEl, setAnchorEl] = useState(null)
+  const navigate = useNavigate()
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // setAuth(event.target.checked);
-  }
+  const currentUrl = window.location.href
+
+  const isLoggedIn = Boolean(user)
+  const isLoginPage = currentUrl.includes('/login')
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     //@ts-ignore
     setAnchorEl(event.currentTarget)
+  }
+
+  const handleLogout = () => {
+    logout()
+    handleClose()
   }
 
   const handleClose = () => {
@@ -41,20 +41,20 @@ export const Header = (props: HeaderProps) => {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
-        <Toolbar>
-          <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            sx={{ mr: 2 }}
-          >
-            <MenuIcon />
-          </IconButton>
+        <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Typography variant={'h6'} component={'div'}>
             Workplace Manager
           </Typography>
-          {!!user && (
+          {!isLoggedIn && !isLoginPage && (
+            <Button
+              variant={'outlined'}
+              style={{ color: 'white' }}
+              onClick={() => navigate('/login')}
+            >
+              Login
+            </Button>
+          )}
+          {isLoggedIn && (
             <div>
               <IconButton
                 size="large"
@@ -81,7 +81,7 @@ export const Header = (props: HeaderProps) => {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 <MenuItem onClick={handleClose}>My account</MenuItem>
               </Menu>
             </div>

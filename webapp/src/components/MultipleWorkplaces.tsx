@@ -7,13 +7,13 @@ import {
   isBefore,
   isEqual,
 } from 'date-fns'
+import { Box } from '@mui/material'
+import { ACCORDION_LABEL_DATE_FORMAT, Workplaces } from './Workplaces'
 import {
   DAYS_PER_WEEK,
   MONDAY_NUMBER_CODE,
   WEEK_STARTS_ON_MONDAY,
-} from '../App'
-import { Box } from '@mui/material'
-import { ACCORDION_LABEL_DATE_FORMAT, Workplaces } from './Workplaces'
+} from './WorkplaceAccordions'
 
 type MultipleWorkplacesProps = {
   startDate: Date
