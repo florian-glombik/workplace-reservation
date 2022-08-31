@@ -47,9 +47,13 @@ export const Header = () => {
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
         <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Typography variant={'h6'} component={'div'}>
-            Workplace Manager
-          </Typography>
+          <Button
+            variant={'outlined'}
+            style={{ color: 'white' }}
+            onClick={() => navigate('/')}
+          >
+            <Typography variant={'h6'}>Workplace Manager</Typography>
+          </Button>
           {!isLoggedIn && !isLoginPage && (
             <Button
               variant={'outlined'}

@@ -10,6 +10,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer } from 'react-toastify'
 import { WorkplaceAccordions } from './components/WorkplaceAccordions'
 import { PageNotFound } from './components/PageNotFound'
+import { EditAccount } from './components/EditAccount'
 
 function App() {
   return (
@@ -18,15 +19,23 @@ function App() {
         <Header />
         <Routes>
           <Route
-            path="/"
+            path={'/'}
             element={
               <ProtectedRoute>
-                <WorkplaceAccordions></WorkplaceAccordions>
+                <WorkplaceAccordions />
               </ProtectedRoute>
             }
           />
-          <Route path="/login" element={<Login />} />
-          <Route path="/registration" element={<Registration />} />
+          <Route
+            path={'/account/edit'}
+            element={
+              <ProtectedRoute>
+                <EditAccount />
+              </ProtectedRoute>
+            }
+          />
+          <Route path={'/login'} element={<Login />} />
+          <Route path={'/registration'} element={<Registration />} />
           <Route path={'*'} element={<PageNotFound />} />
         </Routes>
       </AuthProvider>
