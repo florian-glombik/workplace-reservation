@@ -13,16 +13,6 @@ import {
 import { endOfWeek, startOfWeek } from 'date-fns'
 import { WEEK_STARTS_ON_MONDAY } from './WorkplaceAccordions'
 import * as React from 'react'
-import {
-  KeyboardDatePicker,
-  MuiPickersUtilsProvider,
-} from '@material-ui/pickers'
-import DateFnsUtils from '@date-io/date-fns'
-// import {
-//   DateRangePicker,
-//   DateRange,
-//   DateRangeDelimiter,
-// } from '@material-ui/pickers'
 
 export const ReoccurringReservations = () => {
   // @ts-ignore
@@ -86,49 +76,6 @@ export const ReoccurringReservations = () => {
             <MenuItem value={'sunday'}>Sunday</MenuItem>
           </Select>
         </FormControl>
-        {/*<DateRangePicker*/}
-        {/*  startText="Check-in"*/}
-        {/*  endText="Check-out"*/}
-        {/*  value={value}*/}
-        {/*  onChange={(newValue: any) => setValue(newValue)}*/}
-        {/*  renderInput={(startProps: any, endProps: any) => (*/}
-        {/*    <React.Fragment>*/}
-        {/*      <TextField {...startProps} />*/}
-        {/*      <DateRangeDelimiter> to </DateRangeDelimiter>*/}
-        {/*      <TextField {...endProps} />*/}
-        {/*    </React.Fragment>*/}
-        {/*  )}*/}
-        {/*/>*/}
-        {/*<MuiPickersUtilsProvider utils={DateFnsUtils}>*/}
-        {/*  <KeyboardDatePicker*/}
-        {/*    disableToolbar*/}
-        {/*    variant="inline"*/}
-        {/*    format="dd/MM/yyyy"*/}
-        {/*    margin="normal"*/}
-        {/*    id="date-picker-inline"*/}
-        {/*    label="Start"*/}
-        {/*    value={startOfReoccurringReservation}*/}
-        {/*    onChange={handleStartDateChange}*/}
-        {/*    KeyboardButtonProps={{*/}
-        {/*      'aria-label': 'change date',*/}
-        {/*    }}*/}
-        {/*  />*/}
-        {/*</MuiPickersUtilsProvider>*/}
-        {/*<MuiPickersUtilsProvider utils={DateFnsUtils}>*/}
-        {/*  <KeyboardDatePicker*/}
-        {/*    disableToolbar*/}
-        {/*    variant="inline"*/}
-        {/*    format="dd/MM/yyyy"*/}
-        {/*    margin="normal"*/}
-        {/*    id="date-picker-inline"*/}
-        {/*    label="End"*/}
-        {/*    value={endOfReoccurringReservation}*/}
-        {/*    onChange={handleEndDateChange}*/}
-        {/*    KeyboardButtonProps={{*/}
-        {/*      'aria-label': 'change date',*/}
-        {/*    }}*/}
-        {/*  />*/}
-        {/*</MuiPickersUtilsProvider>*/}
       </Box>
     </Box>
   )
