@@ -27,7 +27,7 @@ export const Header = (props: HeaderProps) => {
       <Box sx={{ m: 2 }}>
         <Typography variant={'h4'}>
           <Link href={'/'} underline={'none'}>
-            Workplace Reservation
+            Workplace Manager
           </Link>
         </Typography>
       </Box>

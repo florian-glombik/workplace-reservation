@@ -1,12 +1,4 @@
-import {
-  ExpansionPanel,
-  ExpansionPanelDetails,
-  ExpansionPanelSummary,
-  Table,
-  TableBody,
-  TableHead,
-  TableRow,
-} from '@material-ui/core'
+import { Table, TableBody, TableHead, TableRow } from '@material-ui/core'
 import axios, { AxiosRequestConfig } from 'axios'
 import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
@@ -20,15 +12,22 @@ import {
   isWithinInterval,
   startOfDay,
 } from 'date-fns'
-import { Button, TableCell, Typography } from '@mui/material'
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  TableCell,
+  Typography,
+} from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import withStyles from '@material-ui/core/styles/withStyles'
 
-const IconLeftExpansionPanelSummary = withStyles({
+const IconLeftAccordionSummary = withStyles({
   expandIcon: {
     order: -1,
   },
-})(ExpansionPanelSummary)
+})(AccordionSummary)
 
 export type NullString = {
   String: string
@@ -62,7 +61,7 @@ const weekDays: string[] = [
   'Sunday',
 ]
 
-const ACCORDION_LABEL_DATE_FORMAT = 'dd-MM-yy'
+export const ACCORDION_LABEL_DATE_FORMAT = 'dd-MM-yy'
 
 type WorkplacesProps = {
   startOfTheWeek: Date
@@ -205,14 +204,14 @@ export const Workplaces = ({
   }
 
   return (
-    <ExpansionPanel defaultExpanded={defaultExpanded}>
-      <IconLeftExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+    <Accordion defaultExpanded={defaultExpanded}>
+      <IconLeftAccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography>
           {format(startOfTheWeek, ACCORDION_LABEL_DATE_FORMAT)} -{' '}
           {format(endOfTheWeek, ACCORDION_LABEL_DATE_FORMAT)}
         </Typography>
-      </IconLeftExpansionPanelSummary>
-      <ExpansionPanelDetails>
+      </IconLeftAccordionSummary>
+      <AccordionDetails>
         <Table>
           <TableHead>
             <TableRow>
@@ -280,7 +279,7 @@ export const Workplaces = ({
             })}
           </TableBody>
         </Table>
-      </ExpansionPanelDetails>
-    </ExpansionPanel>
+      </AccordionDetails>
+    </Accordion>
   )
 }

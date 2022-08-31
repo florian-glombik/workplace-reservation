@@ -1,6 +1,7 @@
 import {
   addDays,
   endOfWeek,
+  format,
   getDay,
   isAfter,
   isBefore,
@@ -12,7 +13,7 @@ import {
   WEEK_STARTS_ON_MONDAY,
 } from '../App'
 import { Box } from '@mui/material'
-import { Workplaces } from './Workplaces'
+import { ACCORDION_LABEL_DATE_FORMAT, Workplaces } from './Workplaces'
 
 type MultipleWorkplacesProps = {
   startDate: Date
@@ -32,6 +33,10 @@ export const MultipleWorkplaces = ({
     <Box>
       {workplaceInputs.map((workplaceInput) => (
         <Workplaces
+          key={`${format(
+            workplaceInput.startDate,
+            ACCORDION_LABEL_DATE_FORMAT
+          )}-${format(workplaceInput.endDate, ACCORDION_LABEL_DATE_FORMAT)}`}
           startOfTheWeek={workplaceInput.startDate}
           endOfTheWeek={workplaceInput.endDate}
           defaultExpanded={false}
