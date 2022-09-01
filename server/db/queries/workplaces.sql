@@ -9,6 +9,9 @@ WHERE id = $1;
 -- name: GetWorkplaces :many
 SELECT * FROM workplaces;
 
+-- name: GetNamesOfWorkplaces :many
+SELECT workplaces.id, workplaces.name FROM workplaces;
+
 SELECT *
 FROM reservations
 WHERE

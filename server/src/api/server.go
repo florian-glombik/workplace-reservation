@@ -75,10 +75,12 @@ func (server *Server) setupRouter() {
 
 	authRoutes.PATCH("/users/edit", server.editUser)
 	authRoutes.GET("/workplaces", server.getWorkplaces)
+	authRoutes.GET("/workplaces/names", server.getNamesOfWorkplaces)
 	authRoutes.POST("/workplace/create", server.createWorkplace)
 	authRoutes.POST("/workplace/reserve", server.createReservation)
 	authRoutes.DELETE("/workplace/reservations/:reservation-id", server.deleteReservation)
 	authRoutes.GET("/workplace/reservations", server.getReservations)
+	authRoutes.POST("/reservations/reoccurring", server.addReoccurringReservation)
 	authRoutes.GET("/users", server.getUserById)
 
 	router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))

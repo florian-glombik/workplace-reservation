@@ -53,6 +53,18 @@ type GetWorkplacesResponse struct {
 	Workplaces []WorkplaceWithReservations `json:"workplaces"`
 }
 
+// GetNamesOfWorkplaces
+// @Summary      Returns the names of all workplaces
+// @Tags         workplaces
+// @Router       /workplaces/names [get]
+func (server *Server) getNamesOfWorkplaces(context *gin.Context) {
+	workplaceNames, err := server.queries.GetNamesOfWorkplaces(context)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+	}
+	context.JSON(http.StatusOK, workplaceNames)
+}
+
 // GetWorkplaces
 // @Summary      Returns all workplaces with reservations in the requested timespan and the linked office
 // @Tags         workplaces

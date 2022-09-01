@@ -1,9 +1,8 @@
-import { useState } from 'react'
-import { Box, TextField, TextFieldProps } from '@material-ui/core'
+import { useEffect, useState } from 'react'
+import { Box, TextField } from '@material-ui/core'
 import { useAuth } from '../utils/AuthProvider'
 import {
   FormControl,
-  Grid,
   IconButton,
   InputLabel,
   MenuItem,
@@ -11,12 +10,16 @@ import {
   SelectChangeEvent,
   Typography,
 } from '@mui/material'
-import { endOfWeek, format, startOfWeek } from 'date-fns'
-import { DAYS_PER_WEEK, WEEK_STARTS_ON_MONDAY } from './WorkplaceAccordions'
+import { format } from 'date-fns'
+import { DAYS_PER_WEEK } from './WorkplaceAccordions'
 import * as React from 'react'
 import { DateRange, DateRangePicker } from 'mui-daterange-picker'
-import { ACCORDION_LABEL_DATE_FORMAT } from './Workplaces'
+import { ACCORDION_LABEL_DATE_FORMAT, WorkplaceWithName } from './Workplaces'
 import AddIcon from '@mui/icons-material/Add'
+import axios, { AxiosRequestConfig } from 'axios'
+import { BASE_URL } from '../config'
+import { toast } from 'react-toastify'
+import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 
 enum RepetitionInterval {
   weekly = DAYS_PER_WEEK,
@@ -25,46 +28,60 @@ enum RepetitionInterval {
   monthly = DAYS_PER_WEEK * 4,
 }
 
+type ReoccurringReservationRequest = {
+  workplaceId: string
+  intervalInDays: number
+  reservationStartDay: Date
+  repeatUntil: Date
+}
+
 export const ReoccurringReservations = () => {
   // @ts-ignore
-  const { jwtToken, user, setUser } = useAuth()
-  const [noChangesMade, setNoChangesMade] = useState(true)
-  const [details, setDetails] = useState({
-    id: user.id,
-    email: user.email,
-    username: user.username.String,
-    firstName: user.firstName.String,
-    lastName: user.lastName.String,
-  })
+  const { jwtToken } = useAuth()
   const [open, setOpen] = useState(false)
+  const [workplaces, setWorkplaces] = useState<WorkplaceWithName[]>([])
   const [dateRange, setDateRange] = useState<DateRange>({})
+  const [disableSubmitButton, setDisableSubmitButton] = useState(true)
   const toggleDateSelection = () => setOpen(!open)
   const today = useState(new Date())
-
-  // @ts-ignore
-  const startOfTheWeek = startOfWeek(today, WEEK_STARTS_ON_MONDAY)
-  // @ts-ignore
-  const endOfTheWeek = endOfWeek(today, WEEK_STARTS_ON_MONDAY)
+  const [selectedWorkplaceId, setSelectedWorkplaceId] = useState('')
 
   const [dayOfTheWeek, setDayOfTheWeek] = useState('monday')
   const [repetitionInterval, setRepetitionInterval] = useState(
     RepetitionInterval.weekly
   )
-  const [startOfReoccurringReservation, setStartOfReoccurringReservation] =
-    useState(new Date())
-  const [endOfReoccurringReservation, setEndOfReoccurringReservation] =
-    useState(undefined)
-
   const [selectedDateAsString, setSelectedDateAsString] = useState('')
 
   const handleWeekdaySelection = (event: SelectChangeEvent) => {
-    // @ts-ignore
     setDayOfTheWeek(event.target.value as string)
+  }
+
+  const handleSelectedWorkplaceIdSelection = (event: SelectChangeEvent) => {
+    setSelectedWorkplaceId(event.target.value)
   }
 
   const handleRepetitionSelection = (event: SelectChangeEvent) => {
     // @ts-ignore
     setRepetitionInterval(event.target.value as string)
+  }
+
+  useEffect(() => {
+    updateWorkplaceNames()
+  }, [])
+
+  const updateWorkplaceNames = async () => {
+    const requestConfig: AxiosRequestConfig = {
+      headers: {
+        Authorization: 'Bearer ' + jwtToken,
+      },
+    }
+    axios
+      .get(BASE_URL + 'workplaces/names', requestConfig)
+      .then((response) => response.data)
+      .then((data) => {
+        setWorkplaces(data)
+        console.log(data)
+      })
   }
 
   const convertDateRangeToString = (dateRange: DateRange) => {
@@ -77,13 +94,53 @@ export const ReoccurringReservations = () => {
     return `${startDateAsString} - ${endDateAsString}`
   }
 
+  const addReoccurringReservation = async () => {
+    const requestConfig: AxiosRequestConfig = {
+      headers: {
+        Authorization: 'Bearer ' + jwtToken,
+      },
+    }
+
+    const requestData: ReoccurringReservationRequest = {
+      workplaceId: selectedWorkplaceId,
+      intervalInDays: repetitionInterval,
+      reservationStartDay: dateRange.startDate!,
+      repeatUntil: dateRange.endDate!,
+    }
+
+    axios
+      .post(BASE_URL + 'reservations/reoccurring', requestData, requestConfig)
+      .then((response) => console.log(response))
+      .catch((error) => toast.error(getDisplayResponseMessage(error)))
+  }
+
+  const isSubmitButtonDisabled = (dateRange: DateRange) => {
+    return !(!!dateRange.startDate && !!dateRange.endDate)
+  }
+
   return (
     <Box>
       <Typography variant={'h4'} sx={{ mt: 2, mb: 2 }}>
         Reoccurring Reservations
       </Typography>
-      {/*<Box sx={{ display: 'flex', justifyContent: 'center' }}>*/}
       <Box>
+        <FormControl>
+          <InputLabel id="workplace-selection-label">Workplace</InputLabel>
+          <Select
+            labelId="workplace-selection-label"
+            value={selectedWorkplaceId}
+            onChange={handleSelectedWorkplaceIdSelection}
+            required
+            sx={{ m: 2, minWidth: '6rem' }}
+          >
+            {workplaces.map((workplace) => (
+              <MenuItem value={workplace.ID} key={workplace.ID}>
+                {workplace?.Name?.String ? workplace.Name.String : workplace.ID}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
         <FormControl>
           <InputLabel id="weekday-selection-label">Weekday</InputLabel>
           <Select
@@ -139,7 +196,11 @@ export const ReoccurringReservations = () => {
           />
         </FormControl>
 
-        <IconButton type={'submit'}>
+        <IconButton
+          onClick={addReoccurringReservation}
+          disabled={disableSubmitButton}
+          color={'primary'}
+        >
           <AddIcon></AddIcon>
           <Typography>Add reservation</Typography>
         </IconButton>
@@ -149,6 +210,7 @@ export const ReoccurringReservations = () => {
           toggle={toggleDateSelection}
           onChange={(dateRange: DateRange) => {
             setDateRange(dateRange)
+            setDisableSubmitButton(isSubmitButtonDisabled(dateRange))
             setSelectedDateAsString(convertDateRangeToString(dateRange))
           }}
           minDate={today as unknown as Date}
