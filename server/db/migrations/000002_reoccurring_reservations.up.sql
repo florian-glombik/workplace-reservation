@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS reoccurring_reservations
     id                      UUID PRIMARY KEY UNIQUE NOT NULL,
     interval_in_days        int                     NOT NULL,
     repeated_reservation_id UUID                    NOT NULL,
+    repeat_until            TIMESTAMPTZ             NOT NULL,
     FOREIGN KEY (repeated_reservation_id) REFERENCES reservations (id)
 );
 
