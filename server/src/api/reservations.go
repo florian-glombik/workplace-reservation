@@ -20,7 +20,7 @@ type Reservation struct {
 	End                 time.Time `json:"end"`
 }
 
-type reserveWorkplaceRequest struct {
+type ReserveWorkplaceRequest struct {
 	WorkplaceId      uuid.UUID `json:"workplaceId" binding:"required"`
 	UserId           uuid.UUID `json:"userId" binding:"required"`
 	StartReservation time.Time `json:"startReservation" binding:"required"`
@@ -31,20 +31,24 @@ type reserveWorkplaceRequest struct {
 // @Summary      Reserving a workplace for the requested timespan
 // @Tags         reservation
 // @Router       /workplace/reserve [post]
-func (server *Server) createReservation(context *gin.Context) {
-	var request reserveWorkplaceRequest
+func (server *Server) handleCreateReservation(context *gin.Context) {
+	var request ReserveWorkplaceRequest
 
 	if err := context.ShouldBindJSON(&request); err != nil {
 		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
 		return
 	}
 
+	_ = createReservation(server, context, request)
+}
+
+func createReservation(server *Server, context *gin.Context, request ReserveWorkplaceRequest) error {
 	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
 	reservationMadeForOtherUser := request.UserId != authPayload.UserId
 	if reservationMadeForOtherUser {
 		err := errors.New("not authenticated as user for whom the reservation shall be done, authorized as user with id: " + authPayload.Id.String())
 		context.JSON(http.StatusUnauthorized, errorResponse("Not authenticated as user for whom the workplace shall be reserved.", err))
-		return
+		return err
 	}
 
 	workplaceReservationsSqlParams := db.RetrieveWorkplaceReservationsInTimespanParams{
@@ -55,13 +59,13 @@ func (server *Server) createReservation(context *gin.Context) {
 	reservationConflicts, err := server.queries.RetrieveWorkplaceReservationsInTimespan(context, workplaceReservationsSqlParams)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
-		return
+		return err
 	}
 	reservationConflictsExist := len(reservationConflicts) > 0
 	if reservationConflictsExist {
 		err := errors.New("the workplace is at least partially reserved within the requested timespan")
 		context.JSON(http.StatusInternalServerError, errorResponse("The workplace is already reserved within the requested timespan!", err))
-		return
+		return err
 	}
 
 	reserveWorkplaceSqlParams := db.ReserveWorkplaceParams{
@@ -74,10 +78,11 @@ func (server *Server) createReservation(context *gin.Context) {
 	reservation, err := server.queries.ReserveWorkplace(context, reserveWorkplaceSqlParams)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
-		return
+		return err
 	}
 
 	context.JSON(http.StatusOK, reservation)
+	return nil
 }
 
 // GetReservations

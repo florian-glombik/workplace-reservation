@@ -1,6 +1,7 @@
 package api
 
 import (
+	"github.com/florian-glombik/workplace-reservation/src/token"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"net/http"
@@ -27,10 +28,20 @@ type ReoccurringReservationRequest struct {
 // @Router       /reservations/reoccurring [post]
 func (server *Server) addReoccurringReservation(context *gin.Context) {
 	var request ReoccurringReservationRequest
-
 	if err := context.ShouldBindJSON(&request); err != nil {
 		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
 		return
 	}
+	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
+
+	reservationToBeRepeatedParams := ReserveWorkplaceRequest{
+		WorkplaceId:      request.WorkplaceId,
+		UserId:           authPayload.UserId,
+		StartReservation: request.ReservationStartDay,
+		EndReservation:   request.ReservationStartDay,
+	}
+
+	context.JSON(http.StatusOK, reservationToBeRepeatedParams)
+	//reservationToBeRepeated := server.handleCreateReservation(context)
 
 }
