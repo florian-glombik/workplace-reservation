@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"errors"
 	db "github.com/florian-glombik/workplace-reservation/db/sqlc"
 	"github.com/florian-glombik/workplace-reservation/src/token"
@@ -39,16 +40,19 @@ func (server *Server) handleCreateReservation(context *gin.Context) {
 		return
 	}
 
-	_ = createReservation(server, context, request)
+	_, err := createReservation(server, context, request)
+	if err != nil {
+		return
+	}
 }
 
-func createReservation(server *Server, context *gin.Context, request ReserveWorkplaceRequest) error {
+func createReservation(server *Server, context *gin.Context, request ReserveWorkplaceRequest) (*db.Reservation, error) {
 	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
 	reservationMadeForOtherUser := request.UserId != authPayload.UserId
 	if reservationMadeForOtherUser {
 		err := errors.New("not authenticated as user for whom the reservation shall be done, authorized as user with id: " + authPayload.Id.String())
 		context.JSON(http.StatusUnauthorized, errorResponse("Not authenticated as user for whom the workplace shall be reserved.", err))
-		return err
+		return nil, err
 	}
 
 	workplaceReservationsSqlParams := db.RetrieveWorkplaceReservationsInTimespanParams{
@@ -59,13 +63,13 @@ func createReservation(server *Server, context *gin.Context, request ReserveWork
 	reservationConflicts, err := server.queries.RetrieveWorkplaceReservationsInTimespan(context, workplaceReservationsSqlParams)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
-		return err
+		return nil, err
 	}
 	reservationConflictsExist := len(reservationConflicts) > 0
 	if reservationConflictsExist {
 		err := errors.New("the workplace is at least partially reserved within the requested timespan")
 		context.JSON(http.StatusInternalServerError, errorResponse("The workplace is already reserved within the requested timespan!", err))
-		return err
+		return nil, err
 	}
 
 	reserveWorkplaceSqlParams := db.ReserveWorkplaceParams{
@@ -78,11 +82,11 @@ func createReservation(server *Server, context *gin.Context, request ReserveWork
 	reservation, err := server.queries.ReserveWorkplace(context, reserveWorkplaceSqlParams)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
-		return err
+		return nil, err
 	}
 
 	context.JSON(http.StatusOK, reservation)
-	return nil
+	return &reservation, nil
 }
 
 // GetReservations
@@ -118,29 +122,37 @@ func (server *Server) getReservations(context *gin.Context) {
 // @Summary      Deletes a reservation
 // @Tags         reservation
 // @Router       /workplace/reservation [delete]
-func (server *Server) deleteReservation(context *gin.Context) {
+func (server *Server) handleDeleteReservation(context *gin.Context) {
 	reservationIdString := path.Base(context.Request.URL.String())
 	parsedUuid, err := uuidConversion.FromString(reservationIdString)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, errorResponse("Invalid reservation uuid", err))
 		return
 	}
-	reservationUUID := uuid.UUID(parsedUuid)
+	reservationId := uuid.UUID(parsedUuid)
 
-	reservationToBeDeleted, err := server.queries.GetReservationById(context, reservationUUID)
+	_, err = deleteReservation(server, context, reservationId)
+	if err != nil {
+		return
+	}
+}
+
+func deleteReservation(server *Server, context *gin.Context, reservationId uuid.UUID) (sql.Result, error) {
+	reservationToBeDeleted, err := server.queries.GetReservationById(context, reservationId)
 	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
 	reservationOfOtherUser := reservationToBeDeleted.ReservingUserID != authPayload.UserId
 	if reservationOfOtherUser {
 		err := errors.New("you can only cancel your own reservations")
 		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
-		return
+		return nil, err
 	}
 
-	result, err := server.queries.DeleteReservation(context, reservationUUID)
+	result, err := server.queries.DeleteReservation(context, reservationId)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse("Reservation could not be deleted", err))
-		return
+		return nil, err
 	}
 
 	context.JSON(http.StatusOK, result)
+	return result, nil
 }
