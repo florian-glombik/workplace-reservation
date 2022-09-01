@@ -52,6 +52,10 @@ export const ReoccurringReservations = () => {
   )
   const [selectedDateAsString, setSelectedDateAsString] = useState('')
 
+  useEffect(() => {
+    updateWorkplaceNames()
+  }, [])
+
   const handleWeekdaySelection = (event: SelectChangeEvent) => {
     setDayOfTheWeek(event.target.value as string)
   }
@@ -64,10 +68,6 @@ export const ReoccurringReservations = () => {
     // @ts-ignore
     setRepetitionInterval(event.target.value as string)
   }
-
-  useEffect(() => {
-    updateWorkplaceNames()
-  }, [])
 
   const updateWorkplaceNames = async () => {
     const requestConfig: AxiosRequestConfig = {
@@ -115,7 +115,10 @@ export const ReoccurringReservations = () => {
   }
 
   const isSubmitButtonDisabled = (dateRange: DateRange) => {
-    return !(!!dateRange.startDate && !!dateRange.endDate)
+    return (
+      !(!!dateRange.startDate && !!dateRange.endDate) ||
+      selectedWorkplaceId === ''
+    )
   }
 
   return (
