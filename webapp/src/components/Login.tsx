@@ -51,7 +51,7 @@ export const Login = () => {
             />
           </Box>
           <Box mt={2} mb={3}>
-            <Button type="submit" variant={'contained'}>
+            <Button type={'submit'} variant={'contained'}>
               Login
             </Button>
           </Box>
