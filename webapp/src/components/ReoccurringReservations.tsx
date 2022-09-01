@@ -80,8 +80,8 @@ export const ReoccurringReservations = () => {
       .then((response) => response.data)
       .then((data) => {
         setWorkplaces(data)
-        console.log(data)
       })
+      .catch((error) => toast.error(getDisplayResponseMessage(error)))
   }
 
   const convertDateRangeToString = (dateRange: DateRange) => {
