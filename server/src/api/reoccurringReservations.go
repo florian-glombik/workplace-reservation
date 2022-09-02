@@ -59,12 +59,11 @@ func (server *Server) addReoccurringReservation(context *gin.Context) {
 	reoccurringReservation, err := server.queries.CreateReoccurringReservation(context, reoccurringReservationSqlParams)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
-		//TODO delete created repetable reservation
+		_, _ = deleteReservation(server, context, reservationToBeRepeated.ID)
 		return
 	}
 
 	context.JSON(http.StatusOK, reoccurringReservation)
-
 }
 
 func setTimeOfDay(date time.Time, hours int, minutes int, seconds int) time.Time {
