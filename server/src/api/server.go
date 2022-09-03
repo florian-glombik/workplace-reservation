@@ -30,9 +30,7 @@ type Server struct {
 func NewServer(database *sql.DB) *Server {
 	// TODO load secret key from config file
 	tokenGenerator, err := token.NewJWTGenerator("dlgdjflgjsadfjlsjdfljsldjflsjddflkgj")
-	// TODO improve logging
 	if err != nil {
-		//fmt.Errorf("cannot instantiate token generator: %w", err)
 		fmt.Println("cannot instantiate token generator: %w", err)
 		return nil
 	}

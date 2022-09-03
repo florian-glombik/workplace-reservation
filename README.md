@@ -76,8 +76,12 @@ The project is based on Go and React. I use [GoLand](https://www.jetbrains.com/d
 configurations within this repository, which might save you some time getting started with the project in case you do not
 prefer another IDE.
 
-If you are using GoLand the prettier configuration will look like this: ![goLandPrettierConfiguration.png](goLandPrettierConfiguration.png)
+If you are using GoLand the prettier configuration will look like this: ![goLandPrettierConfiguration.png](goLandPrettierConfiguration.png)<br>
 You will need to install the [prettier plugin](https://plugins.jetbrains.com/plugin/10456-prettier) and restart the GoLand before this selection appears.
 
 ### Server
+#### Swagger API
+https://github.com/swaggo/gin-swagger
+
+execute `swag init` in `server/src`
 Once you have started the server you can find a visual representation of the [Swagger API](http://localhost:8080/swagger/index.html).
