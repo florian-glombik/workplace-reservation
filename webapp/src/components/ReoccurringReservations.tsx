@@ -114,6 +114,7 @@ export const ReoccurringReservations = () => {
       .catch((error) => toast.error(getDisplayResponseMessage(error)))
   }
 
+  // TODO Fix reactivity
   const isSubmitButtonDisabled = (dateRange: DateRange) => {
     return (
       !(!!dateRange.startDate && !!dateRange.endDate) ||
