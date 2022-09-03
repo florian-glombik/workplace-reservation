@@ -40,10 +40,7 @@ func (server *Server) handleCreateReservation(context *gin.Context) {
 		return
 	}
 
-	_, err := createReservation(server, context, request)
-	if err != nil {
-		return
-	}
+	_, _ = createReservation(server, context, request)
 }
 
 func createReservation(server *Server, context *gin.Context, request ReserveWorkplaceRequest) (*db.Reservation, error) {
@@ -115,6 +112,30 @@ func (server *Server) getReservations(context *gin.Context) {
 		return
 	}
 
+	reoccurringReservationsInTimespan, err := server.queries.RetrieveReoccurringReservationsInTimespan(context, db.RetrieveReoccurringReservationsInTimespanParams(retrieveReservationsSqlParams))
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		return
+	}
+
+	var test []db.Reservation
+
+	for _, reoccurringReservation := range reoccurringReservationsInTimespan {
+		currentStartDate := reoccurringReservation.StartDate
+
+		for currentStartDate.Before(reoccurringReservation.RepeatUntil) {
+			test = append(test, db.Reservation{
+				ID:                  uuid.New(),
+				StartDate:           currentStartDate.AddDate(0, 0, int(reoccurringReservation.IntervalInDays)),
+				EndDate:             currentStartDate.AddDate(0, 0, int(reoccurringReservation.IntervalInDays)),
+				ReservingUserID:     reoccurringReservation.ReservingUserID,
+				ReservedWorkplaceID: reoccurringReservation.ReservedWorkplaceID,
+			})
+		}
+
+	}
+
+	existingReservations = append(existingReservations, test...)
 	context.JSON(http.StatusOK, existingReservations)
 }
 

@@ -65,6 +65,11 @@ func (server *Server) getNamesOfWorkplaces(context *gin.Context) {
 	context.JSON(http.StatusOK, workplaceNames)
 }
 
+//SELECT reservation.id, reservation.start_date, reservation.end_date, reservation.reserving_user_id, reservation.reserved_workplace_id, reoccurring.id, reoccurring.interval_in_days, reoccurring.repeated_reservation_id, reoccurring.repeat_until
+
+type reoccurringReservationsInTimespan struct {
+}
+
 // GetWorkplaces
 // @Summary      Returns all workplaces with reservations in the requested timespan and the linked office
 // @Tags         workplaces
@@ -87,9 +92,9 @@ func (server *Server) getWorkplaces(context *gin.Context) {
 		return
 	}
 
-	var workplacesWithReservations = make([]WorkplaceWithReservations, len(workplaces))
+	var workplacesWithReservations = make([]WorkplaceWithReservations, 0)
 
-	for index, workplace := range workplaces {
+	for _, workplace := range workplaces {
 		var workplaceWithReservation WorkplaceWithReservations
 		workplaceWithReservation.ID = workplace.ID
 		workplaceWithReservation.Name = workplace.Name
@@ -105,9 +110,40 @@ func (server *Server) getWorkplaces(context *gin.Context) {
 			context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
 			return
 		}
-		workplaceWithReservation.Reservations = reservations
 
-		workplacesWithReservations[index] = workplaceWithReservation
+		reoccurringReservationsInTimespan, err := server.queries.RetrieveReoccurringWorkplaceReservationsInTimespan(context, db.RetrieveReoccurringWorkplaceReservationsInTimespanParams(workplaceReservationsSqlParams))
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+			return
+		}
+
+		calculatedReoccurringReservations := make([]db.RetrieveWorkplaceReservationsInTimespanRow, 0)
+
+		for _, reoccurringReservation := range reoccurringReservationsInTimespan {
+			currentStartDate := reoccurringReservation.StartDate
+			currentEndDate := reoccurringReservation.EndDate
+
+			for currentStartDate.Before(reoccurringReservation.RepeatUntil) {
+				currentStartDate = currentStartDate.AddDate(0, 0, int(reoccurringReservation.IntervalInDays))
+				currentEndDate = currentEndDate.AddDate(0, 0, int(reoccurringReservation.IntervalInDays))
+
+				calculatedReoccurringReservations = append(calculatedReoccurringReservations, db.RetrieveWorkplaceReservationsInTimespanRow{
+					ID:                  uuid.New(),
+					StartDate:           currentStartDate,
+					EndDate:             currentEndDate,
+					ReservingUserID:     reoccurringReservation.ReservingUserID,
+					ReservedWorkplaceID: reoccurringReservation.ReservedWorkplaceID,
+					Username:            sql.NullString{String: "TODO", Valid: true},
+					Email:               sql.NullString{String: "TODO", Valid: true},
+				})
+			}
+
+		}
+
+		reservations = append(reservations, calculatedReoccurringReservations...)
+
+		workplaceWithReservation.Reservations = reservations
+		workplacesWithReservations = append(workplacesWithReservations, workplaceWithReservation)
 	}
 
 	context.JSON(http.StatusOK, workplacesWithReservations)
