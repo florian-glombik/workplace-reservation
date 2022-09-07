@@ -86,59 +86,6 @@ func createReservation(server *Server, context *gin.Context, request ReserveWork
 	return &reservation, nil
 }
 
-// GetReservations
-// @Summary      Returns all reservations of the specified timespan
-// @Tags         reservation
-// @Router       /workplace/reservations [get]
-func (server *Server) getReservations(context *gin.Context) {
-	startTime, err := time.Parse(time.RFC3339, context.Request.URL.Query().Get("start"))
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, errorResponse("'start' not in RFC3339 format!", err))
-		return
-	}
-	endTime, err := time.Parse(time.RFC3339, context.Request.URL.Query().Get("end"))
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, errorResponse("'end' not in RFC3339 format!", err))
-		return
-	}
-
-	retrieveReservationsSqlParams := db.RetrieveReservationsInTimespanParams{
-		StartDate:   startTime,
-		StartDate_2: endTime,
-	}
-	existingReservations, err := server.queries.RetrieveReservationsInTimespan(context, retrieveReservationsSqlParams)
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
-		return
-	}
-
-	reoccurringReservationsInTimespan, err := server.queries.RetrieveReoccurringReservationsInTimespan(context, db.RetrieveReoccurringReservationsInTimespanParams(retrieveReservationsSqlParams))
-	if err != nil {
-		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
-		return
-	}
-
-	var test []db.Reservation
-
-	for _, reoccurringReservation := range reoccurringReservationsInTimespan {
-		currentStartDate := reoccurringReservation.StartDate
-
-		for currentStartDate.Before(reoccurringReservation.RepeatUntil) {
-			test = append(test, db.Reservation{
-				ID:                  uuid.New(),
-				StartDate:           currentStartDate.AddDate(0, 0, int(reoccurringReservation.IntervalInDays)),
-				EndDate:             currentStartDate.AddDate(0, 0, int(reoccurringReservation.IntervalInDays)),
-				ReservingUserID:     reoccurringReservation.ReservingUserID,
-				ReservedWorkplaceID: reoccurringReservation.ReservedWorkplaceID,
-			})
-		}
-
-	}
-
-	existingReservations = append(existingReservations, test...)
-	context.JSON(http.StatusOK, existingReservations)
-}
-
 // DeleteReservation
 // @Summary      Deletes a reservation
 // @Tags         reservation
@@ -167,6 +114,8 @@ func deleteReservation(server *Server, context *gin.Context, reservationId uuid.
 		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
 		return nil, err
 	}
+
+	// TODO only allow deleting future reservations
 
 	result, err := server.queries.DeleteReservation(context, reservationId)
 	if err != nil {

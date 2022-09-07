@@ -80,9 +80,6 @@ func (server *Server) setupRouter() {
 	authRoutes.POST("/reservations/reoccurring", server.addReoccurringReservation)
 	authRoutes.GET("/users", server.getUserById)
 
-	// TODO can be removed?
-	authRoutes.GET("/workplace/reservations", server.getReservations)
-
 	router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	server.router = router
