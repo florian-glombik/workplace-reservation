@@ -81,67 +81,105 @@ func (server *Server) getWorkplaces(context *gin.Context) {
 		return
 	}
 
+	workplacesWithReservations, err := getWorkplacesWithReservations(server, context, startTime, endTime)
+	if err != nil {
+		return
+	}
+
+	context.JSON(http.StatusOK, workplacesWithReservations)
+}
+
+func getWorkplacesWithReservations(server *Server, context *gin.Context, startTime time.Time, endTime time.Time) ([]WorkplaceWithReservations, error) {
 	workplaces, err := server.queries.GetWorkplaces(context)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
-		return
+		return nil, err
 	}
 
 	var workplacesWithReservations = make([]WorkplaceWithReservations, 0)
 
 	for _, workplace := range workplaces {
-		var workplaceWithReservation WorkplaceWithReservations
-		workplaceWithReservation.ID = workplace.ID
-		workplaceWithReservation.Name = workplace.Name
-		workplaceWithReservation.Description = workplace.Description
-
-		workplaceReservationsSqlParams := db.RetrieveWorkplaceReservationsInTimespanParams{
-			ReservedWorkplaceID: workplace.ID,
-			StartDate:           startTime,
-			StartDate_2:         endTime,
-		}
-		reservations, err := server.queries.RetrieveWorkplaceReservationsInTimespan(context, workplaceReservationsSqlParams)
+		reservations, err := retrieveSingleReservationsInTimespan(server, context, workplace, startTime, endTime)
 		if err != nil {
-			context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
-			return
+			return nil, err
 		}
 
-		reoccurringWorkplaceReservationSqlParams := db.RetrieveReoccurringWorkplaceReservationsInTimespanParams{
-			ReservedWorkplaceID: workplace.ID,
-			ToDate:              endTime.String(),
-		}
-		reoccurringReservationsInTimespan, err := server.queries.RetrieveReoccurringWorkplaceReservationsInTimespan(context, reoccurringWorkplaceReservationSqlParams)
+		reoccurringReservationsInTimespan, err := retrieveReoccurringReservations(server, context, workplace, endTime)
 		if err != nil {
-			context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
-			return
+			return nil, err
 		}
+		singleReservationsFromReoccurringReservationsInTimespan := calculateSingleReservationsFromReoccurringReservations(reoccurringReservationsInTimespan)
 
-		var calculatedReoccurringReservations = make([]db.RetrieveWorkplaceReservationsInTimespanRow, 0)
-		for _, reoccurringReservation := range reoccurringReservationsInTimespan {
-			currentStartDate := reoccurringReservation.StartDate
-			currentEndDate := reoccurringReservation.EndDate
+		reservations = append(reservations, singleReservationsFromReoccurringReservationsInTimespan...)
+		workplaceWithReservations := setWorkplaceReservations(workplace, reservations)
 
-			for currentStartDate.Before(reoccurringReservation.RepeatUntil) {
-				currentStartDate = currentStartDate.AddDate(0, 0, int(reoccurringReservation.IntervalInDays))
-				currentEndDate = currentEndDate.AddDate(0, 0, int(reoccurringReservation.IntervalInDays))
-
-				calculatedReoccurringReservations = append(calculatedReoccurringReservations, db.RetrieveWorkplaceReservationsInTimespanRow{
-					ID:                  uuid.New(),
-					StartDate:           currentStartDate,
-					EndDate:             currentEndDate,
-					ReservingUserID:     reoccurringReservation.ReservingUserID,
-					ReservedWorkplaceID: reoccurringReservation.ReservedWorkplaceID,
-					Username:            sql.NullString{String: "TODO", Valid: true},
-					Email:               sql.NullString{String: "TODO", Valid: true},
-				})
-			}
-		}
-
-		reservations = append(reservations, calculatedReoccurringReservations...)
-
-		workplaceWithReservation.Reservations = reservations
-		workplacesWithReservations = append(workplacesWithReservations, workplaceWithReservation)
+		workplacesWithReservations = append(workplacesWithReservations, workplaceWithReservations)
 	}
 
-	context.JSON(http.StatusOK, workplacesWithReservations)
+	return workplacesWithReservations, nil
+}
+
+func calculateSingleReservationsFromReoccurringReservations(reoccurringReservations []db.RetrieveReoccurringWorkplaceReservationsInTimespanRow) []db.RetrieveWorkplaceReservationsInTimespanRow {
+	var calculatedReoccurringReservations = make([]db.RetrieveWorkplaceReservationsInTimespanRow, 0)
+	for _, reoccurringReservation := range reoccurringReservations {
+		currentStartDate := reoccurringReservation.StartDate
+		currentEndDate := reoccurringReservation.EndDate
+
+		for currentStartDate.Before(reoccurringReservation.RepeatUntil) {
+			currentStartDate = currentStartDate.AddDate(0, 0, int(reoccurringReservation.IntervalInDays))
+			currentEndDate = currentEndDate.AddDate(0, 0, int(reoccurringReservation.IntervalInDays))
+
+			calculatedReoccurringReservations = append(calculatedReoccurringReservations, db.RetrieveWorkplaceReservationsInTimespanRow{
+				ID:                  uuid.New(),
+				StartDate:           currentStartDate,
+				EndDate:             currentEndDate,
+				ReservingUserID:     reoccurringReservation.ReservingUserID,
+				ReservedWorkplaceID: reoccurringReservation.ReservedWorkplaceID,
+				Username:            sql.NullString{String: "TODO", Valid: true},
+				Email:               sql.NullString{String: "TODO", Valid: true},
+			})
+		}
+	}
+	return calculatedReoccurringReservations
+}
+
+func retrieveReoccurringReservations(server *Server, context *gin.Context, workplace db.Workplace, endTime time.Time) ([]db.RetrieveReoccurringWorkplaceReservationsInTimespanRow, error) {
+	// TODO consider start time
+	reoccurringWorkplaceReservationSqlParams := db.RetrieveReoccurringWorkplaceReservationsInTimespanParams{
+		ReservedWorkplaceID: workplace.ID,
+		ToDate:              endTime.String(),
+	}
+	reoccurringReservationsInTimespan, err := server.queries.RetrieveReoccurringWorkplaceReservationsInTimespan(context, reoccurringWorkplaceReservationSqlParams)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		return nil, err
+	}
+
+	return reoccurringReservationsInTimespan, nil
+}
+
+func retrieveSingleReservationsInTimespan(server *Server, context *gin.Context, workplace db.Workplace, startTime time.Time, endTime time.Time) ([]db.RetrieveWorkplaceReservationsInTimespanRow, error) {
+	workplaceReservationsSqlParams := db.RetrieveWorkplaceReservationsInTimespanParams{
+		ReservedWorkplaceID: workplace.ID,
+		StartDate:           startTime,
+		StartDate_2:         endTime,
+	}
+	reservations, err := server.queries.RetrieveWorkplaceReservationsInTimespan(context, workplaceReservationsSqlParams)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		return nil, err
+	}
+
+	return reservations, nil
+}
+
+func setWorkplaceReservations(workplace db.Workplace, reservations []db.RetrieveWorkplaceReservationsInTimespanRow) WorkplaceWithReservations {
+	var workplaceWithReservation WorkplaceWithReservations
+
+	workplaceWithReservation.ID = workplace.ID
+	workplaceWithReservation.Name = workplace.Name
+	workplaceWithReservation.Description = workplace.Description
+	workplaceWithReservation.Reservations = reservations
+
+	return workplaceWithReservation
 }
