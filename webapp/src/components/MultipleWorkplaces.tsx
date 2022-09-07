@@ -5,7 +5,7 @@ import {
   getDay,
   isAfter,
   isBefore,
-  isEqual,
+  isEqual, startOfDay,
 } from 'date-fns'
 import { Box } from '@mui/material'
 import { ACCORDION_LABEL_DATE_FORMAT, Workplaces } from './Workplaces'
@@ -67,7 +67,7 @@ function getWeekStartAndEndDates(
     )
   }
 
-  let currentStartDate = startDate
+  let currentStartDate = startOfDay(startDate)
   // @ts-ignore
   let currentEndDate = endOfWeek(currentStartDate, WEEK_STARTS_ON_MONDAY)
   while (!reachedEndDate) {
