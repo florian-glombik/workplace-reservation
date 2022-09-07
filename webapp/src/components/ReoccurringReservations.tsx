@@ -10,7 +10,7 @@ import {
   SelectChangeEvent,
   Typography,
 } from '@mui/material'
-import { format } from 'date-fns'
+import { endOfDay, startOfDay } from 'date-fns'
 import { DAYS_PER_WEEK } from './WorkplaceAccordions'
 import * as React from 'react'
 import { DateRange, DateRangePicker } from 'mui-daterange-picker'
@@ -20,6 +20,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
+import { format } from 'date-fns-tz'
 
 enum RepetitionInterval {
   weekly = DAYS_PER_WEEK,
@@ -31,8 +32,8 @@ enum RepetitionInterval {
 type ReoccurringReservationRequest = {
   workplaceId: string
   intervalInDays: number
-  reservationStartDay: Date
-  repeatUntil: Date
+  reservationStartDay: string
+  repeatUntil: string
 }
 
 export const ReoccurringReservations = () => {
@@ -101,16 +102,20 @@ export const ReoccurringReservations = () => {
       },
     }
 
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+    const DATE_FORMAT_STRING_RFC_3339 = "yyyy-MM-dd'T'HH:mm:ssXXX"
+
     const requestData: ReoccurringReservationRequest = {
       workplaceId: selectedWorkplaceId,
       intervalInDays: repetitionInterval,
-      reservationStartDay: dateRange.startDate!,
-      repeatUntil: dateRange.endDate!,
+      // @ts-ignore
+      reservationStartDay: format(startOfDay(dateRange.startDate!), DATE_FORMAT_STRING_RFC_3339, {timeZone: timezone}),
+      repeatUntil: format(endOfDay(dateRange.endDate!), DATE_FORMAT_STRING_RFC_3339, {timeZone: timezone}),
     }
 
     axios
       .post(BASE_URL + 'reservations/reoccurring', requestData, requestConfig)
-      .then((response) => console.log(response))
+      .then((response) => toast.success("Reoccurring reservation was successfully created!"))
       .catch((error) => toast.error(getDisplayResponseMessage(error)))
   }
 
