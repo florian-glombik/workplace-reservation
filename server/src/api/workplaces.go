@@ -152,7 +152,7 @@ type RetrieveWorkplaceReservationsInTimespanRowWithReoccurringReservationId stru
 	ReservingUserID          uuid.UUID
 	ReservedWorkplaceID      uuid.UUID
 	Username                 sql.NullString
-	Email                    sql.NullString
+	Email                    string
 	ReoccurringReservationID uuid.UUID
 }
 
@@ -162,6 +162,12 @@ func calculateSingleReservationsFromReoccurringReservations(server *Server, cont
 		currentStartDate := reoccurringReservation.StartDate
 		currentEndDate := reoccurringReservation.EndDate
 		intervalInDays := int(reoccurringReservation.IntervalInDays)
+
+		user, err := server.queries.GetUserById(context, reoccurringReservation.ReservingUserID)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+			return nil, err
+		}
 
 		exceptions, err := server.queries.GetReoccurringReservationExceptions(context, reoccurringReservation.ID_2)
 		if err != nil {
@@ -188,8 +194,8 @@ func calculateSingleReservationsFromReoccurringReservations(server *Server, cont
 					EndDate:                  currentEndDate,
 					ReservingUserID:          reoccurringReservation.ReservingUserID,
 					ReservedWorkplaceID:      reoccurringReservation.ReservedWorkplaceID,
-					Username:                 sql.NullString{String: "TODO", Valid: true},
-					Email:                    sql.NullString{String: "TODO", Valid: true},
+					Username:                 user.Username,
+					Email:                    user.Email,
 					ReoccurringReservationID: reoccurringReservation.ID_2,
 				})
 			}

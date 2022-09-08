@@ -53,7 +53,7 @@ export type Reservation = {
   ReservedWorkplaceID: string
   ReservingUserID: string
   Username: NullString
-  Email: NullString
+  Email: string
 }
 
 const weekDays: string[] = [
@@ -150,8 +150,8 @@ export const Workplaces = ({
         start: reservation.StartDate,
         end: reservation.EndDate,
         reservingUserId: reservation.ReservingUserID,
-        reservedWorkplaceId: reservation.ReservedWorkplaceID
-      }
+        reservedWorkplaceId: reservation.ReservedWorkplaceID,
+      },
     }
 
     axios
@@ -169,7 +169,7 @@ export const Workplaces = ({
     if (reservation.Username.String) {
       return reservation.Username.String
     }
-    return reservation.Email.String
+    return reservation.Email
   }
 
   function getButtonLabel(
