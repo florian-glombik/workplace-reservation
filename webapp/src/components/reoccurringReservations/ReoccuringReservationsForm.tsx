@@ -1,5 +1,13 @@
 import { Box, TextField } from '@material-ui/core'
-import { FormControl, IconButton, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from '@mui/material'
+import {
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
+  Typography,
+} from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
 import { DateRange, DateRangePicker } from 'mui-daterange-picker'
 import * as React from 'react'
@@ -12,7 +20,8 @@ import {
   endOfDay,
   nextFriday,
   nextMonday,
-  nextSaturday, nextSunday,
+  nextSaturday,
+  nextSunday,
   nextThursday,
   nextTuesday,
   nextWednesday,
@@ -37,7 +46,7 @@ export enum Weekday {
   Wednesday,
   Thursday,
   Friday,
-  Saturday
+  Saturday,
 }
 
 type ReoccurringReservationRequest = {
@@ -58,19 +67,27 @@ export const convertDateRangeToString = (dateRange: DateRange) => {
 }
 
 const nextWeekday = (weekday: Weekday, startDate: Date): Date => {
-  switch (weekday) {
+  // TODO fix types
+  switch (Weekday[weekday]) {
+    // @ts-ignore
     case Weekday.Monday:
       return nextMonday(startDate)
+    // @ts-ignore
     case Weekday.Tuesday:
       return nextTuesday(startDate)
+    // @ts-ignore
     case Weekday.Wednesday:
       return nextWednesday(startDate)
+    // @ts-ignore
     case Weekday.Thursday:
       return nextThursday(startDate)
+    // @ts-ignore
     case Weekday.Friday:
       return nextFriday(startDate)
+    // @ts-ignore
     case Weekday.Saturday:
       return nextSaturday(startDate)
+    // @ts-ignore
     case Weekday.Sunday:
       return nextSunday(startDate)
   }
@@ -88,10 +105,12 @@ export const ReoccurringReservationsForm = () => {
   const [open, setOpen] = useState(false)
   const [workplaces, setWorkplaces] = useState<WorkplaceWithName[]>([])
   const [selectedWorkplaceId, setSelectedWorkplaceId] = useState('')
-  // @ts-ignore
-  const [dayOfTheWeek, setDayOfTheWeek] = useState<Weekday>(Weekday[Weekday.Monday])
+  const [dayOfTheWeek, setDayOfTheWeek] = useState<Weekday>(
+    // @ts-ignore
+    Weekday[Weekday.Monday]
+  )
   const [repetitionInterval, setRepetitionInterval] = useState(
-    RepetitionInterval.weekly,
+    RepetitionInterval.weekly
   )
   const toggleDateSelection = () => setOpen(!open)
   const [selectedDateAsString, setSelectedDateAsString] = useState('')
@@ -146,7 +165,7 @@ export const ReoccurringReservationsForm = () => {
     }
 
     const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-    const DATE_FORMAT_STRING_RFC_3339 = 'yyyy-MM-dd\'T\'HH:mm:ssXXX'
+    const DATE_FORMAT_STRING_RFC_3339 = "yyyy-MM-dd'T'HH:mm:ssXXX"
 
     const reservationStartDay = nextWeekday(dayOfTheWeek, dateRange.startDate!)
 
@@ -154,30 +173,40 @@ export const ReoccurringReservationsForm = () => {
       workplaceId: selectedWorkplaceId,
       intervalInDays: repetitionInterval,
       // @ts-ignore
-      reservationStartDay: format(startOfDay(reservationStartDay), DATE_FORMAT_STRING_RFC_3339, { timeZone: timezone }),
-      repeatUntil: format(endOfDay(dateRange.endDate!), DATE_FORMAT_STRING_RFC_3339, { timeZone: timezone }),
+      reservationStartDay: format(
+        startOfDay(reservationStartDay),
+        DATE_FORMAT_STRING_RFC_3339,
+        { timeZone: timezone }
+      ),
+      repeatUntil: format(
+        endOfDay(dateRange.endDate!),
+        DATE_FORMAT_STRING_RFC_3339,
+        { timeZone: timezone }
+      ),
     }
 
     axios
       .post(BASE_URL + 'reservations/reoccurring', requestData, requestConfig)
-      .then((response) => toast.success('Reoccurring reservation was successfully created!'))
+      .then(() =>
+        toast.success('Reoccurring reservation was successfully created!')
+      )
       .catch((error) => toast.error(getDisplayResponseMessage(error)))
+
+    // TODO update list of loaded reservations
   }
 
   const today = useState(new Date())
 
   const isSubmitButtonDisabled = (dateRange: DateRange) => {
-    return (
-      !(!!dateRange.startDate && !!dateRange.endDate)
-    )
+    return !(!!dateRange.startDate && !!dateRange.endDate)
   }
 
   return (
     <Box>
       <FormControl>
-        <InputLabel id='workplace-selection-label'>Workplace</InputLabel>
+        <InputLabel id="workplace-selection-label">Workplace</InputLabel>
         <Select
-          labelId='workplace-selection-label'
+          labelId="workplace-selection-label"
           value={selectedWorkplaceId}
           onChange={handleSelectedWorkplaceIdSelection}
           required
@@ -192,9 +221,9 @@ export const ReoccurringReservationsForm = () => {
       </FormControl>
 
       <FormControl>
-        <InputLabel id='weekday-selection-label'>Weekday</InputLabel>
+        <InputLabel id="weekday-selection-label">Weekday</InputLabel>
         <Select
-          labelId='weekday-selection-label'
+          labelId="weekday-selection-label"
           value={Weekday[dayOfTheWeek]}
           onChange={handleWeekdaySelection}
           required
@@ -211,11 +240,11 @@ export const ReoccurringReservationsForm = () => {
       </FormControl>
 
       <FormControl>
-        <InputLabel id='repeat-interval-section'>
+        <InputLabel id="repeat-interval-section">
           Repetition interval
         </InputLabel>
         <Select
-          labelId='repeat-interval-section'
+          labelId="repeat-interval-section"
           id={'repeat-interval-section'}
           // @ts-ignore
           value={repetitionInterval}
