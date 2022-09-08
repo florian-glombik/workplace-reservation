@@ -1,17 +1,14 @@
 import './Header.css'
-import { useAuth } from '../utils/AuthProvider'
+import { Account, useAuth } from '../utils/AuthProvider'
 import { Box, Typography } from '@material-ui/core'
-import {
-  AppBar,
-  Button,
-  IconButton,
-  Menu,
-  MenuItem,
-  Toolbar,
-} from '@mui/material'
+import { AppBar, Button, IconButton, Menu, MenuItem, Toolbar } from '@mui/material'
 import { AccountCircle } from '@mui/icons-material'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+
+export function getUserDisplayName(user: Account): string {
+  return user.username.Valid && user.username.String != '' ? user.username.String : user.email
+}
 
 export const Header = () => {
   //@ts-ignore
@@ -50,7 +47,7 @@ export const Header = () => {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position='static'>
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Button
             variant={'outlined'}
@@ -69,19 +66,25 @@ export const Header = () => {
             </Button>
           )}
           {isLoggedIn && (
-            <div>
+            <Box sx={{
+              display: 'flex', alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+              <Typography>
+                {getUserDisplayName(user)}
+              </Typography>
               <IconButton
-                size="large"
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
+                size='large'
+                aria-label='account of current user'
+                aria-controls='menu-appbar'
+                aria-haspopup='true'
                 onClick={handleMenu}
-                color="inherit"
+                color='inherit'
               >
                 <AccountCircle />
               </IconButton>
               <Menu
-                id="menu-appbar"
+                id='menu-appbar'
                 anchorEl={anchorEl}
                 anchorOrigin={{
                   vertical: 'top',
@@ -101,7 +104,7 @@ export const Header = () => {
                 </MenuItem>
                 <MenuItem onClick={handleEditAccount}>Edit account</MenuItem>
               </Menu>
-            </div>
+            </Box>
           )}
         </Toolbar>
       </AppBar>
