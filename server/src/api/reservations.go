@@ -53,18 +53,12 @@ func createReservation(server *Server, context *gin.Context, request ReserveWork
 		return nil, err
 	}
 
-	workplaceReservationsSqlParams := db.RetrieveWorkplaceReservationsInTimespanParams{
-		ReservedWorkplaceID: request.WorkplaceId,
-		StartDate:           request.StartReservation,
-		StartDate_2:         request.EndReservation,
-	}
-	reservationConflicts, err := server.queries.RetrieveWorkplaceReservationsInTimespan(context, workplaceReservationsSqlParams)
+	workplace, err := server.queries.GetWorkplaceById(context, request.WorkplaceId)
 	if err != nil {
-		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		context.JSON(http.StatusNotFound, errorResponse("Workplace that shall be reserved was not found!", err))
 		return nil, err
 	}
-
-	// TODO find reservation Conflicts
+	reservationConflicts, err := getWorkplaceReservations(server, context, workplace, request.StartReservation, request.EndReservation)
 
 	reservationConflictsExist := len(reservationConflicts) > 0
 	if reservationConflictsExist {
@@ -156,7 +150,7 @@ func findMatchingReoccurringReservation(server *Server, context *gin.Context, st
 				EndExceptionDate:         calculatedReservation.EndDate,
 			}
 
-			// TODO check if exception was already made!
+			// TODO check if exception was already made! (otherwise the exception could be duplicated multiple times)
 			// TODO improve query, as subset of exceptions can be duplicated
 
 			createdException, err := server.queries.CreateReoccurringReservationException(context, createReoccurringReservationExceptionSqlParams)

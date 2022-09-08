@@ -100,40 +100,49 @@ func getWorkplacesWithReservations(server *Server, context *gin.Context, startTi
 	var workplacesWithReservations = make([]WorkplaceWithReservations, 0)
 
 	for _, workplace := range workplaces {
-		reservations, err := retrieveSingleWorkplaceReservationsInTimespan(server, context, workplace, startTime, endTime)
+		reservations, err := getWorkplaceReservations(server, context, workplace, startTime, endTime)
 		if err != nil {
 			return nil, err
 		}
 
-		reoccurringReservationsInTimespan, err := retrieveReoccurringReservations(server, context, workplace, endTime)
-		if err != nil {
-			return nil, err
-		}
-		singleReservationsFromReoccurringReservationsInTimespan, err := calculateSingleReservationsFromReoccurringReservations(server, context, reoccurringReservationsInTimespan, startTime, endTime)
-		if err != nil {
-			return nil, err
-		}
-
-		var singleReservationsWithoutReoccurringId = make([]db.RetrieveWorkplaceReservationsInTimespanRow, 0)
-		for _, singleReservation := range singleReservationsFromReoccurringReservationsInTimespan {
-			singleReservationsWithoutReoccurringId = append(singleReservationsWithoutReoccurringId, db.RetrieveWorkplaceReservationsInTimespanRow{
-				ID:                  singleReservation.ID,
-				StartDate:           singleReservation.StartDate,
-				EndDate:             singleReservation.EndDate,
-				ReservingUserID:     singleReservation.ReservingUserID,
-				ReservedWorkplaceID: singleReservation.ReservedWorkplaceID,
-				Username:            singleReservation.Username,
-				Email:               singleReservation.Email,
-			})
-		}
-
-		reservations = append(reservations, singleReservationsWithoutReoccurringId...)
 		workplaceWithReservations := setWorkplaceReservations(workplace, reservations)
 
 		workplacesWithReservations = append(workplacesWithReservations, workplaceWithReservations)
 	}
 
 	return workplacesWithReservations, nil
+}
+
+func getWorkplaceReservations(server *Server, context *gin.Context, workplace db.Workplace, startTime time.Time, endTime time.Time) ([]db.RetrieveWorkplaceReservationsInTimespanRow, error) {
+	reservations, err := retrieveSingleWorkplaceReservationsInTimespan(server, context, workplace, startTime, endTime)
+	if err != nil {
+		return nil, err
+	}
+
+	reoccurringReservationsInTimespan, err := retrieveReoccurringReservations(server, context, workplace, endTime)
+	if err != nil {
+		return nil, err
+	}
+	singleReservationsFromReoccurringReservationsInTimespan, err := calculateSingleReservationsFromReoccurringReservations(server, context, reoccurringReservationsInTimespan, startTime, endTime)
+	if err != nil {
+		return nil, err
+	}
+
+	var singleReservationsWithoutReoccurringId = make([]db.RetrieveWorkplaceReservationsInTimespanRow, 0)
+	for _, singleReservation := range singleReservationsFromReoccurringReservationsInTimespan {
+		singleReservationsWithoutReoccurringId = append(singleReservationsWithoutReoccurringId, db.RetrieveWorkplaceReservationsInTimespanRow{
+			ID:                  singleReservation.ID,
+			StartDate:           singleReservation.StartDate,
+			EndDate:             singleReservation.EndDate,
+			ReservingUserID:     singleReservation.ReservingUserID,
+			ReservedWorkplaceID: singleReservation.ReservedWorkplaceID,
+			Username:            singleReservation.Username,
+			Email:               singleReservation.Email,
+		})
+	}
+
+	reservations = append(reservations, singleReservationsWithoutReoccurringId...)
+	return reservations, nil
 }
 
 type RetrieveWorkplaceReservationsInTimespanRowWithReoccurringReservationId struct {
