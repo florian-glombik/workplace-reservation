@@ -1,6 +1,6 @@
 module github.com/florian-glombik/workplace-reservation
 
-go 1.17
+go 1.18
 
 require (
 	github.com/gin-contrib/cors v1.4.0

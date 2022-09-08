@@ -141,16 +141,22 @@ export const Workplaces = ({
     return null
   }
 
-  function cancelReservation(reservationId: string) {
+  function cancelReservation(reservation: Reservation) {
     const requestConfig = {
       headers: {
         Authorization: 'Bearer ' + token,
       },
+      params: {
+        start: reservation.StartDate,
+        end: reservation.EndDate,
+        reservingUserId: reservation.ReservingUserID,
+        reservedWorkplaceId: reservation.ReservedWorkplaceID
+      }
     }
 
     axios
       .delete(
-        BASE_URL + 'workplace/reservations/' + reservationId,
+        BASE_URL + 'workplace/reservations/' + reservation.ID,
         requestConfig
       )
       .then(() => {
@@ -258,7 +264,7 @@ export const Workplaces = ({
                           color={isReserved ? 'error' : 'success'}
                           onClick={
                             isReservedByCurrentUser
-                              ? () => cancelReservation(reservation!.ID)
+                              ? () => cancelReservation(reservation!)
                               : () =>
                                   reserveWorkplace(
                                     workplace.id,
