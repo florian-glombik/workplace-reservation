@@ -63,6 +63,9 @@ func createReservation(server *Server, context *gin.Context, request ReserveWork
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
 		return nil, err
 	}
+
+	// TODO find reservation Conflicts
+
 	reservationConflictsExist := len(reservationConflicts) > 0
 	if reservationConflictsExist {
 		err := errors.New("the workplace is at least partially reserved within the requested timespan")

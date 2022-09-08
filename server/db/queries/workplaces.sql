@@ -27,16 +27,3 @@ FROM users
               OR end_date BETWEEN $2 AND $3
           )) AS reservationsInTimespan
      ON reservationsInTimespan.reserving_user_id = users.id;
-
--- name: ReservationExceptions :many
-SELECT reservationsInTimespan.*, users.username, users.email
-FROM users
-         RIGHT JOIN
-     (SELECT *
-      FROM reservations
-      WHERE reserved_workplace_id = $1
-        AND (
-              start_date BETWEEN $2 AND $3
-              OR end_date BETWEEN $2 AND $3
-          )) AS reservationsInTimespan
-     ON reservationsInTimespan.reserving_user_id = users.id;
