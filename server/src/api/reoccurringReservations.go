@@ -23,6 +23,22 @@ type ReoccurringReservationRequest struct {
 	RepeatUntil         time.Time `json:"repeatUntil"`
 }
 
+// GetReoccurringReservations
+// @Summary      Returns reoccurring reservations of authenticated user
+// @Tags         reservation
+// @Router       /reservations/reoccurring [get]
+func (server *Server) getReoccurringReservation(context *gin.Context) {
+	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
+
+	reoccurringReservations, err := server.queries.ReoccurringReservationsOfUser(context, authPayload.UserId)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		return
+	}
+
+	context.JSON(http.StatusOK, reoccurringReservations)
+}
+
 // AddReoccurringReservation
 // @Summary      Adds a reoccurring reservation
 // @Tags         reservation

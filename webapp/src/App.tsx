@@ -11,7 +11,7 @@ import { ToastContainer } from 'react-toastify'
 import { WorkplaceAccordions } from './components/WorkplaceAccordions'
 import { PageNotFound } from './components/PageNotFound'
 import { EditAccount } from './components/EditAccount'
-import { ReoccurringReservations } from './components/ReoccurringReservations'
+import { ReoccurringReservations } from './components/reoccurringReservations/ReoccurringReservations'
 
 function App() {
   return (
