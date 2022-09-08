@@ -2,22 +2,44 @@
 INSERT INTO reoccurring_reservations (id, interval_in_days, repeated_reservation_id, repeat_until)
 VALUES ($1, $2, $3, $4) RETURNING *;
 
--- name: ReoccurringReservationsOfUser :many
+-- name: ActiveReoccurringReservationsOfUser :many
 SELECT reoccurringReservationsWithStartDate.*, workplaces.name AS workplaceName
-FROM
-    (SELECT reoccurring_reservations.*, reservationsOfUser.start_date, reservationsOfUser.reserved_workplace_id
-     FROM (SELECT *
-           FROM reservations
-           WHERE reservations.reserving_user_id = $1) AS reservationsOfUser
-              JOIN reoccurring_reservations
-                   ON reoccurring_reservations.repeated_reservation_id = reservationsOfUser.id) AS reoccurringReservationsWithStartDate
-        JOIN workplaces
-             ON workplaces.id = reoccurringReservationsWithStartDate.reserved_workplace_id;
+FROM (SELECT activeReoccuringReservations.*, reservationsOfUser.start_date, reservationsOfUser.reserved_workplace_id
+      FROM (SELECT *
+            FROM reservations
+            WHERE reservations.reserving_user_id = $1) AS reservationsOfUser
+               JOIN (SELECT *
+                     FROM reoccurring_reservations
+                     WHERE repeat_until >= (SELECT NOW())) AS activeReoccuringReservations
+                    ON activeReoccuringReservations.repeated_reservation_id =
+                       reservationsOfUser.id) AS reoccurringReservationsWithStartDate
+         JOIN workplaces
+              ON workplaces.id = reoccurringReservationsWithStartDate.reserved_workplace_id;
 
 -- name: GetReoccurringReservationByRepeatedReservationId :one
 SELECT *
 FROM reoccurring_reservations
 WHERE repeated_reservation_id = $1;
+
+-- name: GetReoccurringReservationById :one
+SELECT *
+FROM reoccurring_reservations
+WHERE id = $1;
+
+-- name: DeleteReoccurringReservationById :execresult
+DELETE
+FROM reoccurring_reservations
+WHERE id = $1;
+
+-- name: DeleteExceptionsById :execresult
+DELETE
+FROM reoccurring_reservations_exceptions
+WHERE reoccurring_reservation_id = $1;
+
+-- name: UpdateReoccurringReservation :execresult
+UPDATE reoccurring_reservations
+SET repeat_until = $2
+WHERE id = $1;
 
 -- name: CreateReoccurringReservationException :one
 INSERT INTO reoccurring_reservations_exceptions (id, reoccurring_reservation_id, start_exception_date,

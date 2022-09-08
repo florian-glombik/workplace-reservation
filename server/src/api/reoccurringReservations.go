@@ -5,7 +5,9 @@ import (
 	"github.com/florian-glombik/workplace-reservation/src/token"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	uuidConversion "github.com/satori/go.uuid"
 	"net/http"
+	"path"
 	"time"
 )
 
@@ -23,14 +25,64 @@ type ReoccurringReservationRequest struct {
 	RepeatUntil         time.Time `json:"repeatUntil"`
 }
 
+// DeleteReoccurringReservation
+// @Summary      Deletes reoccurring reservation
+// @Tags         reservation
+// @Router       /reservations/reoccurring [delete]
+func (server *Server) deleteReoccurringReservation(context *gin.Context) {
+	reservationIdString := path.Base(context.Request.URL.Path)
+	parsedUuid, err := uuidConversion.FromString(reservationIdString)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, errorResponse("Invalid reoccurring reservation uuid", err))
+		return
+	}
+	reservationId := uuid.UUID(parsedUuid)
+
+	reoccurringReservationToDelete, err := server.queries.GetReoccurringReservationById(context, reservationId)
+	baseReservation, err := server.queries.GetReservationById(context, reoccurringReservationToDelete.RepeatedReservationID)
+
+	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
+	if baseReservation.ReservingUserID != authPayload.UserId {
+		context.JSON(http.StatusForbidden, errorResponse("You can only delete your own reoccurring reservations!", err))
+		return
+	}
+
+	now := time.Now()
+	noReservationsInThePast := baseReservation.StartDate.After(now) // TODO check if reoccurring reservation has only exceptions
+	if noReservationsInThePast {
+		_, err := server.queries.DeleteExceptionsById(context, reoccurringReservationToDelete.ID)
+		sqlResult, err := server.queries.DeleteReoccurringReservationById(context, reoccurringReservationToDelete.ID)
+		_, err = server.queries.DeleteReservation(context, baseReservation.ID)
+		if err != nil {
+			context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+			return
+		}
+		context.JSON(http.StatusOK, sqlResult)
+		return
+	}
+
+	yesterday := now.AddDate(0, 0, -1)
+	updateReoccurringReservationSqlParams := db.UpdateReoccurringReservationParams{
+		ID:          reoccurringReservationToDelete.ID,
+		RepeatUntil: yesterday,
+	}
+	sqlResult, err := server.queries.UpdateReoccurringReservation(context, updateReoccurringReservationSqlParams)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		return
+	}
+
+	context.JSON(http.StatusOK, sqlResult)
+}
+
 // GetReoccurringReservations
 // @Summary      Returns reoccurring reservations of authenticated user
 // @Tags         reservation
 // @Router       /reservations/reoccurring [get]
-func (server *Server) getReoccurringReservation(context *gin.Context) {
+func (server *Server) getActiveReoccurringReservations(context *gin.Context) {
 	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
 
-	reoccurringReservations, err := server.queries.ReoccurringReservationsOfUser(context, authPayload.UserId)
+	reoccurringReservations, err := server.queries.ActiveReoccurringReservationsOfUser(context, authPayload.UserId)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
 		return
