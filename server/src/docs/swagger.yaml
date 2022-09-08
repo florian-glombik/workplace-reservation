@@ -1,0 +1,102 @@
+basePath: /api/v1
+host: localhost:8080
+info:
+  contact:
+    name: API Support
+  title: Workplace Reservation API
+  version: "1.0"
+paths:
+  /reservations/reoccurring:
+    post:
+      responses: {}
+      summary: Adds a reoccurring reservation
+      tags:
+      - reservation
+  /users:
+    get:
+      responses: {}
+      summary: Get user information by id if logged in
+      tags:
+      - accounts
+    post:
+      consumes:
+      - application/json
+      description: get string by ID
+      parameters:
+      - description: TODO
+        in: path
+        name: email
+        required: true
+        type: string
+      - description: TODO
+        in: path
+        name: password
+        required: true
+        type: string
+      - description: TODO
+        in: path
+        name: username
+        type: string
+      - description: TODO
+        in: path
+        name: firstName
+        type: string
+      - description: TODO
+        in: path
+        name: lastName
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Create a new account
+      tags:
+      - accounts
+  /users/edit:
+    patch:
+      responses: {}
+      tags:
+      - accounts
+  /users/login:
+    post:
+      responses: {}
+      summary: Login with existing user
+      tags:
+      - accounts
+  /workplace/create:
+    post:
+      responses: {}
+      summary: Creating a new workplace
+      tags:
+      - workplaces
+  /workplace/reservation:
+    delete:
+      responses: {}
+      summary: Deletes a reservation
+      tags:
+      - reservation
+  /workplace/reservations:
+    get:
+      responses: {}
+      summary: Returns all reservations of the specified timespan
+      tags:
+      - reservation
+  /workplace/reserve:
+    post:
+      responses: {}
+      summary: Reserving a workplace for the requested timespan
+      tags:
+      - reservation
+  /workplaces:
+    get:
+      responses: {}
+      summary: Returns all workplaces with reservations in the requested timespan
+        and the linked office
+      tags:
+      - workplaces
+  /workplaces/names:
+    get:
+      responses: {}
+      summary: Returns the names of all workplaces
+      tags:
+      - workplaces
+swagger: "2.0"
