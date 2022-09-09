@@ -49,7 +49,7 @@ TODO
 ## Developer Setup Guide
 ### Prerequisite Installations
 Make sure to install:
-- [Go](https://go.dev/) _- at least version 1.15_
+- [Go](https://go.dev/) _- at least version 1.18_
 - [docker](https://www.docker.com/get-started/) _- keeps our PostgresSQL database_
 - [npm](https://www.npmjs.com/) _- used as package manager, e.g. for importing [React](https://reactjs.org/)_
 - [migrate](https://github.com/golang-migrate/migrate/blob/master/cmd/migrate/README.md) _- framework used for database migrations_
