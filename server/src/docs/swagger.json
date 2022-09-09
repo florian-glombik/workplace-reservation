@@ -1,0 +1,151 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "Workplace Reservation API",
+        "contact": {
+            "name": "API Support"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/api/v1",
+    "paths": {
+        "/reservations/reoccurring": {
+            "post": {
+                "tags": [
+                    "reservation"
+                ],
+                "summary": "Adds a reoccurring reservation",
+                "responses": {}
+            }
+        },
+        "/users": {
+            "get": {
+                "tags": [
+                    "accounts"
+                ],
+                "summary": "Get user information by id if logged in",
+                "responses": {}
+            },
+            "post": {
+                "description": "get string by ID",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "accounts"
+                ],
+                "summary": "Create a new account",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "TODO",
+                        "name": "email",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "TODO",
+                        "name": "password",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "TODO",
+                        "name": "username",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "TODO",
+                        "name": "firstName",
+                        "in": "path"
+                    },
+                    {
+                        "type": "string",
+                        "description": "TODO",
+                        "name": "lastName",
+                        "in": "path"
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/users/edit": {
+            "patch": {
+                "tags": [
+                    "accounts"
+                ],
+                "responses": {}
+            }
+        },
+        "/users/login": {
+            "post": {
+                "tags": [
+                    "accounts"
+                ],
+                "summary": "Login with existing user",
+                "responses": {}
+            }
+        },
+        "/workplace/create": {
+            "post": {
+                "tags": [
+                    "workplaces"
+                ],
+                "summary": "Creating a new workplace",
+                "responses": {}
+            }
+        },
+        "/workplace/reservation": {
+            "delete": {
+                "tags": [
+                    "reservation"
+                ],
+                "summary": "Deletes a reservation",
+                "responses": {}
+            }
+        },
+        "/workplace/reservations": {
+            "get": {
+                "tags": [
+                    "reservation"
+                ],
+                "summary": "Returns all reservations of the specified timespan",
+                "responses": {}
+            }
+        },
+        "/workplace/reserve": {
+            "post": {
+                "tags": [
+                    "reservation"
+                ],
+                "summary": "Reserving a workplace for the requested timespan",
+                "responses": {}
+            }
+        },
+        "/workplaces": {
+            "get": {
+                "tags": [
+                    "workplaces"
+                ],
+                "summary": "Returns all workplaces with reservations in the requested timespan and the linked office",
+                "responses": {}
+            }
+        },
+        "/workplaces/names": {
+            "get": {
+                "tags": [
+                    "workplaces"
+                ],
+                "summary": "Returns the names of all workplaces",
+                "responses": {}
+            }
+        }
+    }
+}

@@ -11,5 +11,14 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
+# auto generated files
+go.sum
+sqlc/
+package-lock.json
+
+# custom configuration files
+dataSources.xml
+
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
