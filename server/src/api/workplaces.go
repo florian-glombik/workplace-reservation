@@ -137,7 +137,9 @@ func getWorkplaceReservations(server *Server, context *gin.Context, workplace db
 			ReservingUserID:     singleReservation.ReservingUserID,
 			ReservedWorkplaceID: singleReservation.ReservedWorkplaceID,
 			Username:            singleReservation.Username,
-			Email:               singleReservation.Email,
+			Email: sql.NullString{
+				singleReservation.Email, true,
+			},
 		})
 	}
 

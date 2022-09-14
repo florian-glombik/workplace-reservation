@@ -53,7 +53,7 @@ export type Reservation = {
   ReservedWorkplaceID: string
   ReservingUserID: string
   Username: NullString
-  Email: string
+  Email: NullString
 }
 
 const weekDays: string[] = [
@@ -169,7 +169,7 @@ export const Workplaces = ({
     if (reservation.Username.String) {
       return reservation.Username.String
     }
-    return reservation.Email
+    return reservation.Email.String
   }
 
   function getButtonLabel(

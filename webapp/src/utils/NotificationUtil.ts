@@ -6,5 +6,5 @@ interface ErrorResponse {
 }
 
 export function getDisplayResponseMessage(error: AxiosError<ErrorResponse>) {
-  return error.response?.data.message ?? error.message ?? error
+  return error.response?.data?.message ?? error.message ?? error
 }
