@@ -17,7 +17,7 @@ const ErrRequestCouldNotBeParsed = "The request could not be parsed."
 const UnexpectedErrContactMessage = "An unexpected error has occurred. Please contact CONTACT_PERSON to contribute in resolving the problem as soon as possible."
 
 type CreateUserRequest struct {
-	Username  string `json:"username" binding:"omitempty,alphanum"`
+	Username  string `json:"username" binding:"omitempty"`
 	FirstName string `json:"firstName" binding:"omitempty,alphanum"`
 	LastName  string `json:"lastName" binding:"omitempty,alphanum"`
 	Password  string `json:"password" binding:"required,min=3"`
@@ -66,7 +66,7 @@ func (server *Server) createUser(context *gin.Context) {
 			return
 		}
 
-		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
+		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed+" Consider changing the input for "+invalidInputTag, err))
 		return
 	}
 
@@ -190,7 +190,7 @@ func (server *Server) loginUser(context *gin.Context) {
 type editUserRequest struct {
 	ID        uuid.UUID `json:"id" binding:"required"`
 	Email     string    `json:"email" binding:"required,email"`
-	Username  string    `json:"username" binding:"omitempty,alphanum"`
+	Username  string    `json:"username" binding:"omitempty"`
 	FirstName string    `json:"firstName" binding:"omitempty,alphanum"`
 	LastName  string    `json:"lastName" binding:"omitempty,alphanum"`
 	Password  string    `json:"password" binding:"omitempty,min=3"`
