@@ -45,6 +45,13 @@ func (server *Server) handleCreateReservation(context *gin.Context) {
 }
 
 func createReservation(server *Server, context *gin.Context, request ReserveWorkplaceRequest) (*db.Reservation, error) {
+	now := time.Now()
+	if now.After(request.EndReservation) {
+		err := errors.New("you can not make workplace reservations in the past")
+		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
+		return nil, err
+	}
+
 	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
 	reservationMadeForOtherUser := request.UserId != authPayload.UserId
 	if reservationMadeForOtherUser {
