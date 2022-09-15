@@ -5,23 +5,11 @@ import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useAuth } from '../utils/AuthProvider'
 import { useEffect, useState } from 'react'
-import {
-  addDays,
-  endOfDay,
-  format,
-  isWithinInterval,
-  startOfDay,
-} from 'date-fns'
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Button,
-  TableCell,
-  Typography,
-} from '@mui/material'
+import { addDays, endOfDay, format, isBefore, isWithinInterval, startOfDay } from 'date-fns'
+import { Accordion, AccordionDetails, AccordionSummary, Button, TableCell, Typography } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import withStyles from '@material-ui/core/styles/withStyles'
+import NoAccountsIcon from '@mui/icons-material/NoAccounts'
 
 const IconLeftAccordionSummary = withStyles({
   expandIcon: {
@@ -75,10 +63,10 @@ type WorkplacesProps = {
 }
 
 export const Workplaces = ({
-  startOfTheWeek,
-  endOfTheWeek,
-  defaultExpanded,
-}: WorkplacesProps) => {
+                             startOfTheWeek,
+                             endOfTheWeek,
+                             defaultExpanded,
+                           }: WorkplacesProps) => {
   // @ts-ignore
   const token = useAuth().jwtToken
   // @ts-ignore
@@ -112,7 +100,7 @@ export const Workplaces = ({
 
   function getConflictingReservingUserIfExists(
     dayToCheck: Date,
-    reservations: Reservation[] | null
+    reservations: Reservation[] | null,
   ): Reservation | null {
     if (!reservations) {
       return null
@@ -157,7 +145,7 @@ export const Workplaces = ({
     axios
       .delete(
         BASE_URL + 'workplace/reservations/' + reservation.ID,
-        requestConfig
+        requestConfig,
       )
       .then(() => {
         updateWorkplaces()
@@ -175,13 +163,14 @@ export const Workplaces = ({
   function getButtonLabel(
     isReserved: boolean,
     isReservedByCurrentUser: boolean,
-    reservation: Reservation | null
+    isInThePast: boolean,
+    reservation: Reservation | null,
   ): string {
     if (!isReserved) {
       return 'Reserve'
     }
 
-    if (isReservedByCurrentUser) {
+    if (isReservedByCurrentUser && !isInThePast) {
       return 'Cancel'
     }
 
@@ -192,7 +181,7 @@ export const Workplaces = ({
     workplaceId: string,
     userId: string,
     startReservation: Date,
-    endReservation: Date
+    endReservation: Date,
   ) {
     const data = {
       workplaceId: workplaceId,
@@ -247,40 +236,49 @@ export const Workplaces = ({
                     const reservation: Reservation | null =
                       getConflictingReservingUserIfExists(
                         currentDay,
-                        workplace.reservations
+                        workplace.reservations,
                       )
                     const startOfCurrentDay = startOfDay(currentDay)
                     const endOfCurrentDay = endOfDay(currentDay)
 
-                    const isReserved = reservation != null
+                    const isDayInThePast: boolean = isBefore(startOfCurrentDay, startOfDay(Date.now()))
+
+                    const isReserved: boolean = reservation != null
                     const isReservedByCurrentUser =
                       reservation?.ReservingUserID === loggedInUser.id
+                    const displayNoUserIcon = !isReserved && isDayInThePast
 
                     return (
                       <TableCell key={`reservation-${day}-${workplace.id}`}>
                         <Button
-                          variant={isReserved ? 'outlined' : 'contained'}
-                          disabled={isReserved && !isReservedByCurrentUser}
+                          variant={isReserved || displayNoUserIcon ? 'outlined' : 'contained'}
+                          disabled={isDayInThePast || (isReserved && !isReservedByCurrentUser)}
                           color={isReserved ? 'error' : 'success'}
                           onClick={
                             isReservedByCurrentUser
                               ? () => cancelReservation(reservation!)
                               : () =>
-                                  reserveWorkplace(
-                                    workplace.id,
-                                    loggedInUser.id,
-                                    startOfCurrentDay,
-                                    endOfCurrentDay
-                                  )
+                                reserveWorkplace(
+                                  workplace.id,
+                                  loggedInUser.id,
+                                  startOfCurrentDay,
+                                  endOfCurrentDay,
+                                )
                           }
                         >
-                          <Typography noWrap>
-                            {getButtonLabel(
-                              isReserved,
-                              isReservedByCurrentUser,
-                              reservation
-                            )}
-                          </Typography>
+                          {displayNoUserIcon && (
+                            <NoAccountsIcon></NoAccountsIcon>
+                          )}
+                          {!displayNoUserIcon &&
+                            (<Typography noWrap>
+                              {getButtonLabel(
+                                isReserved,
+                                isReservedByCurrentUser,
+                                isDayInThePast,
+                                reservation,
+                              )}
+                            </Typography>)
+                          }
                         </Button>
                       </TableCell>
                     )

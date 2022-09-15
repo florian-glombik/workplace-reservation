@@ -105,7 +105,7 @@ func (server *Server) handleDeleteReservation(context *gin.Context) {
 
 const NoElementFound string = "sql: no rows in result set"
 
-func findMatchingReoccurringReservation(server *Server, context *gin.Context, startDate time.Time, endDate time.Time, reservingUserId uuid.UUID, reservedWorkplaceId uuid.UUID) (*db.ReoccurringReservationsException, error) {
+func findMatchingReoccurringReservationAndCreateExceptionIfFound(server *Server, context *gin.Context, startDate time.Time, endDate time.Time, reservingUserId uuid.UUID, reservedWorkplaceId uuid.UUID) (*db.ReoccurringReservationsException, error) {
 	matchingReoccurringReservationsSqlParams := db.ReoccurringReservationsOfWorkplaceAndUserInTimespanParams{
 		ReservingUserID:     reservingUserId,
 		ReservedWorkplaceID: reservedWorkplaceId,
@@ -169,9 +169,9 @@ func findMatchingReoccurringReservation(server *Server, context *gin.Context, st
 }
 
 func deleteReservation(server *Server, context *gin.Context, reservationId uuid.UUID) (sql.Result, error) {
-	// TODO only allow deleting future reservations
-
 	reservationToBeDeleted, err := server.queries.GetReservationById(context, reservationId)
+
+	now := time.Now()
 	if err != nil {
 		if err.Error() == NoElementFound {
 			startDate, err := time.Parse(time.RFC3339, context.Request.URL.Query().Get("start"))
@@ -200,7 +200,13 @@ func deleteReservation(server *Server, context *gin.Context, reservationId uuid.
 			}
 			reservedWorkplaceId := uuid.UUID(parsedWorkplaceId)
 
-			reservation, err := findMatchingReoccurringReservation(server, context, startDate, endDate, reservingUserId, reservedWorkplaceId)
+			if now.After(endDate) {
+				err := errors.New("you can not cancel reservations that are in the past")
+				context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
+				return nil, err
+			}
+
+			reservation, err := findMatchingReoccurringReservationAndCreateExceptionIfFound(server, context, startDate, endDate, reservingUserId, reservedWorkplaceId)
 			if err != nil {
 				return nil, err
 			}
@@ -210,6 +216,12 @@ func deleteReservation(server *Server, context *gin.Context, reservationId uuid.
 			context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
 			return nil, err
 		}
+	}
+
+	if now.After(reservationToBeDeleted.EndDate) {
+		err := errors.New("you can not cancel reservations that are in the past")
+		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
+		return nil, err
 	}
 
 	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
