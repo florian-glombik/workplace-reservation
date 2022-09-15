@@ -5,10 +5,13 @@ import { AppBar, Button, IconButton, Menu, MenuItem, Toolbar } from '@mui/materi
 import { AccountCircle } from '@mui/icons-material'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 export function getUserDisplayName(user: Account): string {
   return user.username.Valid && user.username.String != '' ? user.username.String : user.email
 }
+
+const WORKPLACE_RESERVATION_BUG_OR_FEATURE_REQUEST_LINK = 'https://github.com/florian-glombik/workplace-reservation/issues/new/choose'
 
 export const Header = () => {
   //@ts-ignore
@@ -39,6 +42,11 @@ export const Header = () => {
   const handleReoccurringReservations = () => {
     handleClose()
     navigate('/reservations/reoccurring')
+  }
+
+  const handleLinkToRepo = () => {
+    handleClose()
+    window.open(WORKPLACE_RESERVATION_BUG_OR_FEATURE_REQUEST_LINK)
   }
 
   const handleClose = () => {
@@ -103,6 +111,9 @@ export const Header = () => {
                   Reoccurring Reservations
                 </MenuItem>
                 <MenuItem onClick={handleEditAccount}>Edit account</MenuItem>
+                <MenuItem onClick={handleLinkToRepo}>
+                  Found a bug? &nbsp; <GitHubIcon />
+                </MenuItem>
               </Menu>
             </Box>
           )}
