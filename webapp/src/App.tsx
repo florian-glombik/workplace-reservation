@@ -12,6 +12,7 @@ import { WorkplaceAccordions } from './components/WorkplaceAccordions'
 import { PageNotFound } from './components/PageNotFound'
 import { EditAccount } from './components/EditAccount'
 import { ReoccurringReservations } from './components/reoccurringReservations/ReoccurringReservations'
+import { FixedOccupancyPlanOverview } from './components/FixedOccupancyPlanOverview'
 
 function App() {
   return (
@@ -24,6 +25,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <WorkplaceAccordions />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={'/fixed-occupancy-plan'}
+            element={
+              <ProtectedRoute>
+                <FixedOccupancyPlanOverview />
               </ProtectedRoute>
             }
           />

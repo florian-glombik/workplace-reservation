@@ -16,8 +16,6 @@ export const EditAccount = () => {
     id: user.id,
     email: user.email,
     username: user.username.String,
-    firstName: user.firstName.String,
-    lastName: user.lastName.String,
   })
 
   const updateChangesMade = () => {
@@ -35,14 +33,16 @@ export const EditAccount = () => {
       },
     }
 
-    axios
-      .patch(BASE_URL + 'users/edit', details, requestConfig)
-      .then((response) => {
-        setUser(response.data)
-        setNoChangesMade(true)
-        toast.success('The account was successfully updated!')
-      })
-      .catch((error) => toast.error(getDisplayResponseMessage(error)))
+    try {
+      const updatedUser = (
+        await axios.patch(BASE_URL + 'users/edit', details, requestConfig)
+      ).data
+      setUser(updatedUser)
+      setNoChangesMade(true)
+      toast.success('The account was successfully updated!')
+    } catch (error) {
+      toast.error(getDisplayResponseMessage(error))
+    }
   }
 
   return (
