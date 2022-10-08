@@ -25,28 +25,22 @@ const UnexpectedErrContactMessage = "An unexpected error has occurred. Please co
 const DuplicateKeyValueViolatesUniqueConstraint = "23505"
 
 type CreateUserRequest struct {
-	Username  string `json:"username" binding:"omitempty"`
-	FirstName string `json:"firstName" binding:"omitempty,alphanum"`
-	LastName  string `json:"lastName" binding:"omitempty,alphanum"`
-	Password  string `json:"password" binding:"required,min=3"`
-	Email     string `json:"email" binding:"required,email"`
+	Username string `json:"username" binding:"omitempty"`
+	Password string `json:"password" binding:"required,min=3"`
+	Email    string `json:"email" binding:"required,email"`
 }
 
 type userWithoutHashedPassword struct {
-	ID        uuid.UUID      `json:"id"`
-	Email     string         `json:"email"`
-	Username  sql.NullString `json:"username"`
-	FirstName sql.NullString `json:"firstName"`
-	LastName  sql.NullString `json:"lastName"`
+	ID       uuid.UUID      `json:"id"`
+	Email    string         `json:"email"`
+	Username sql.NullString `json:"username"`
 }
 
 func getUserResponse(user db.User) userWithoutHashedPassword {
 	return userWithoutHashedPassword{
-		ID:        user.ID,
-		Username:  user.Username,
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		Email:     user.Email,
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
 	}
 }
 
