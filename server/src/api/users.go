@@ -13,8 +13,16 @@ import (
 	"time"
 )
 
+// User Roles
+
+const Admin = "admin"
+const StaticReservationPlanner = "static-reservation-planner"
+const User = "user"
+
 const ErrRequestCouldNotBeParsed = "The request could not be parsed."
 const UnexpectedErrContactMessage = "An unexpected error has occurred. Please contact CONTACT_PERSON to contribute in resolving the problem as soon as possible."
+
+const DuplicateKeyValueViolatesUniqueConstraint = "23505"
 
 type CreateUserRequest struct {
 	Username  string `json:"username" binding:"omitempty"`
@@ -76,14 +84,12 @@ func (server *Server) createUser(context *gin.Context) {
 		return
 	}
 
-	// TODO how to insert null in database?
+	//TODO how to insert null in database?
 	createUserSqlParams := db.CreateUserParams{
-		ID:        uuid.New(),
-		Username:  sql.NullString{String: request.Username, Valid: true},
-		FirstName: sql.NullString{String: request.FirstName, Valid: true},
-		LastName:  sql.NullString{String: request.LastName, Valid: true},
-		Password:  hashedPassword,
-		Email:     request.Email,
+		ID:       uuid.New(),
+		Username: sql.NullString{String: request.Username, Valid: true},
+		Password: hashedPassword,
+		Email:    request.Email,
 	}
 
 	newUser, err := server.queries.CreateUser(context, createUserSqlParams)
@@ -91,7 +97,7 @@ func (server *Server) createUser(context *gin.Context) {
 	if err != nil {
 		pqErr := err.(*pq.Error)
 
-		if pqErr.Code == ("23505") {
+		if pqErr.Code == DuplicateKeyValueViolatesUniqueConstraint {
 			context.JSON(http.StatusForbidden, errorResponse("E-Mail is already in use!", err))
 			return
 		}
@@ -216,19 +222,16 @@ func (server *Server) editUser(context *gin.Context) {
 	}
 
 	updateUserSqlParams := db.UpdateUserParams{
-		ID:        request.ID,
-		Username:  sql.NullString{String: request.Username, Valid: true},
-		Email:     request.Email,
-		FirstName: sql.NullString{String: request.FirstName, Valid: true},
-		LastName:  sql.NullString{String: request.LastName, Valid: true},
-		Password:  userToBeUpdated.Password,
+		ID:       request.ID,
+		Username: sql.NullString{String: request.Username, Valid: true},
+		Email:    request.Email,
+		Password: userToBeUpdated.Password,
 	}
 	err = server.queries.UpdateUser(context, updateUserSqlParams)
 	if err != nil {
 		pqErr := err.(*pq.Error)
 
-		//duplicate key value violates unique constraint "users_email_key"
-		if pqErr.Code == ("23505") {
+		if pqErr.Code == DuplicateKeyValueViolatesUniqueConstraint {
 			context.JSON(http.StatusForbidden, errorResponse("E-Mail is already in use!", err))
 			return
 		}
