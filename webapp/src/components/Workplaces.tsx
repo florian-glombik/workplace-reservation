@@ -5,8 +5,25 @@ import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useAuth } from '../utils/AuthProvider'
 import { useEffect, useState } from 'react'
-import { addDays, endOfDay, format, isBefore, isWithinInterval, startOfDay } from 'date-fns'
-import { Accordion, AccordionDetails, AccordionSummary, Button, TableCell, Typography } from '@mui/material'
+import {
+  addDays,
+  endOfDay,
+  format,
+  isBefore,
+  isThisWeek,
+  isToday,
+  isWeekend,
+  isWithinInterval,
+  startOfDay,
+} from 'date-fns'
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Button,
+  TableCell,
+  Typography,
+} from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import withStyles from '@material-ui/core/styles/withStyles'
 import NoAccountsIcon from '@mui/icons-material/NoAccounts'
@@ -63,10 +80,10 @@ type WorkplacesProps = {
 }
 
 export const Workplaces = ({
-                             startOfTheWeek,
-                             endOfTheWeek,
-                             defaultExpanded,
-                           }: WorkplacesProps) => {
+  startOfTheWeek,
+  endOfTheWeek,
+  defaultExpanded,
+}: WorkplacesProps) => {
   // @ts-ignore
   const token = useAuth().jwtToken
   // @ts-ignore
@@ -100,7 +117,7 @@ export const Workplaces = ({
 
   function getConflictingReservingUserIfExists(
     dayToCheck: Date,
-    reservations: Reservation[] | null,
+    reservations: Reservation[] | null
   ): Reservation | null {
     if (!reservations) {
       return null
@@ -145,7 +162,7 @@ export const Workplaces = ({
     axios
       .delete(
         BASE_URL + 'workplace/reservations/' + reservation.ID,
-        requestConfig,
+        requestConfig
       )
       .then(() => {
         updateWorkplaces()
@@ -164,7 +181,7 @@ export const Workplaces = ({
     isReserved: boolean,
     isReservedByCurrentUser: boolean,
     isInThePast: boolean,
-    reservation: Reservation | null,
+    reservation: Reservation | null
   ): string {
     if (!isReserved) {
       return 'Reserve'
@@ -181,7 +198,7 @@ export const Workplaces = ({
     workplaceId: string,
     userId: string,
     startReservation: Date,
-    endReservation: Date,
+    endReservation: Date
   ) {
     const data = {
       workplaceId: workplaceId,
@@ -206,7 +223,9 @@ export const Workplaces = ({
   return (
     <Accordion defaultExpanded={defaultExpanded}>
       <IconLeftAccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography>
+        <Typography
+          sx={{ fontWeight: isThisWeek(startOfTheWeek) ? 'bold' : '' }}
+        >
           {format(startOfTheWeek, ACCORDION_LABEL_DATE_FORMAT)} -{' '}
           {format(endOfTheWeek, ACCORDION_LABEL_DATE_FORMAT)}
         </Typography>
@@ -227,21 +246,35 @@ export const Workplaces = ({
           <TableBody>
             {weekDays.map((day, index) => {
               const currentDay = addDays(startOfTheWeek, index)
+              const dayIsToday = isToday(currentDay)
+              const dayIsWeekend = isWeekend(currentDay)
+
+              const weekendStyle = { backgroundColor: '#e5e7df', opacity: 0.85 }
 
               return (
-                <TableRow key={`worplace-reservations-${day}`}>
-                  <TableCell>{currentDay.getDate()}</TableCell>
-                  <TableCell>{day}</TableCell>
+                <TableRow
+                  key={`worplace-reservations-${day}`}
+                  style={dayIsWeekend ? weekendStyle : {}}
+                >
+                  <TableCell sx={{ fontWeight: dayIsToday ? 'bold' : '' }}>
+                    {currentDay.getDate()}
+                  </TableCell>
+                  <TableCell sx={{ fontWeight: dayIsToday ? 'bold' : '' }}>
+                    {day}
+                  </TableCell>
                   {workplaces.map((workplace) => {
                     const reservation: Reservation | null =
                       getConflictingReservingUserIfExists(
                         currentDay,
-                        workplace.reservations,
+                        workplace.reservations
                       )
                     const startOfCurrentDay = startOfDay(currentDay)
                     const endOfCurrentDay = endOfDay(currentDay)
 
-                    const isDayInThePast: boolean = isBefore(startOfCurrentDay, startOfDay(Date.now()))
+                    const isDayInThePast: boolean = isBefore(
+                      startOfCurrentDay,
+                      startOfDay(Date.now())
+                    )
 
                     const isReserved: boolean = reservation != null
                     const isReservedByCurrentUser =
@@ -251,34 +284,41 @@ export const Workplaces = ({
                     return (
                       <TableCell key={`reservation-${day}-${workplace.id}`}>
                         <Button
-                          variant={isReserved || displayNoUserIcon ? 'outlined' : 'contained'}
-                          disabled={isDayInThePast || (isReserved && !isReservedByCurrentUser)}
+                          variant={
+                            isReserved || displayNoUserIcon
+                              ? 'outlined'
+                              : 'contained'
+                          }
+                          disabled={
+                            isDayInThePast ||
+                            (isReserved && !isReservedByCurrentUser)
+                          }
                           color={isReserved ? 'error' : 'success'}
                           onClick={
                             isReservedByCurrentUser
                               ? () => cancelReservation(reservation!)
                               : () =>
-                                reserveWorkplace(
-                                  workplace.id,
-                                  loggedInUser.id,
-                                  startOfCurrentDay,
-                                  endOfCurrentDay,
-                                )
+                                  reserveWorkplace(
+                                    workplace.id,
+                                    loggedInUser.id,
+                                    startOfCurrentDay,
+                                    endOfCurrentDay
+                                  )
                           }
                         >
                           {displayNoUserIcon && (
                             <NoAccountsIcon></NoAccountsIcon>
                           )}
-                          {!displayNoUserIcon &&
-                            (<Typography noWrap>
+                          {!displayNoUserIcon && (
+                            <Typography noWrap>
                               {getButtonLabel(
                                 isReserved,
                                 isReservedByCurrentUser,
                                 isDayInThePast,
-                                reservation,
+                                reservation
                               )}
-                            </Typography>)
-                          }
+                            </Typography>
+                          )}
                         </Button>
                       </TableCell>
                     )
