@@ -107,13 +107,12 @@ export const Workplaces = ({
       },
     }
 
-    await axios
-      .get(BASE_URL + 'workplaces', requestConfig)
-      .then((response) => response.data)
-      .then((data) => {
-        setWorkplaces(data)
-      })
-      .catch((error) => toast.error(getDisplayResponseMessage(error)))
+    try {
+      const workplaces = await axios.get(BASE_URL + 'workplaces', requestConfig)
+      setWorkplaces(workplaces.data)
+    } catch (error) {
+      toast.error(getDisplayResponseMessage(error))
+    }
   }
 
   function getConflictingReservingUserIfExists(
@@ -147,7 +146,7 @@ export const Workplaces = ({
     return null
   }
 
-  function cancelReservation(reservation: Reservation) {
+  async function cancelReservation(reservation: Reservation) {
     const requestConfig = {
       headers: {
         Authorization: 'Bearer ' + token,
@@ -160,15 +159,15 @@ export const Workplaces = ({
       },
     }
 
-    axios
-      .delete(
+    try {
+      await axios.delete(
         BASE_URL + 'workplace/reservations/' + reservation.ID,
         requestConfig
       )
-      .then(() => {
-        updateWorkplaces()
-      })
-      .catch((error) => toast.error(getDisplayResponseMessage(error)))
+      updateWorkplaces()
+    } catch (error) {
+      toast.error(getDisplayResponseMessage(error))
+    }
   }
 
   function getReservingUsername(reservation: Reservation): string {
@@ -195,7 +194,7 @@ export const Workplaces = ({
     return getReservingUsername(reservation!)
   }
 
-  function reserveWorkplace(
+  async function reserveWorkplace(
     workplaceId: string,
     userId: string,
     startReservation: Date,
@@ -213,12 +212,12 @@ export const Workplaces = ({
       },
     }
 
-    axios
-      .post(BASE_URL + 'workplace/reserve', data, requestConfig)
-      .then(() => {
-        updateWorkplaces()
-      })
-      .catch((error) => toast.error(getDisplayResponseMessage(error)))
+    try {
+      await axios.post(BASE_URL + 'workplace/reserve', data, requestConfig)
+      updateWorkplaces()
+    } catch (error) {
+      toast.error(getDisplayResponseMessage(error))
+    }
   }
 
   return (
