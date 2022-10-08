@@ -177,7 +177,7 @@ func calculateSingleReservationsFromReoccurringReservations(server *Server, cont
 			return nil, err
 		}
 
-		for currentStartDate.Before(reoccurringReservation.RepeatUntil) {
+		for {
 			currentStartDate = currentStartDate.AddDate(0, 0, intervalInDays)
 			currentEndDate = currentEndDate.AddDate(0, 0, intervalInDays)
 
@@ -200,6 +200,10 @@ func calculateSingleReservationsFromReoccurringReservations(server *Server, cont
 					Email:                    user.Email,
 					ReoccurringReservationID: reoccurringReservation.ID_2,
 				})
+			}
+
+			if currentStartDate.Before(reoccurringReservation.RepeatUntil) {
+				break
 			}
 		}
 	}
