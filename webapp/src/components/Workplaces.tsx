@@ -27,6 +27,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import withStyles from '@material-ui/core/styles/withStyles'
 import NoAccountsIcon from '@mui/icons-material/NoAccounts'
+import { WEEK_STARTS_ON_MONDAY } from './WorkplaceAccordions'
 
 const IconLeftAccordionSummary = withStyles({
   expandIcon: {
@@ -224,7 +225,11 @@ export const Workplaces = ({
     <Accordion defaultExpanded={defaultExpanded}>
       <IconLeftAccordionSummary expandIcon={<ExpandMoreIcon />}>
         <Typography
-          sx={{ fontWeight: isThisWeek(startOfTheWeek) ? 'bold' : '' }}
+          sx={{
+            fontWeight: isThisWeek(startOfTheWeek, WEEK_STARTS_ON_MONDAY)
+              ? 'bold'
+              : '',
+          }}
         >
           {format(startOfTheWeek, ACCORDION_LABEL_DATE_FORMAT)} -{' '}
           {format(endOfTheWeek, ACCORDION_LABEL_DATE_FORMAT)}
