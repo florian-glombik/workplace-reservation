@@ -15,9 +15,9 @@ import (
 
 // User Roles
 
-const Admin = "admin"
-const StaticReservationPlanner = "static-reservation-planner"
-const User = "user"
+const admin = "admin"
+const staticReservationPlanner = "static-reservation-planner"
+const user = "user"
 
 const ErrRequestCouldNotBeParsed = "The request could not be parsed."
 const UnexpectedErrContactMessage = "An unexpected error has occurred. Please contact CONTACT_PERSON to contribute in resolving the problem as soon as possible."
@@ -34,6 +34,7 @@ type userWithoutHashedPassword struct {
 	ID       uuid.UUID      `json:"id"`
 	Email    string         `json:"email"`
 	Username sql.NullString `json:"username"`
+	Role     string         `json:"role"`
 }
 
 func getUserResponse(user db.User) userWithoutHashedPassword {
@@ -41,6 +42,7 @@ func getUserResponse(user db.User) userWithoutHashedPassword {
 		ID:       user.ID,
 		Username: user.Username,
 		Email:    user.Email,
+		Role:     user.Role,
 	}
 }
 
@@ -52,8 +54,6 @@ func getUserResponse(user db.User) userWithoutHashedPassword {
 // @Param        email   	path      string  true	 "TODO"
 // @Param        password   path      string  true 	 "TODO"
 // @Param        username   path      string  false  "TODO"
-// @Param        firstName  path      string  false  "TODO"
-// @Param        lastName   path      string  false  "TODO"
 // @Description  get string by ID
 // @Router       /users [post]
 func (server *Server) createUser(context *gin.Context) {
@@ -78,12 +78,12 @@ func (server *Server) createUser(context *gin.Context) {
 		return
 	}
 
-	//TODO how to insert null in database?
 	createUserSqlParams := db.CreateUserParams{
 		ID:       uuid.New(),
 		Username: sql.NullString{String: request.Username, Valid: true},
 		Password: hashedPassword,
 		Email:    request.Email,
+		Role:     user,
 	}
 
 	newUser, err := server.queries.CreateUser(context, createUserSqlParams)
@@ -173,7 +173,13 @@ func (server *Server) loginUser(context *gin.Context) {
 		return
 	}
 
-	accessToken, err := server.tokenGenerator.CreateToken(user.ID, time.Minute*60)
+	role, err := server.queries.GetUserRoleById(context, user.ID)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		return
+	}
+
+	accessToken, err := server.tokenGenerator.CreateToken(user.ID, time.Minute*60, role)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse("The access token could not be generated.", err))
 		return
@@ -188,12 +194,15 @@ func (server *Server) loginUser(context *gin.Context) {
 }
 
 type editUserRequest struct {
-	ID        uuid.UUID `json:"id" binding:"required"`
-	Email     string    `json:"email" binding:"required,email"`
-	Username  string    `json:"username" binding:"omitempty"`
-	FirstName string    `json:"firstName" binding:"omitempty,alphanum"`
-	LastName  string    `json:"lastName" binding:"omitempty,alphanum"`
-	Password  string    `json:"password" binding:"omitempty,min=3"`
+	ID       uuid.UUID `json:"id" binding:"required"`
+	Email    string    `json:"email" binding:"required,email"`
+	Username string    `json:"username" binding:"omitempty"`
+	Password string    `json:"password" binding:"omitempty,min=3"`
+	Role     string    `json:"role" binding:"omitempty,min=4"`
+}
+
+func isAdmin(context *gin.Context) bool {
+	return context.MustGet(authorizationPayloadKey).(*token.Payload).Role == admin
 }
 
 // EditUser
@@ -209,9 +218,16 @@ func (server *Server) editUser(context *gin.Context) {
 
 	userToBeUpdated, err := server.queries.GetUserById(context, request.ID)
 	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
+
 	accountOfOtherUser := userToBeUpdated.ID != authPayload.UserId
-	if accountOfOtherUser {
+	if accountOfOtherUser && !isAdmin(context) {
 		context.JSON(http.StatusForbidden, errorResponse("You cannot update accounts of other users!", err))
+		return
+	}
+
+	isRoleUpdated := userToBeUpdated.Role != request.Role
+	if isRoleUpdated && !isAdmin(context) {
+		context.JSON(http.StatusForbidden, errorResponse("You are not allowed to update user roles", err))
 		return
 	}
 
@@ -220,6 +236,7 @@ func (server *Server) editUser(context *gin.Context) {
 		Username: sql.NullString{String: request.Username, Valid: true},
 		Email:    request.Email,
 		Password: userToBeUpdated.Password,
+		Role:     request.Role,
 	}
 	err = server.queries.UpdateUser(context, updateUserSqlParams)
 	if err != nil {
