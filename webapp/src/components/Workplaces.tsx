@@ -253,7 +253,7 @@ export const Workplaces = ({
               const dayIsToday = isToday(currentDay)
               const dayIsWeekend = isWeekend(currentDay)
 
-              const weekendStyle = { backgroundColor: '#e5e7df', opacity: 0.85 }
+              const weekendStyle = { opacity: 0.7 }
 
               return (
                 <TableRow
