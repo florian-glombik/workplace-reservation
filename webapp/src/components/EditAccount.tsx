@@ -6,7 +6,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
-import { useAuth } from '../utils/AuthProvider'
+import { Account, useAuth } from '../utils/AuthProvider'
 
 export const EditAccount = () => {
   // @ts-ignore
@@ -18,10 +18,21 @@ export const EditAccount = () => {
     username: user.username.String,
   })
 
+  // const initialValues: Account = {
+  //   id: user.id,
+  //   email: user.email,
+  //   username: user.username,
+  //   role: user.role,
+  // }
+
   const updateChangesMade = () => {
+    console.log('----------')
+    console.log(user.username.String)
+    console.log(details.username)
     setNoChangesMade(
-      user.username == details.username || user.email == details.username
+      user.username == details.username && user.email == details.username
     )
+    console.log({ noChangesMade })
   }
 
   const saveChanges = async (e: any) => {
@@ -48,15 +59,17 @@ export const EditAccount = () => {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
       <Box>
-        <form onSubmit={saveChanges} onChange={updateChangesMade}>
+        <form onSubmit={saveChanges}>
           <h1>Edit Account</h1>
           <Box mt={2}>
             <TextField
               label={'Username'}
               variant={'outlined'}
-              onChange={(e) =>
+              onChange={(e) => {
                 setDetails({ ...details, username: e.target.value })
-              }
+                updateChangesMade()
+                console.log('current value', e.target.value)
+              }}
               fullWidth
               defaultValue={details.username}
               autoFocus
