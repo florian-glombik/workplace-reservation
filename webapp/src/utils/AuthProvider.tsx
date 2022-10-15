@@ -2,17 +2,27 @@ import { createContext, useContext, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocalStorage } from './LocalStorageUtil'
 import { NullString } from '../components/Workplaces'
+import jwtDecode from 'jwt-decode'
 
 //@ts-ignore
 const AuthContext = createContext()
+
+export type Token = {
+  id: string
+  issuedAt: Date
+  expiredAt: Date
+  userId: string
+  role: Role
+}
 
 export type Account = {
   id: string
   email: string
   username: NullString
-  firstName: NullString
-  lastName: NullString
+  role: Role
 }
+
+export type Role = 'user' | 'admin'
 
 export const AuthProvider = ({ children }: any) => {
   const [jwtToken, setJwtToken] = useLocalStorage('jwtToken', null)
@@ -21,6 +31,11 @@ export const AuthProvider = ({ children }: any) => {
 
   const login = async (jwtToken: string, user: Account) => {
     setJwtToken(jwtToken)
+
+    const decodedToken = jwtDecode(jwtToken) as Token
+    user.id = decodedToken.userId
+    user.role = decodedToken.role
+
     setUser(user)
     navigate('/', { replace: true })
   }
@@ -29,6 +44,11 @@ export const AuthProvider = ({ children }: any) => {
     setJwtToken(null)
     setUser(null)
     navigate('/login', { replace: true })
+  }
+
+  function isAdmin(): boolean {
+    const decodedToken = jwtDecode(jwtToken) as Token
+    return decodedToken.role === 'admin'
   }
 
   const value = useMemo(
