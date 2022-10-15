@@ -21,3 +21,7 @@ WHERE id=$1;
 SELECT role
 FROM users
 WHERE id = $1;
+
+-- name: GetAllUsers :many
+SELECT *
+FROM users;

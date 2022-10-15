@@ -3,7 +3,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
-import { useAuth } from '../utils/AuthProvider'
+import { Account, useAuth } from '../utils/AuthProvider'
 import { useEffect, useState } from 'react'
 import {
   addDays,
@@ -78,12 +78,14 @@ type WorkplacesProps = {
   startOfTheWeek: Date
   endOfTheWeek: Date
   defaultExpanded: boolean
+  availableUsers: Account[]
 }
 
 export const Workplaces = ({
   startOfTheWeek,
   endOfTheWeek,
   defaultExpanded,
+  availableUsers,
 }: WorkplacesProps) => {
   // @ts-ignore
   const token = useAuth().jwtToken
@@ -94,6 +96,9 @@ export const Workplaces = ({
   const { isAdmin } = useAuth()
 
   const [workplaces, setWorkplaces] = useState<Workplaces[]>([])
+
+  // @ts-ignore
+  const [userToBeReserved, setUserToBeReserved] = useState(useAuth().user)
 
   useEffect(() => {
     updateWorkplaces()
@@ -114,7 +119,9 @@ export const Workplaces = ({
       const workplaces = await axios.get(BASE_URL + 'workplaces', requestConfig)
       setWorkplaces(workplaces.data)
     } catch (error) {
-      toast.error(getDisplayResponseMessage(error))
+      toast.error(
+        'Could not load workplaces: ' + getDisplayResponseMessage(error)
+      )
     }
   }
 

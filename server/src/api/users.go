@@ -2,6 +2,7 @@ package api
 
 import (
 	"database/sql"
+	"errors"
 	db "github.com/florian-glombik/workplace-reservation/db/sqlc"
 	"github.com/florian-glombik/workplace-reservation/src/token"
 	"github.com/florian-glombik/workplace-reservation/src/util"
@@ -203,6 +204,31 @@ type editUserRequest struct {
 
 func isAdmin(context *gin.Context) bool {
 	return context.MustGet(authorizationPayloadKey).(*token.Payload).Role == admin
+}
+
+// LoadAvailableUsers
+// @Summary
+// @Tags         accounts
+// @Router       /users/all-available [get]
+func (server *Server) loadAvailableUsers(context *gin.Context) {
+	if !isAdmin(context) {
+		err := errors.New("Only admins are allowed to load the profiles of all users")
+		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
+	}
+
+	users, err := server.queries.GetAllUsers(context)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		return
+	}
+
+	var usersWithoutSensitiveInformation []userWithoutHashedPassword
+
+	for _, user := range users {
+		usersWithoutSensitiveInformation = append(usersWithoutSensitiveInformation, getUserResponse(user))
+	}
+
+	context.JSON(http.StatusOK, usersWithoutSensitiveInformation)
 }
 
 // EditUser
