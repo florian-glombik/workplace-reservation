@@ -25,7 +25,7 @@ const WORKPLACE_RESERVATION_BUG_OR_FEATURE_REQUEST_LINK =
 
 export const Header = () => {
   //@ts-ignore
-  const { logout, user } = useAuth()
+  const { logout, user, isAdmin } = useAuth()
   const [anchorEl, setAnchorEl] = useState(null)
   const navigate = useNavigate()
 
@@ -123,9 +123,11 @@ export const Header = () => {
                 onClose={handleClose}
               >
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                <MenuItem onClick={handleFixedOccupancySchedule}>
-                  Fixed occupancy schedule
-                </MenuItem>
+                {isAdmin && (
+                  <MenuItem onClick={handleFixedOccupancySchedule}>
+                    Fixed occupancy schedule
+                  </MenuItem>
+                )}
                 <MenuItem onClick={handleReoccurringReservations}>
                   Reoccurring Reservations
                 </MenuItem>
