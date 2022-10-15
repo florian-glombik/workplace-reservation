@@ -48,6 +48,8 @@ export const AuthProvider = ({ children }: any) => {
 
   function isAdmin(): boolean {
     const decodedToken = jwtDecode(jwtToken) as Token
+
+    console.log(decodedToken.role === 'admin')
     return decodedToken.role === 'admin'
   }
 
@@ -58,6 +60,7 @@ export const AuthProvider = ({ children }: any) => {
       login,
       logout,
       setUser,
+      isAdmin,
     }),
     [jwtToken, user]
   )
