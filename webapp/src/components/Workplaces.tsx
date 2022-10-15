@@ -90,6 +90,9 @@ export const Workplaces = ({
   // @ts-ignore
   const loggedInUser = useAuth().user
 
+  // @ts-ignore
+  const { isAdmin } = useAuth()
+
   const [workplaces, setWorkplaces] = useState<Workplaces[]>([])
 
   useEffect(() => {
@@ -295,11 +298,11 @@ export const Workplaces = ({
                           }
                           disabled={
                             isDayInThePast ||
-                            (isReserved && !isReservedByCurrentUser)
+                            (isReserved && !isReservedByCurrentUser && !isAdmin)
                           }
                           color={isReserved ? 'error' : 'success'}
                           onClick={
-                            isReservedByCurrentUser
+                            isReservedByCurrentUser || (isReserved && isAdmin)
                               ? () => cancelReservation(reservation!)
                               : () =>
                                   reserveWorkplace(

@@ -233,7 +233,7 @@ func deleteReservation(server *Server, context *gin.Context, reservationId uuid.
 
 	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
 	reservationOfOtherUser := reservationToBeDeleted.ReservingUserID != authPayload.UserId
-	if reservationOfOtherUser {
+	if reservationOfOtherUser && !isAdmin(context) {
 		err := errors.New("you can only cancel your own reservations")
 		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
 		return nil, err
