@@ -103,6 +103,13 @@ func (server *Server) getActiveRecurringReservationsOfAllUsers(context *gin.Cont
 		return
 	}
 
+	recurringReservations, err := server.queries.ActiveRecurringReservationsOfAllUsers(context)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		return
+	}
+
+	context.JSON(http.StatusOK, recurringReservations)
 }
 
 // AddReoccurringReservation
