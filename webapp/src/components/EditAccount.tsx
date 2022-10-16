@@ -6,7 +6,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
-import { Account, useAuth } from '../utils/AuthProvider'
+import { useAuth } from '../utils/AuthProvider'
 
 export const EditAccount = () => {
   // @ts-ignore
@@ -16,6 +16,7 @@ export const EditAccount = () => {
     id: user.id,
     email: user.email,
     username: user.username.String,
+    role: user.role,
   })
 
   // const initialValues: Account = {
