@@ -42,12 +42,14 @@ export const ActiveRecurringReservations = () => {
       },
     }
 
-    axios
-      .get(BASE_URL + 'reservations/reoccurring', requestConfig)
-      .then((response) => response.data)
-      .then((data) => {
-        setActiveRecurringReservations(data)
-      })
+    try {
+      const recurringReservations = (
+        await axios.get(BASE_URL + 'reservations/reoccurring', requestConfig)
+      ).data
+      setActiveRecurringReservations(recurringReservations)
+    } catch (error) {
+      toast.error(getDisplayResponseMessage(error))
+    }
   }
 
   const deleteReoccurringReservation = async (
@@ -58,13 +60,16 @@ export const ActiveRecurringReservations = () => {
         Authorization: 'Bearer ' + jwtToken,
       },
     }
-    axios
-      .delete(
+
+    try {
+      await axios.delete(
         BASE_URL + 'reservations/reoccurring/' + reoccurringReservationId,
         requestConfig
       )
-      .then(() => toast.success('Reoccurring reservation was deleted!'))
-      .catch((error) => toast.error(getDisplayResponseMessage(error)))
+      toast.success('Reoccurring reservation was deleted!')
+    } catch (error) {
+      toast.error(getDisplayResponseMessage(error))
+    }
   }
 
   // TODO use table instead
