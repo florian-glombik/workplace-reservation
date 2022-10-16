@@ -296,8 +296,7 @@ export const Workplaces = ({
                       reservation?.ReservingUserID === loggedInUser.id
                     const displayAdminSelection = isAdmin && !isReserved
 
-                    const displayNoUserIcon =
-                      !isReserved && isDayInThePast && !displayAdminSelection
+                    const displayNoUserIcon = !isReserved && isDayInThePast
 
                     return (
                       <TableCell key={`reservation-${day}-${workplace.id}`}>
@@ -332,6 +331,10 @@ export const Workplaces = ({
                                 <MenuItem
                                   value={user.id}
                                   key={`reserving-user-selection-${day}-${workplace.id}-${user.id}`}
+                                  sx={{
+                                    fontWeight:
+                                      user.id === loggedInUser.id ? 'bold' : '',
+                                  }}
                                 >
                                   {user.username.String
                                     ? user.username.String
@@ -341,12 +344,12 @@ export const Workplaces = ({
                             </Select>
                           </FormControl>
                         )}
-                        {displayNoUserIcon && (
+                        {!displayAdminSelection && displayNoUserIcon && (
                           <NoAccountsIcon
                             sx={{ opacity: 0.3 }}
                           ></NoAccountsIcon>
                         )}
-                        {!displayNoUserIcon && (
+                        {!displayAdminSelection && !displayNoUserIcon && (
                           <Button
                             variant={
                               isReserved || displayNoUserIcon
