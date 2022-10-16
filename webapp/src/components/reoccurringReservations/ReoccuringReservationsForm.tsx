@@ -49,7 +49,7 @@ export enum Weekday {
   Saturday,
 }
 
-type ReoccurringReservationRequest = {
+type RecurringReservationRequest = {
   workplaceId: string
   intervalInDays: number
   reservationStartDay: string
@@ -99,7 +99,7 @@ export function getWorkplaceName(workplace: WorkplaceWithName): string {
   return workplace?.Name?.String ? workplace.Name.String : workplace.ID
 }
 
-export const ReoccurringReservationsForm = () => {
+export const RecurringReservationsForm = () => {
   // @ts-ignore
   const { jwtToken } = useAuth()
   const [open, setOpen] = useState(false)
@@ -157,7 +157,7 @@ export const ReoccurringReservationsForm = () => {
     setRepetitionInterval(event.target.value as string)
   }
 
-  const addReoccurringReservation = async () => {
+  const addRecurringReservation = async () => {
     const requestConfig: AxiosRequestConfig = {
       headers: {
         Authorization: 'Bearer ' + jwtToken,
@@ -169,7 +169,7 @@ export const ReoccurringReservationsForm = () => {
 
     const reservationStartDay = nextWeekday(dayOfTheWeek, dateRange.startDate!)
 
-    const requestData: ReoccurringReservationRequest = {
+    const requestData: RecurringReservationRequest = {
       workplaceId: selectedWorkplaceId,
       intervalInDays: repetitionInterval,
       // @ts-ignore
@@ -277,7 +277,7 @@ export const ReoccurringReservationsForm = () => {
       </FormControl>
 
       <IconButton
-        onClick={addReoccurringReservation}
+        onClick={addRecurringReservation}
         disabled={disableSubmitButton}
         color={'primary'}
       >

@@ -11,7 +11,7 @@ import { ToastContainer } from 'react-toastify'
 import { WorkplaceAccordions } from './components/WorkplaceAccordions'
 import { PageNotFound } from './components/PageNotFound'
 import { EditAccount } from './components/EditAccount'
-import { ReoccurringReservations } from './components/reoccurringReservations/ReoccurringReservations'
+import { RecurringReservations } from './components/reoccurringReservations/RecurringReservations'
 import { FixedOccupancyPlanOverview } from './components/FixedOccupancyPlanOverview'
 
 function App() {
@@ -37,10 +37,10 @@ function App() {
             }
           />
           <Route
-            path={'/reservations/reoccurring'}
+            path={'/reservations/recurring'}
             element={
               <ProtectedRoute>
-                <ReoccurringReservations />
+                <RecurringReservations />
               </ProtectedRoute>
             }
           />

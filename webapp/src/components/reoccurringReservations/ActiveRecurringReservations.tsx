@@ -15,7 +15,7 @@ import { NullString } from '../Workplaces'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 
-type ActiveReoccurringReservation = {
+type ActiveRecurringReservation = {
   ID: string
   IntervalInDays: number
   RepeatedReservationID: string
@@ -25,11 +25,11 @@ type ActiveReoccurringReservation = {
   Workplacename: NullString
 }
 
-export const ActiveReoccurringReservations = () => {
+export const ActiveRecurringReservations = () => {
   // @ts-ignore
   const { jwtToken } = useAuth()
-  const [activeReoccurringReservations, setActiveReoccurringReservations] =
-    useState<ActiveReoccurringReservation[]>([])
+  const [activeRecurringReservations, setActiveRecurringReservations] =
+    useState<ActiveRecurringReservation[]>([])
 
   useEffect(() => {
     updateActiveReoccurringReservations()
@@ -46,7 +46,7 @@ export const ActiveReoccurringReservations = () => {
       .get(BASE_URL + 'reservations/reoccurring', requestConfig)
       .then((response) => response.data)
       .then((data) => {
-        setActiveReoccurringReservations(data)
+        setActiveRecurringReservations(data)
       })
   }
 
@@ -70,9 +70,9 @@ export const ActiveReoccurringReservations = () => {
   // TODO use table instead
   return (
     <Box>
-      {activeReoccurringReservations &&
-        activeReoccurringReservations.map(
-          (reoccurringReservation: ActiveReoccurringReservation) => (
+      {activeRecurringReservations &&
+        activeRecurringReservations.map(
+          (reoccurringReservation: ActiveRecurringReservation) => (
             <Box sx={{ display: 'flex' }} key={reoccurringReservation.ID}>
               <Typography sx={{ m: 2 }}>
                 Workplace:{' '}
@@ -106,7 +106,7 @@ export const ActiveReoccurringReservations = () => {
             </Box>
           )
         )}
-      {!activeReoccurringReservations && (
+      {!activeRecurringReservations && (
         <Typography sx={{ m: 2 }}>
           No active reoccurring reservations
         </Typography>

@@ -49,9 +49,9 @@ export const Header = () => {
     navigate('/fixed-occupancy-plan')
   }
 
-  const handleReoccurringReservations = () => {
+  const handleRecurringReservations = () => {
     handleClose()
-    navigate('/reservations/reoccurring')
+    navigate('/reservations/recurring')
   }
 
   const handleEditAccount = () => {
@@ -128,8 +128,8 @@ export const Header = () => {
                     Fixed occupancy schedule
                   </MenuItem>
                 )}
-                <MenuItem onClick={handleReoccurringReservations}>
-                  Reoccurring Reservations
+                <MenuItem onClick={handleRecurringReservations}>
+                  Recurring Reservations
                 </MenuItem>
                 <MenuItem onClick={handleEditAccount}>Edit account</MenuItem>
                 <MenuItem onClick={handleLinkToRepo}>
