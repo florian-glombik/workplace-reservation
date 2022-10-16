@@ -80,7 +80,12 @@ If you are using GoLand the prettier configuration will look like this: ![goLand
 You will need to install the [prettier plugin](https://plugins.jetbrains.com/plugin/10456-prettier) and restart the GoLand before this selection appears.
 
 ### Server
+
+#### GoLand Database Configuration example
+![goLandDatabaseConfigurationExample.png](goLandDatabaseConfigurationExample.png) <br>
+
 #### Swagger API
+
 https://github.com/swaggo/gin-swagger
 
 execute `swag init` in `server/src`
