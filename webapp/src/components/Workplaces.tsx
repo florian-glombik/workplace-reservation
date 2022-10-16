@@ -308,7 +308,7 @@ export const Workplaces = ({
                             <Select
                               labelId="reserving-user-selection-label"
                               id="reserving-user-selection"
-                              value={undefined}
+                              value={''}
                               onChange={(e) => {
                                 const selectedUser = availableUsers.find(
                                   (user) => user.id === e.target.value

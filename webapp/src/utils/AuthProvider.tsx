@@ -50,6 +50,9 @@ export const AuthProvider = ({ children }: any) => {
   }
 
   function isLoggedInUserAdmin(): boolean {
+    if (!jwtToken) {
+      return false
+    }
     const decodedToken = jwtDecode(jwtToken) as Token
     return decodedToken.role === 'admin'
   }
