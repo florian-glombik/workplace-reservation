@@ -21,6 +21,9 @@ const WEEKS_AFTER_DEFAULT = 4
 export const DAYS_PER_WEEK = 7
 
 export const WorkplaceAccordions = () => {
+  //@ts-ignore
+  const { isAdmin } = useAuth()
+
   const [today] = useState(Date.now())
   const startOfTheWeek = startOfWeek(today, WEEK_STARTS_ON_MONDAY)
   const endOfTheWeek = endOfWeek(today, WEEK_STARTS_ON_MONDAY)
@@ -31,7 +34,9 @@ export const WorkplaceAccordions = () => {
   const [availableUsers, setAvailableUsers] = useState<Account[]>([])
 
   useEffect(() => {
-    loadUsers()
+    if (isAdmin) {
+      loadUsers()
+    }
   }, [])
 
   const loadUsers = async () => {

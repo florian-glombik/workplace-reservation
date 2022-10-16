@@ -27,6 +27,7 @@ export type Role = 'user' | 'admin'
 export const AuthProvider = ({ children }: any) => {
   const [jwtToken, setJwtToken] = useLocalStorage('jwtToken', null)
   const [user, setUser] = useLocalStorage('user', null)
+  const [isAdmin, setIsAdmin] = useLocalStorage('isAdmin', false)
   const navigate = useNavigate()
 
   const login = async (jwtToken: string, user: Account) => {
@@ -37,6 +38,8 @@ export const AuthProvider = ({ children }: any) => {
     user.role = decodedToken.role
 
     setUser(user)
+    setIsAdmin(isLoggedInUserAdmin())
+
     navigate('/', { replace: true })
   }
 
@@ -46,7 +49,7 @@ export const AuthProvider = ({ children }: any) => {
     navigate('/login', { replace: true })
   }
 
-  function isAdmin(): boolean {
+  function isLoggedInUserAdmin(): boolean {
     const decodedToken = jwtDecode(jwtToken) as Token
     return decodedToken.role === 'admin'
   }

@@ -294,9 +294,10 @@ export const Workplaces = ({
                     const isReserved: boolean = reservation != null
                     const isReservedByCurrentUser =
                       reservation?.ReservingUserID === loggedInUser.id
-                    const displayNoUserIcon = !isReserved && isDayInThePast
-
                     const displayAdminSelection = isAdmin && !isReserved
+
+                    const displayNoUserIcon =
+                      !isReserved && isDayInThePast && !displayAdminSelection
 
                     return (
                       <TableCell key={`reservation-${day}-${workplace.id}`}>
@@ -340,7 +341,12 @@ export const Workplaces = ({
                             </Select>
                           </FormControl>
                         )}
-                        {!displayAdminSelection && (
+                        {displayNoUserIcon && (
+                          <NoAccountsIcon
+                            sx={{ opacity: 0.3 }}
+                          ></NoAccountsIcon>
+                        )}
+                        {!displayNoUserIcon && (
                           <Button
                             variant={
                               isReserved || displayNoUserIcon
@@ -366,19 +372,14 @@ export const Workplaces = ({
                                     )
                             }
                           >
-                            {displayNoUserIcon && (
-                              <NoAccountsIcon></NoAccountsIcon>
-                            )}
-                            {!displayNoUserIcon && (
-                              <Typography noWrap>
-                                {getButtonLabel(
-                                  isReserved,
-                                  isReservedByCurrentUser,
-                                  isDayInThePast,
-                                  reservation
-                                )}
-                              </Typography>
-                            )}
+                            <Typography noWrap>
+                              {getButtonLabel(
+                                isReserved,
+                                isReservedByCurrentUser,
+                                isDayInThePast,
+                                reservation
+                              )}
+                            </Typography>
                           </Button>
                         )}
                       </TableCell>
