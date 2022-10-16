@@ -124,7 +124,7 @@ export const Header = () => {
               >
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 {isAdmin && (
-                  <MenuItem onClick={handleFixedOccupancySchedule}>
+                  <MenuItem onClick={handleFixedOccupancySchedule} disabled>
                     Fixed occupancy schedule
                   </MenuItem>
                 )}
