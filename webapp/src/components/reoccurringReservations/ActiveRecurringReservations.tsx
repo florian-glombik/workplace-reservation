@@ -30,12 +30,13 @@ type ActiveRecurringReservation = {
   RepeatUntil: string
   StartDate: string
   ReservedWorkplaceID: string
-  Workplacename: NullString
+  WorkplaceName: NullString
+  ReservingUserId?: string
 }
 
 export const ActiveRecurringReservations = () => {
   // @ts-ignore
-  const { jwtToken } = useAuth()
+  const { jwtToken, isAdmin } = useAuth()
   const [activeRecurringReservations, setActiveRecurringReservations] =
     useState<ActiveRecurringReservation[]>([])
 
@@ -51,9 +52,18 @@ export const ActiveRecurringReservations = () => {
     }
 
     try {
-      const recurringReservations = (
-        await axios.get(BASE_URL + 'reservations/reoccurring', requestConfig)
-      ).data
+      let requestUrl = BASE_URL
+      if (isAdmin) {
+        requestUrl += 'reservations/recurring/all-users'
+      } else {
+        requestUrl += 'reservations/reoccurring'
+      }
+
+      const recurringReservations = (await axios.get(requestUrl, requestConfig))
+        .data
+
+      console.log(recurringReservations)
+
       setActiveRecurringReservations(recurringReservations)
     } catch (error) {
       toast.error(getDisplayResponseMessage(error))
@@ -100,7 +110,7 @@ export const ActiveRecurringReservations = () => {
                   <TableCell>
                     {getWorkplaceName({
                       ID: recurringReservation.ReservedWorkplaceID,
-                      Name: recurringReservation.Workplacename,
+                      Name: recurringReservation.WorkplaceName,
                     })}
                   </TableCell>
                   <TableCell>
