@@ -127,14 +127,17 @@ export const RecurringReservationsForm = () => {
         Authorization: 'Bearer ' + jwtToken,
       },
     }
-    axios
-      .get(BASE_URL + 'workplaces/names', requestConfig)
-      .then((response) => response.data)
-      .then((data) => {
-        setWorkplaces(data)
-        setDefaultWorkplace(data)
-      })
-      .catch((error) => toast.error(getDisplayResponseMessage(error)))
+
+    try {
+      const response = (
+        await axios.get(BASE_URL + 'workplaces/names', requestConfig)
+      ).data
+
+      setWorkplaces(response)
+      setDefaultWorkplace(response)
+    } catch (error) {
+      toast.error(getDisplayResponseMessage(error))
+    }
   }
 
   const setDefaultWorkplace = (workplaces: WorkplaceWithName[]) => {
@@ -185,12 +188,16 @@ export const RecurringReservationsForm = () => {
       ),
     }
 
-    axios
-      .post(BASE_URL + 'reservations/reoccurring', requestData, requestConfig)
-      .then(() =>
-        toast.success('Reoccurring reservation was successfully created!')
+    try {
+      await axios.post(
+        BASE_URL + 'reservations/reoccurring',
+        requestData,
+        requestConfig
       )
-      .catch((error) => toast.error(getDisplayResponseMessage(error)))
+      toast.success('Recurring reservation was successfully created!')
+    } catch (error) {
+      toast.error(getDisplayResponseMessage(error))
+    }
 
     // TODO update list of loaded reservations
   }
