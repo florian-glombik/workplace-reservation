@@ -21,6 +21,10 @@ import {
   AccordionDetails,
   AccordionSummary,
   Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   TableCell,
   Typography,
 } from '@mui/material'
@@ -96,9 +100,6 @@ export const Workplaces = ({
   const { isAdmin } = useAuth()
 
   const [workplaces, setWorkplaces] = useState<Workplaces[]>([])
-
-  // @ts-ignore
-  const [userToBeReserved, setUserToBeReserved] = useState(useAuth().user)
 
   useEffect(() => {
     updateWorkplaces()
@@ -295,45 +296,91 @@ export const Workplaces = ({
                       reservation?.ReservingUserID === loggedInUser.id
                     const displayNoUserIcon = !isReserved && isDayInThePast
 
+                    const displayAdminSelection = isAdmin && !isReserved
+
                     return (
                       <TableCell key={`reservation-${day}-${workplace.id}`}>
-                        <Button
-                          variant={
-                            isReserved || displayNoUserIcon
-                              ? 'outlined'
-                              : 'contained'
-                          }
-                          disabled={
-                            isDayInThePast ||
-                            (isReserved && !isReservedByCurrentUser && !isAdmin)
-                          }
-                          color={isReserved ? 'error' : 'success'}
-                          onClick={
-                            isReservedByCurrentUser || (isReserved && isAdmin)
-                              ? () => cancelReservation(reservation!)
-                              : () =>
-                                  reserveWorkplace(
-                                    workplace.id,
-                                    loggedInUser.id,
-                                    startOfCurrentDay,
-                                    endOfCurrentDay
-                                  )
-                          }
-                        >
-                          {displayNoUserIcon && (
-                            <NoAccountsIcon></NoAccountsIcon>
-                          )}
-                          {!displayNoUserIcon && (
-                            <Typography noWrap>
-                              {getButtonLabel(
-                                isReserved,
-                                isReservedByCurrentUser,
-                                isDayInThePast,
-                                reservation
-                              )}
-                            </Typography>
-                          )}
-                        </Button>
+                        {displayAdminSelection && (
+                          <FormControl fullWidth>
+                            <InputLabel id="reserving-user-selection-label">
+                              Reserving user
+                            </InputLabel>
+                            <Select
+                              labelId="reserving-user-selection-label"
+                              id="reserving-user-selection"
+                              value={undefined}
+                              onChange={(e) => {
+                                const selectedUser = availableUsers.find(
+                                  (user) => user.id === e.target.value
+                                )
+
+                                if (!selectedUser) {
+                                  toast('Error on reserving user selection')
+                                  return
+                                }
+
+                                reserveWorkplace(
+                                  workplace.id,
+                                  selectedUser.id,
+                                  startOfCurrentDay,
+                                  endOfCurrentDay
+                                )
+                              }}
+                            >
+                              {availableUsers.map((user: Account) => (
+                                <MenuItem
+                                  value={user.id}
+                                  key={`reserving-user-selection-${day}-${workplace.id}-${user.id}`}
+                                >
+                                  {user.username.String
+                                    ? user.username.String
+                                    : user.email}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        )}
+                        {!displayAdminSelection && (
+                          <Button
+                            variant={
+                              isReserved || displayNoUserIcon
+                                ? 'outlined'
+                                : 'contained'
+                            }
+                            disabled={
+                              (isDayInThePast && !isAdmin) ||
+                              (isReserved &&
+                                !isReservedByCurrentUser &&
+                                !isAdmin)
+                            }
+                            color={isReserved ? 'error' : 'success'}
+                            onClick={
+                              isReservedByCurrentUser || (isReserved && isAdmin)
+                                ? () => cancelReservation(reservation!)
+                                : () =>
+                                    reserveWorkplace(
+                                      workplace.id,
+                                      loggedInUser.id,
+                                      startOfCurrentDay,
+                                      endOfCurrentDay
+                                    )
+                            }
+                          >
+                            {displayNoUserIcon && (
+                              <NoAccountsIcon></NoAccountsIcon>
+                            )}
+                            {!displayNoUserIcon && (
+                              <Typography noWrap>
+                                {getButtonLabel(
+                                  isReserved,
+                                  isReservedByCurrentUser,
+                                  isDayInThePast,
+                                  reservation
+                                )}
+                              </Typography>
+                            )}
+                          </Button>
+                        )}
                       </TableCell>
                     )
                   })}
