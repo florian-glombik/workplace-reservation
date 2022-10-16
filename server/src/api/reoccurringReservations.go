@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	db "github.com/florian-glombik/workplace-reservation/db/sqlc"
 	"github.com/florian-glombik/workplace-reservation/src/token"
 	"github.com/gin-gonic/gin"
@@ -82,13 +83,26 @@ func (server *Server) deleteReoccurringReservation(context *gin.Context) {
 func (server *Server) getActiveReoccurringReservations(context *gin.Context) {
 	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
 
-	reoccurringReservations, err := server.queries.ActiveReoccurringReservationsOfUser(context, authPayload.UserId)
+	recurringReservations, err := server.queries.ActiveReoccurringReservationsOfUser(context, authPayload.UserId)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
 		return
 	}
 
-	context.JSON(http.StatusOK, reoccurringReservations)
+	context.JSON(http.StatusOK, recurringReservations)
+}
+
+// GetReoccurringReservationsOfAllUsers
+// @Summary      Returns reoccurring reservations of all users
+// @Tags         reservation
+// @Router       /reservations/recurring/all-users [get]
+func (server *Server) getActiveRecurringReservationsOfAllUsers(context *gin.Context) {
+	if !isAdmin(context) {
+		err := errors.New("You are not allowed to view the recurring reservations of all users!")
+		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
+		return
+	}
+
 }
 
 // AddReoccurringReservation

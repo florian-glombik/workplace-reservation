@@ -16,6 +16,15 @@ FROM (SELECT activeReoccuringReservations.*, reservationsOfUser.start_date, rese
          JOIN workplaces
               ON workplaces.id = reoccurringReservationsWithStartDate.reserved_workplace_id;
 
+-- name: ActiveReoccurringReservationsOfAllUsers :many
+SELECT reoccurringReservationsWithStartDate.*, workplaces.name AS workplaceName
+FROM (SELECT activeReoccuringReservations.*, reservationsOfUser.start_date, reservationsOfUser.reserved_workplace_id
+      FROM (SELECT *
+            FROM reoccurring_reservations
+            WHERE repeat_until >= (SELECT NOW())) AS test) AS activeReoccuringReservations
+         JOIN workplaces
+              ON workplaces.id = activeReoccuringReservations.reserved_workplace_id;
+
 -- name: GetReoccurringReservationByRepeatedReservationId :one
 SELECT *
 FROM reoccurring_reservations

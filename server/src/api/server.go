@@ -86,6 +86,8 @@ func (server *Server) setupRouter() {
 	authRoutes.GET("/reservations/reoccurring", server.getActiveReoccurringReservations)
 	authRoutes.DELETE("/reservations/reoccurring/:reoccurring-reservation-id", server.deleteReoccurringReservation)
 
+	authRoutes.GET("/reservations/recurring/all-users", server.getActiveRecurringReservationsOfAllUsers)
+
 	router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	server.router = router
