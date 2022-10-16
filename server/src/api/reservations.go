@@ -207,7 +207,7 @@ func deleteReservation(server *Server, context *gin.Context, reservationId uuid.
 			}
 			reservedWorkplaceId := uuid.UUID(parsedWorkplaceId)
 
-			if now.After(endDate) {
+			if now.After(endDate) && !isAdmin(context) {
 				err := errors.New("you can not cancel reservations that are in the past")
 				context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
 				return nil, err
@@ -225,7 +225,7 @@ func deleteReservation(server *Server, context *gin.Context, reservationId uuid.
 		}
 	}
 
-	if now.After(reservationToBeDeleted.EndDate) {
+	if now.After(reservationToBeDeleted.EndDate) && !isAdmin(context) {
 		err := errors.New("you can not cancel reservations that are in the past")
 		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
 		return nil, err
