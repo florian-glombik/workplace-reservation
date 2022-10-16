@@ -1,4 +1,11 @@
-import { Box, IconButton, Typography } from '@mui/material'
+import {
+  Box,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  Typography,
+} from '@mui/material'
 import { useEffect, useState } from 'react'
 import axios, { AxiosRequestConfig } from 'axios'
 import { useAuth } from '../../utils/AuthProvider'
@@ -14,6 +21,7 @@ import { getDay, parseISO } from 'date-fns'
 import { NullString } from '../Workplaces'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
+import { TableHead, TableRow } from '@material-ui/core'
 
 type ActiveRecurringReservation = {
   ID: string
@@ -72,45 +80,56 @@ export const ActiveRecurringReservations = () => {
     }
   }
 
-  // TODO use table instead
   return (
     <Box>
-      {activeRecurringReservations &&
-        activeRecurringReservations.map(
-          (reoccurringReservation: ActiveRecurringReservation) => (
-            <Box sx={{ display: 'flex' }} key={reoccurringReservation.ID}>
-              <Typography sx={{ m: 2 }}>
-                Workplace:{' '}
-                {getWorkplaceName({
-                  ID: reoccurringReservation.ReservedWorkplaceID,
-                  Name: reoccurringReservation.Workplacename,
-                })}
-              </Typography>
-              <Typography sx={{ m: 2 }}>
-                Weekday:{' '}
-                {Weekday[getDay(parseISO(reoccurringReservation.StartDate))]}
-              </Typography>
-              <Typography sx={{ m: 2 }}>
-                Repetition Interval:{' '}
-                {RepetitionInterval[reoccurringReservation.IntervalInDays]}
-              </Typography>
-              <Typography sx={{ m: 2 }}>
-                Timespan:{' '}
-                {convertDateRangeToString({
-                  startDate: parseISO(reoccurringReservation.StartDate),
-                  endDate: parseISO(reoccurringReservation.RepeatUntil),
-                })}
-              </Typography>
-              <IconButton
-                onClick={() =>
-                  deleteReoccurringReservation(reoccurringReservation.ID)
-                }
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Box>
-          )
-        )}
+      {activeRecurringReservations && (
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Workplace</TableCell>
+              <TableCell>Weekday</TableCell>
+              <TableCell>Repetition interval</TableCell>
+              <TableCell>Timespan</TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {activeRecurringReservations.map(
+              (recurringReservation: ActiveRecurringReservation) => (
+                <TableRow key={recurringReservation.ID}>
+                  <TableCell>
+                    {getWorkplaceName({
+                      ID: recurringReservation.ReservedWorkplaceID,
+                      Name: recurringReservation.Workplacename,
+                    })}
+                  </TableCell>
+                  <TableCell>
+                    {Weekday[getDay(parseISO(recurringReservation.StartDate))]}
+                  </TableCell>
+                  <TableCell>
+                    {RepetitionInterval[recurringReservation.IntervalInDays]}
+                  </TableCell>
+                  <TableCell>
+                    {convertDateRangeToString({
+                      startDate: parseISO(recurringReservation.StartDate),
+                      endDate: parseISO(recurringReservation.RepeatUntil),
+                    })}
+                  </TableCell>
+                  <TableCell>
+                    <IconButton
+                      onClick={() =>
+                        deleteReoccurringReservation(recurringReservation.ID)
+                      }
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              )
+            )}
+          </TableBody>
+        </Table>
+      )}
       {!activeRecurringReservations && (
         <Typography sx={{ m: 2 }}>
           No active reoccurring reservations
