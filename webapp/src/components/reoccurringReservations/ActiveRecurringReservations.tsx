@@ -8,7 +8,7 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import axios, { AxiosRequestConfig } from 'axios'
-import { isAdmin, useAuth } from '../../utils/AuthProvider'
+import { Account, isAdmin, useAuth } from '../../utils/AuthProvider'
 import { BASE_URL } from '../../config'
 import DeleteIcon from '@mui/icons-material/Delete'
 import {
@@ -22,6 +22,7 @@ import { NullString } from '../Workplaces'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 import { TableHead, TableRow } from '@material-ui/core'
+import { getUserDisplayName } from '../Header'
 
 type ActiveRecurringReservation = {
   ID: string
@@ -31,7 +32,7 @@ type ActiveRecurringReservation = {
   StartDate: string
   ReservedWorkplaceID: string
   WorkplaceName: NullString
-  ReservingUserId?: string
+  ReservingUserID?: string
 }
 
 export const ActiveRecurringReservations = () => {
@@ -41,10 +42,10 @@ export const ActiveRecurringReservations = () => {
     useState<ActiveRecurringReservation[]>([])
 
   useEffect(() => {
-    updateActiveReoccurringReservations()
+    updateActiveRecurringReservations()
   }, [])
 
-  const updateActiveReoccurringReservations = async () => {
+  const updateActiveRecurringReservations = async () => {
     const requestConfig: AxiosRequestConfig = {
       headers: {
         Authorization: 'Bearer ' + jwtToken,
@@ -56,13 +57,11 @@ export const ActiveRecurringReservations = () => {
       if (isAdmin(user)) {
         requestUrl += 'reservations/recurring/all-users'
       } else {
-        requestUrl += 'reservations/reoccurring'
+        requestUrl += 'reservations/recurring'
       }
 
       const recurringReservations = (await axios.get(requestUrl, requestConfig))
         .data
-
-      console.log(recurringReservations)
 
       setActiveRecurringReservations(recurringReservations)
     } catch (error) {
@@ -90,6 +89,9 @@ export const ActiveRecurringReservations = () => {
     }
   }
 
+  console.log(availableUsers)
+  console.log(activeRecurringReservations)
+
   return (
     <Box>
       {activeRecurringReservations && (
@@ -108,6 +110,16 @@ export const ActiveRecurringReservations = () => {
             {activeRecurringReservations.map(
               (recurringReservation: ActiveRecurringReservation) => (
                 <TableRow key={recurringReservation.ID}>
+                  {isAdmin(user) && (
+                    <TableCell>
+                      {getUserDisplayName(
+                        availableUsers.find(
+                          (user: Account) =>
+                            user.id === recurringReservation.ReservingUserID
+                        )
+                      )}
+                    </TableCell>
+                  )}
                   <TableCell>
                     {getWorkplaceName({
                       ID: recurringReservation.ReservedWorkplaceID,

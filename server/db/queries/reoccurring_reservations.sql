@@ -18,7 +18,7 @@ FROM (SELECT activeReoccuringReservations.*, reservationsOfUser.start_date, rese
 
 -- name: ActiveRecurringReservationsOfAllUsers :many
 SELECT recurringReservationsWithStartDate.*, workplaces.name as workplace_name
-FROM (SELECT activeRecurringReservations.*, reservations.start_date, reservations.reserved_workplace_id
+FROM (SELECT activeRecurringReservations.*, reservations.start_date, reservations.reserved_workplace_id, reservations.reserving_user_id
       FROM reservations
                JOIN (SELECT *
                      FROM reoccurring_reservations

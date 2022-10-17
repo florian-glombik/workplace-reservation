@@ -77,11 +77,11 @@ func (server *Server) deleteReoccurringReservation(context *gin.Context) {
 	context.JSON(http.StatusOK, sqlResult)
 }
 
-// GetReoccurringReservations
-// @Summary      Returns reoccurring reservations of authenticated user
+// GetRecurringReservations
+// @Summary      Returns recurring reservations of authenticated user
 // @Tags         reservation
-// @Router       /reservations/reoccurring [get]
-func (server *Server) getActiveReoccurringReservations(context *gin.Context) {
+// @Router       /reservations/recurring [get]
+func (server *Server) getActiveRecurringReservations(context *gin.Context) {
 	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
 
 	recurringReservations, err := server.queries.ActiveReoccurringReservationsOfUser(context, authPayload.UserId)
