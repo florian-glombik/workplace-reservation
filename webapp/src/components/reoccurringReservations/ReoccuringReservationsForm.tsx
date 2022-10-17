@@ -30,7 +30,8 @@ import {
 import { BASE_URL } from '../../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
-import { useAuth } from '../../utils/AuthProvider'
+import { Account, useAuth } from '../../utils/AuthProvider'
+import { getUserDisplayName } from '../Header'
 
 export enum RepetitionInterval {
   weekly = DAYS_PER_WEEK,
@@ -54,6 +55,7 @@ type RecurringReservationRequest = {
   intervalInDays: number
   reservationStartDay: string
   repeatUntil: string
+  userId: string
 }
 
 export const convertDateRangeToString = (dateRange: DateRange) => {
@@ -101,10 +103,11 @@ export function getWorkplaceName(workplace: WorkplaceWithName): string {
 
 export const RecurringReservationsForm = () => {
   // @ts-ignore
-  const { jwtToken } = useAuth()
+  const { jwtToken, user, availableUsers } = useAuth()
   const [open, setOpen] = useState(false)
   const [workplaces, setWorkplaces] = useState<WorkplaceWithName[]>([])
   const [selectedWorkplaceId, setSelectedWorkplaceId] = useState('')
+  const [selectedUserId, setSelectedUserId] = useState(user.id)
   const [dayOfTheWeek, setDayOfTheWeek] = useState<Weekday>(
     // @ts-ignore
     Weekday[Weekday.Monday]
@@ -144,6 +147,10 @@ export const RecurringReservationsForm = () => {
     if (workplaces.length > 0) {
       setSelectedWorkplaceId(workplaces[0].ID)
     }
+  }
+
+  const handleSelectedUserIdSelection = (event: SelectChangeEvent) => {
+    setSelectedUserId(event.target.value)
   }
 
   const handleSelectedWorkplaceIdSelection = (event: SelectChangeEvent) => {
@@ -186,11 +193,12 @@ export const RecurringReservationsForm = () => {
         DATE_FORMAT_STRING_RFC_3339,
         { timeZone: timezone }
       ),
+      userId: selectedUserId,
     }
 
     try {
       await axios.post(
-        BASE_URL + 'reservations/reoccurring',
+        BASE_URL + 'reservations/recurring',
         requestData,
         requestConfig
       )
@@ -210,6 +218,27 @@ export const RecurringReservationsForm = () => {
 
   return (
     <Box>
+      <FormControl>
+        <InputLabel id="user-selection-label">User</InputLabel>
+        <Select
+          labelId="user-selection-label"
+          value={selectedUserId}
+          onChange={handleSelectedUserIdSelection}
+          required
+          sx={{ m: 2, minWidth: '6rem' }}
+        >
+          {availableUsers.map((userA: Account) => (
+            <MenuItem
+              value={userA.id}
+              key={userA.id}
+              sx={{ fontWeight: userA.id === user.id ? 'bold' : '' }}
+            >
+              {getUserDisplayName(userA)}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+
       <FormControl>
         <InputLabel id="workplace-selection-label">Workplace</InputLabel>
         <Select

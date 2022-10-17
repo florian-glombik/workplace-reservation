@@ -36,7 +36,7 @@ type ActiveRecurringReservation = {
 
 export const ActiveRecurringReservations = () => {
   // @ts-ignore
-  const { jwtToken, user } = useAuth()
+  const { jwtToken, user, availableUsers } = useAuth()
   const [activeRecurringReservations, setActiveRecurringReservations] =
     useState<ActiveRecurringReservation[]>([])
 
@@ -96,6 +96,7 @@ export const ActiveRecurringReservations = () => {
         <Table>
           <TableHead>
             <TableRow>
+              {isAdmin(user) && <TableCell>User</TableCell>}
               <TableCell>Workplace</TableCell>
               <TableCell>Weekday</TableCell>
               <TableCell>Repetition interval</TableCell>

@@ -24,6 +24,7 @@ type ReoccurringReservationRequest struct {
 	IntervalInDays      int       `json:"intervalInDays"`
 	ReservationStartDay time.Time `json:"reservationStartDay"`
 	RepeatUntil         time.Time `json:"repeatUntil"`
+	UserId              uuid.UUID `json:"userId"`
 }
 
 // DeleteReoccurringReservation
@@ -112,23 +113,28 @@ func (server *Server) getActiveRecurringReservationsOfAllUsers(context *gin.Cont
 	context.JSON(http.StatusOK, recurringReservations)
 }
 
-// AddReoccurringReservation
-// @Summary      Adds a reoccurring reservation
+// AddRecurringReservation
+// @Summary      Adds a recurring reservation
 // @Tags         reservation
-// @Router       /reservations/reoccurring [post]
-func (server *Server) addReoccurringReservation(context *gin.Context) {
+// @Router       /reservations/recurring [post]
+func (server *Server) addRecurringReservation(context *gin.Context) {
 	var request ReoccurringReservationRequest
 	if err := context.ShouldBindJSON(&request); err != nil {
 		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
 		return
 	}
 	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
+	if authPayload.UserId != request.UserId && !isAdmin(context) {
+		err := errors.New("You are not allowed to make recurring reservations for other users!")
+		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
+		return
+	}
 
 	startDayWithHoursSetToBeginOfDay := setTimeOfDay(request.ReservationStartDay, 0, 0, 0)
 	reservationEndDate := setTimeOfDay(startDayWithHoursSetToBeginOfDay, 23, 59, 59)
 	reservationToBeRepeatedParams := ReserveWorkplaceRequest{
 		WorkplaceId:      request.WorkplaceId,
-		UserId:           authPayload.UserId,
+		UserId:           request.UserId,
 		StartReservation: startDayWithHoursSetToBeginOfDay,
 		EndReservation:   reservationEndDate,
 	}
