@@ -1,5 +1,5 @@
 import './Header.css'
-import { Account, useAuth } from '../utils/AuthProvider'
+import { Account, isAdmin, useAuth } from '../utils/AuthProvider'
 import { Box, Typography } from '@material-ui/core'
 import {
   AppBar,
@@ -25,7 +25,7 @@ const WORKPLACE_RESERVATION_BUG_OR_FEATURE_REQUEST_LINK =
 
 export const Header = () => {
   //@ts-ignore
-  const { logout, user, isAdmin } = useAuth()
+  const { logout, user } = useAuth()
   const [anchorEl, setAnchorEl] = useState(null)
   const navigate = useNavigate()
 
@@ -123,7 +123,7 @@ export const Header = () => {
                 onClose={handleClose}
               >
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                {isAdmin && (
+                {isAdmin(user) && (
                   <MenuItem onClick={handleFixedOccupancySchedule} disabled>
                     Fixed occupancy schedule
                   </MenuItem>

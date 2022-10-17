@@ -3,7 +3,7 @@ import { addDays, endOfWeek, nextMonday, startOfWeek } from 'date-fns'
 import { Workplaces } from './Workplaces'
 import React, { useEffect, useState } from 'react'
 import { Box } from '@mui/material'
-import { Account, useAuth } from '../utils/AuthProvider'
+import { Account, isAdmin, useAuth } from '../utils/AuthProvider'
 import axios from 'axios'
 import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
@@ -22,7 +22,7 @@ export const DAYS_PER_WEEK = 7
 
 export const WorkplaceAccordions = () => {
   //@ts-ignore
-  const { isAdmin } = useAuth()
+  const { user } = useAuth()
 
   const [today] = useState(Date.now())
   const startOfTheWeek = startOfWeek(today, WEEK_STARTS_ON_MONDAY)
@@ -34,7 +34,7 @@ export const WorkplaceAccordions = () => {
   const [availableUsers, setAvailableUsers] = useState<Account[]>([])
 
   useEffect(() => {
-    if (isAdmin) {
+    if (isAdmin(user)) {
       loadUsers()
     }
   }, [])

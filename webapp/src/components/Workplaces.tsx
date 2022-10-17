@@ -3,7 +3,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
-import { Account, useAuth } from '../utils/AuthProvider'
+import { Account, isAdmin, useAuth } from '../utils/AuthProvider'
 import { useEffect, useState } from 'react'
 import {
   addDays,
@@ -95,9 +95,6 @@ export const Workplaces = ({
   const token = useAuth().jwtToken
   // @ts-ignore
   const loggedInUser = useAuth().user
-
-  // @ts-ignore
-  const { isAdmin } = useAuth()
 
   const [workplaces, setWorkplaces] = useState<Workplaces[]>([])
 
@@ -294,7 +291,8 @@ export const Workplaces = ({
                     const isReserved: boolean = reservation != null
                     const isReservedByCurrentUser =
                       reservation?.ReservingUserID === loggedInUser.id
-                    const displayAdminSelection = isAdmin && !isReserved
+                    const displayAdminSelection =
+                      isAdmin(loggedInUser) && !isReserved
 
                     const displayNoUserIcon = !isReserved && isDayInThePast
 

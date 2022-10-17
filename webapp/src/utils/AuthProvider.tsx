@@ -24,6 +24,10 @@ export type Account = {
 
 export type Role = 'user' | 'admin'
 
+export function isAdmin(user: Account): boolean {
+  return user.role === 'admin'
+}
+
 export const AuthProvider = ({ children }: any) => {
   const [jwtToken, setJwtToken] = useLocalStorage('jwtToken', null)
   const [user, setUser] = useLocalStorage('user', null)
@@ -46,10 +50,6 @@ export const AuthProvider = ({ children }: any) => {
     navigate('/login', { replace: true })
   }
 
-  const isAdmin = (): boolean => {
-    return user?.role === 'admin'
-  }
-
   const value = useMemo(
     () => ({
       jwtToken: jwtToken,
@@ -57,7 +57,6 @@ export const AuthProvider = ({ children }: any) => {
       login,
       logout,
       setUser,
-      isAdmin,
     }),
     [jwtToken, user]
   )

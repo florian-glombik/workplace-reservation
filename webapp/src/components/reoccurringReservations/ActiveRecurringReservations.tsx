@@ -8,7 +8,7 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import axios, { AxiosRequestConfig } from 'axios'
-import { useAuth } from '../../utils/AuthProvider'
+import { isAdmin, useAuth } from '../../utils/AuthProvider'
 import { BASE_URL } from '../../config'
 import DeleteIcon from '@mui/icons-material/Delete'
 import {
@@ -36,7 +36,7 @@ type ActiveRecurringReservation = {
 
 export const ActiveRecurringReservations = () => {
   // @ts-ignore
-  const { jwtToken, isAdmin } = useAuth()
+  const { jwtToken, user } = useAuth()
   const [activeRecurringReservations, setActiveRecurringReservations] =
     useState<ActiveRecurringReservation[]>([])
 
@@ -53,7 +53,7 @@ export const ActiveRecurringReservations = () => {
 
     try {
       let requestUrl = BASE_URL
-      if (isAdmin) {
+      if (isAdmin(user)) {
         requestUrl += 'reservations/recurring/all-users'
       } else {
         requestUrl += 'reservations/reoccurring'
