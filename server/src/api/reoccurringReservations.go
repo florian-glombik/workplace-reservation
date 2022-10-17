@@ -27,11 +27,11 @@ type ReoccurringReservationRequest struct {
 	UserId              uuid.UUID `json:"userId"`
 }
 
-// DeleteReoccurringReservation
-// @Summary      Deletes reoccurring reservation
+// DeleteRecurringReservation
+// @Summary      Deletes recurring reservation
 // @Tags         reservation
-// @Router       /reservations/reoccurring [delete]
-func (server *Server) deleteReoccurringReservation(context *gin.Context) {
+// @Router       /reservations/recurring [delete]
+func (server *Server) deleteRecurringReservation(context *gin.Context) {
 	reservationIdString := path.Base(context.Request.URL.Path)
 	parsedUuid, err := uuidConversion.FromString(reservationIdString)
 	if err != nil {
@@ -44,7 +44,7 @@ func (server *Server) deleteReoccurringReservation(context *gin.Context) {
 	baseReservation, err := server.queries.GetReservationById(context, reoccurringReservationToDelete.RepeatedReservationID)
 
 	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
-	if baseReservation.ReservingUserID != authPayload.UserId {
+	if baseReservation.ReservingUserID != authPayload.UserId && !isAdmin(context) {
 		context.JSON(http.StatusForbidden, errorResponse("You can only delete your own reoccurring reservations!", err))
 		return
 	}

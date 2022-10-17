@@ -69,9 +69,7 @@ export const ActiveRecurringReservations = () => {
     }
   }
 
-  const deleteReoccurringReservation = async (
-    reoccurringReservationId: string
-  ) => {
+  const deleteRecurringReservation = async (recurringReservationId: string) => {
     const requestConfig: AxiosRequestConfig = {
       headers: {
         Authorization: 'Bearer ' + jwtToken,
@@ -80,7 +78,7 @@ export const ActiveRecurringReservations = () => {
 
     try {
       await axios.delete(
-        BASE_URL + 'reservations/reoccurring/' + reoccurringReservationId,
+        BASE_URL + 'reservations/recurring/' + recurringReservationId,
         requestConfig
       )
       toast.success('Reoccurring reservation was deleted!')
@@ -88,9 +86,6 @@ export const ActiveRecurringReservations = () => {
       toast.error(getDisplayResponseMessage(error))
     }
   }
-
-  console.log(availableUsers)
-  console.log(activeRecurringReservations)
 
   return (
     <Box>
@@ -141,7 +136,7 @@ export const ActiveRecurringReservations = () => {
                   <TableCell>
                     <IconButton
                       onClick={() =>
-                        deleteReoccurringReservation(recurringReservation.ID)
+                        deleteRecurringReservation(recurringReservation.ID)
                       }
                     >
                       <DeleteIcon />
