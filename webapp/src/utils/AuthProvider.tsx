@@ -77,6 +77,7 @@ export const AuthProvider = ({ children }: any) => {
   const logout = () => {
     setJwtToken(null)
     setUser(null)
+    setAvailableUsers(null)
     navigate('/login', { replace: true })
   }
 

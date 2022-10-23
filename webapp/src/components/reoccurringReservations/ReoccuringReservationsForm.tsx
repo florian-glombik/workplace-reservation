@@ -30,7 +30,7 @@ import {
 import { BASE_URL } from '../../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
-import { Account, useAuth } from '../../utils/AuthProvider'
+import { Account, isAdmin, useAuth } from '../../utils/AuthProvider'
 import { getUserDisplayName } from '../Header'
 
 export enum RepetitionInterval {
@@ -218,26 +218,28 @@ export const RecurringReservationsForm = () => {
 
   return (
     <Box>
-      <FormControl>
-        <InputLabel id="user-selection-label">User</InputLabel>
-        <Select
-          labelId="user-selection-label"
-          value={selectedUserId}
-          onChange={handleSelectedUserIdSelection}
-          required
-          sx={{ m: 2, minWidth: '6rem' }}
-        >
-          {availableUsers.map((userA: Account) => (
-            <MenuItem
-              value={userA.id}
-              key={userA.id}
-              sx={{ fontWeight: userA.id === user.id ? 'bold' : '' }}
-            >
-              {getUserDisplayName(userA)}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
+      {isAdmin(user) && (
+        <FormControl>
+          <InputLabel id="user-selection-label">User</InputLabel>
+          <Select
+            labelId="user-selection-label"
+            value={selectedUserId}
+            onChange={handleSelectedUserIdSelection}
+            required
+            sx={{ m: 2, minWidth: '6rem' }}
+          >
+            {availableUsers.map((userA: Account) => (
+              <MenuItem
+                value={userA.id}
+                key={userA.id}
+                sx={{ fontWeight: userA.id === user.id ? 'bold' : '' }}
+              >
+                {getUserDisplayName(userA)}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
 
       <FormControl>
         <InputLabel id="workplace-selection-label">Workplace</InputLabel>
