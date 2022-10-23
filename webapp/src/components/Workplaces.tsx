@@ -291,8 +291,10 @@ export const Workplaces = ({
                     const isReserved: boolean = reservation != null
                     const isReservedByCurrentUser =
                       reservation?.ReservingUserID === loggedInUser.id
+
+                    const loggedInUserIsAdmin = isAdmin(loggedInUser)
                     const displayAdminSelection =
-                      isAdmin(loggedInUser) && !isReserved
+                      loggedInUserIsAdmin && !isReserved
 
                     const displayNoUserIcon = !isReserved && isDayInThePast
 
@@ -355,14 +357,15 @@ export const Workplaces = ({
                                 : 'contained'
                             }
                             disabled={
-                              (isDayInThePast && !isAdmin) ||
+                              (isDayInThePast && !loggedInUserIsAdmin) ||
                               (isReserved &&
                                 !isReservedByCurrentUser &&
-                                !isAdmin)
+                                !loggedInUserIsAdmin)
                             }
                             color={isReserved ? 'error' : 'success'}
                             onClick={
-                              isReservedByCurrentUser || (isReserved && isAdmin)
+                              isReservedByCurrentUser ||
+                              (isReserved && loggedInUserIsAdmin)
                                 ? () => cancelReservation(reservation!)
                                 : () =>
                                     reserveWorkplace(
