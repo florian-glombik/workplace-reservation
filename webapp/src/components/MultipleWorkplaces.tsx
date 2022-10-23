@@ -5,7 +5,8 @@ import {
   getDay,
   isAfter,
   isBefore,
-  isEqual, startOfDay,
+  isEqual,
+  startOfDay,
 } from 'date-fns'
 import { Box } from '@mui/material'
 import { ACCORDION_LABEL_DATE_FORMAT, Workplaces } from './Workplaces'
@@ -14,19 +15,23 @@ import {
   MONDAY_NUMBER_CODE,
   WEEK_STARTS_ON_MONDAY,
 } from './WorkplaceAccordions'
+import { Account } from '../utils/AuthProvider'
 
 type MultipleWorkplacesProps = {
   startDate: Date
   endDate: Date
+  availableUsers: Account[]
 }
 
 export const MultipleWorkplaces = ({
   startDate,
   endDate,
+  availableUsers,
 }: MultipleWorkplacesProps) => {
   const workplaceInputs: MultipleWorkplacesProps[] = getWeekStartAndEndDates(
     startDate,
-    endDate
+    endDate,
+    availableUsers
   )
 
   return (
@@ -40,6 +45,7 @@ export const MultipleWorkplaces = ({
           startOfTheWeek={workplaceInput.startDate}
           endOfTheWeek={workplaceInput.endDate}
           defaultExpanded={false}
+          availableUsers={availableUsers}
         ></Workplaces>
       ))}
     </Box>
@@ -48,7 +54,8 @@ export const MultipleWorkplaces = ({
 
 function getWeekStartAndEndDates(
   startDate: Date,
-  endDate: Date
+  endDate: Date,
+  availableUsers: Account[]
 ): MultipleWorkplacesProps[] {
   let workplacesInputs: MultipleWorkplacesProps[] = []
 
@@ -74,6 +81,7 @@ function getWeekStartAndEndDates(
     workplacesInputs.push({
       startDate: currentStartDate,
       endDate: currentEndDate,
+      availableUsers: availableUsers,
     })
 
     if (isAfter(currentEndDate, endDate) || isEqual(currentEndDate, endDate)) {

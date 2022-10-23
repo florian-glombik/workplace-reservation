@@ -5,6 +5,6 @@ interface ErrorResponse {
   reason: string
 }
 
-export function getDisplayResponseMessage(error: AxiosError<ErrorResponse>) {
+export function getDisplayResponseMessage(error: any) {
   return error.response?.data?.message ?? error.message ?? error
 }

@@ -6,7 +6,7 @@ import (
 )
 
 type Generator interface {
-	CreateToken(userId uuid.UUID, duration time.Duration) (string, error)
+	CreateToken(userId uuid.UUID, duration time.Duration, role string) (string, error)
 
 	VerifyToken(token string) (*Payload, error)
 }

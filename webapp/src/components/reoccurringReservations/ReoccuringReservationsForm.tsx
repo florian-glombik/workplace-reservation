@@ -30,7 +30,8 @@ import {
 import { BASE_URL } from '../../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
-import { useAuth } from '../../utils/AuthProvider'
+import { Account, isAdmin, useAuth } from '../../utils/AuthProvider'
+import { getUserDisplayName } from '../Header'
 
 export enum RepetitionInterval {
   weekly = DAYS_PER_WEEK,
@@ -49,11 +50,12 @@ export enum Weekday {
   Saturday,
 }
 
-type ReoccurringReservationRequest = {
+type RecurringReservationRequest = {
   workplaceId: string
   intervalInDays: number
   reservationStartDay: string
   repeatUntil: string
+  userId: string
 }
 
 export const convertDateRangeToString = (dateRange: DateRange) => {
@@ -99,12 +101,13 @@ export function getWorkplaceName(workplace: WorkplaceWithName): string {
   return workplace?.Name?.String ? workplace.Name.String : workplace.ID
 }
 
-export const ReoccurringReservationsForm = () => {
+export const RecurringReservationsForm = () => {
   // @ts-ignore
-  const { jwtToken } = useAuth()
+  const { jwtToken, user, availableUsers } = useAuth()
   const [open, setOpen] = useState(false)
   const [workplaces, setWorkplaces] = useState<WorkplaceWithName[]>([])
   const [selectedWorkplaceId, setSelectedWorkplaceId] = useState('')
+  const [selectedUserId, setSelectedUserId] = useState(user.id)
   const [dayOfTheWeek, setDayOfTheWeek] = useState<Weekday>(
     // @ts-ignore
     Weekday[Weekday.Monday]
@@ -127,20 +130,27 @@ export const ReoccurringReservationsForm = () => {
         Authorization: 'Bearer ' + jwtToken,
       },
     }
-    axios
-      .get(BASE_URL + 'workplaces/names', requestConfig)
-      .then((response) => response.data)
-      .then((data) => {
-        setWorkplaces(data)
-        setDefaultWorkplace(data)
-      })
-      .catch((error) => toast.error(getDisplayResponseMessage(error)))
+
+    try {
+      const response = (
+        await axios.get(BASE_URL + 'workplaces/names', requestConfig)
+      ).data
+
+      setWorkplaces(response)
+      setDefaultWorkplace(response)
+    } catch (error) {
+      toast.error(getDisplayResponseMessage(error))
+    }
   }
 
   const setDefaultWorkplace = (workplaces: WorkplaceWithName[]) => {
     if (workplaces.length > 0) {
       setSelectedWorkplaceId(workplaces[0].ID)
     }
+  }
+
+  const handleSelectedUserIdSelection = (event: SelectChangeEvent) => {
+    setSelectedUserId(event.target.value)
   }
 
   const handleSelectedWorkplaceIdSelection = (event: SelectChangeEvent) => {
@@ -157,7 +167,7 @@ export const ReoccurringReservationsForm = () => {
     setRepetitionInterval(event.target.value as string)
   }
 
-  const addReoccurringReservation = async () => {
+  const addRecurringReservation = async () => {
     const requestConfig: AxiosRequestConfig = {
       headers: {
         Authorization: 'Bearer ' + jwtToken,
@@ -169,7 +179,7 @@ export const ReoccurringReservationsForm = () => {
 
     const reservationStartDay = nextWeekday(dayOfTheWeek, dateRange.startDate!)
 
-    const requestData: ReoccurringReservationRequest = {
+    const requestData: RecurringReservationRequest = {
       workplaceId: selectedWorkplaceId,
       intervalInDays: repetitionInterval,
       // @ts-ignore
@@ -183,14 +193,19 @@ export const ReoccurringReservationsForm = () => {
         DATE_FORMAT_STRING_RFC_3339,
         { timeZone: timezone }
       ),
+      userId: selectedUserId,
     }
 
-    axios
-      .post(BASE_URL + 'reservations/reoccurring', requestData, requestConfig)
-      .then(() =>
-        toast.success('Reoccurring reservation was successfully created!')
+    try {
+      await axios.post(
+        BASE_URL + 'reservations/recurring',
+        requestData,
+        requestConfig
       )
-      .catch((error) => toast.error(getDisplayResponseMessage(error)))
+      toast.success('Recurring reservation was successfully created!')
+    } catch (error) {
+      toast.error(getDisplayResponseMessage(error))
+    }
 
     // TODO update list of loaded reservations
   }
@@ -203,6 +218,29 @@ export const ReoccurringReservationsForm = () => {
 
   return (
     <Box>
+      {isAdmin(user) && (
+        <FormControl>
+          <InputLabel id="user-selection-label">User</InputLabel>
+          <Select
+            labelId="user-selection-label"
+            value={selectedUserId}
+            onChange={handleSelectedUserIdSelection}
+            required
+            sx={{ m: 2, minWidth: '6rem' }}
+          >
+            {availableUsers.map((userA: Account) => (
+              <MenuItem
+                value={userA.id}
+                key={userA.id}
+                sx={{ fontWeight: userA.id === user.id ? 'bold' : '' }}
+              >
+                {getUserDisplayName(userA)}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
+
       <FormControl>
         <InputLabel id="workplace-selection-label">Workplace</InputLabel>
         <Select
@@ -277,7 +315,7 @@ export const ReoccurringReservationsForm = () => {
       </FormControl>
 
       <IconButton
-        onClick={addReoccurringReservation}
+        onClick={addRecurringReservation}
         disabled={disableSubmitButton}
         color={'primary'}
       >

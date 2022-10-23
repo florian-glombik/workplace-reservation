@@ -1,6 +1,7 @@
 package api
 
 import (
+	"errors"
 	db "github.com/florian-glombik/workplace-reservation/db/sqlc"
 	"github.com/florian-glombik/workplace-reservation/src/token"
 	"github.com/gin-gonic/gin"
@@ -23,13 +24,14 @@ type ReoccurringReservationRequest struct {
 	IntervalInDays      int       `json:"intervalInDays"`
 	ReservationStartDay time.Time `json:"reservationStartDay"`
 	RepeatUntil         time.Time `json:"repeatUntil"`
+	UserId              uuid.UUID `json:"userId"`
 }
 
-// DeleteReoccurringReservation
-// @Summary      Deletes reoccurring reservation
+// DeleteRecurringReservation
+// @Summary      Deletes recurring reservation
 // @Tags         reservation
-// @Router       /reservations/reoccurring [delete]
-func (server *Server) deleteReoccurringReservation(context *gin.Context) {
+// @Router       /reservations/recurring [delete]
+func (server *Server) deleteRecurringReservation(context *gin.Context) {
 	reservationIdString := path.Base(context.Request.URL.Path)
 	parsedUuid, err := uuidConversion.FromString(reservationIdString)
 	if err != nil {
@@ -42,7 +44,7 @@ func (server *Server) deleteReoccurringReservation(context *gin.Context) {
 	baseReservation, err := server.queries.GetReservationById(context, reoccurringReservationToDelete.RepeatedReservationID)
 
 	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
-	if baseReservation.ReservingUserID != authPayload.UserId {
+	if baseReservation.ReservingUserID != authPayload.UserId && !isAdmin(context) {
 		context.JSON(http.StatusForbidden, errorResponse("You can only delete your own reoccurring reservations!", err))
 		return
 	}
@@ -75,39 +77,64 @@ func (server *Server) deleteReoccurringReservation(context *gin.Context) {
 	context.JSON(http.StatusOK, sqlResult)
 }
 
-// GetReoccurringReservations
-// @Summary      Returns reoccurring reservations of authenticated user
+// GetRecurringReservations
+// @Summary      Returns recurring reservations of authenticated user
 // @Tags         reservation
-// @Router       /reservations/reoccurring [get]
-func (server *Server) getActiveReoccurringReservations(context *gin.Context) {
+// @Router       /reservations/recurring [get]
+func (server *Server) getActiveRecurringReservations(context *gin.Context) {
 	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
 
-	reoccurringReservations, err := server.queries.ActiveReoccurringReservationsOfUser(context, authPayload.UserId)
+	recurringReservations, err := server.queries.ActiveReoccurringReservationsOfUser(context, authPayload.UserId)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
 		return
 	}
 
-	context.JSON(http.StatusOK, reoccurringReservations)
+	context.JSON(http.StatusOK, recurringReservations)
 }
 
-// AddReoccurringReservation
-// @Summary      Adds a reoccurring reservation
+// GetReoccurringReservationsOfAllUsers
+// @Summary      Returns reoccurring reservations of all users
 // @Tags         reservation
-// @Router       /reservations/reoccurring [post]
-func (server *Server) addReoccurringReservation(context *gin.Context) {
+// @Router       /reservations/recurring/all-users [get]
+func (server *Server) getActiveRecurringReservationsOfAllUsers(context *gin.Context) {
+	if !isAdmin(context) {
+		err := errors.New("You are not allowed to view the recurring reservations of all users!")
+		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
+		return
+	}
+
+	recurringReservations, err := server.queries.ActiveRecurringReservationsOfAllUsers(context)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		return
+	}
+
+	context.JSON(http.StatusOK, recurringReservations)
+}
+
+// AddRecurringReservation
+// @Summary      Adds a recurring reservation
+// @Tags         reservation
+// @Router       /reservations/recurring [post]
+func (server *Server) addRecurringReservation(context *gin.Context) {
 	var request ReoccurringReservationRequest
 	if err := context.ShouldBindJSON(&request); err != nil {
 		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
 		return
 	}
 	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
+	if authPayload.UserId != request.UserId && !isAdmin(context) {
+		err := errors.New("You are not allowed to make recurring reservations for other users!")
+		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
+		return
+	}
 
 	startDayWithHoursSetToBeginOfDay := setTimeOfDay(request.ReservationStartDay, 0, 0, 0)
 	reservationEndDate := setTimeOfDay(startDayWithHoursSetToBeginOfDay, 23, 59, 59)
 	reservationToBeRepeatedParams := ReserveWorkplaceRequest{
 		WorkplaceId:      request.WorkplaceId,
-		UserId:           authPayload.UserId,
+		UserId:           request.UserId,
 		StartReservation: startDayWithHoursSetToBeginOfDay,
 		EndReservation:   reservationEndDate,
 	}

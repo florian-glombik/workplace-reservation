@@ -46,7 +46,7 @@ func (server *Server) handleCreateReservation(context *gin.Context) {
 
 func createReservation(server *Server, context *gin.Context, request ReserveWorkplaceRequest) (*db.Reservation, error) {
 	now := time.Now()
-	if now.After(request.EndReservation) {
+	if now.After(request.EndReservation) && !isAdmin(context) {
 		err := errors.New("you can not make workplace reservations in the past")
 		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
 		return nil, err
@@ -54,7 +54,7 @@ func createReservation(server *Server, context *gin.Context, request ReserveWork
 
 	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
 	reservationMadeForOtherUser := request.UserId != authPayload.UserId
-	if reservationMadeForOtherUser {
+	if reservationMadeForOtherUser && !isAdmin(context) {
 		err := errors.New("not authenticated as user for whom the reservation shall be done, authorized as user with id: " + authPayload.Id.String())
 		context.JSON(http.StatusUnauthorized, errorResponse("Not authenticated as user for whom the workplace shall be reserved.", err))
 		return nil, err
@@ -207,7 +207,7 @@ func deleteReservation(server *Server, context *gin.Context, reservationId uuid.
 			}
 			reservedWorkplaceId := uuid.UUID(parsedWorkplaceId)
 
-			if now.After(endDate) {
+			if now.After(endDate) && !isAdmin(context) {
 				err := errors.New("you can not cancel reservations that are in the past")
 				context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
 				return nil, err
@@ -225,7 +225,7 @@ func deleteReservation(server *Server, context *gin.Context, reservationId uuid.
 		}
 	}
 
-	if now.After(reservationToBeDeleted.EndDate) {
+	if now.After(reservationToBeDeleted.EndDate) && !isAdmin(context) {
 		err := errors.New("you can not cancel reservations that are in the past")
 		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
 		return nil, err
@@ -233,7 +233,7 @@ func deleteReservation(server *Server, context *gin.Context, reservationId uuid.
 
 	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
 	reservationOfOtherUser := reservationToBeDeleted.ReservingUserID != authPayload.UserId
-	if reservationOfOtherUser {
+	if reservationOfOtherUser && !isAdmin(context) {
 		err := errors.New("you can only cancel your own reservations")
 		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
 		return nil, err

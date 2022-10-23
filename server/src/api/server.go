@@ -72,15 +72,20 @@ func (server *Server) setupRouter() {
 	authRoutes := router.Group("/").Use(authenticate(server.tokenGenerator))
 
 	authRoutes.PATCH("/users/edit", server.editUser)
+	authRoutes.GET("/users/all-available", server.loadAvailableUsers)
+	authRoutes.GET("/users", server.getUserById)
+
 	authRoutes.GET("/workplaces", server.getWorkplaces)
 	authRoutes.GET("/workplaces/names", server.getNamesOfWorkplaces)
+
 	authRoutes.POST("/workplace/create", server.createWorkplace)
 	authRoutes.POST("/workplace/reserve", server.handleCreateReservation)
 	authRoutes.DELETE("/workplace/reservations/:reservation-id", server.handleDeleteReservation)
-	authRoutes.POST("/reservations/reoccurring", server.addReoccurringReservation)
-	authRoutes.GET("/reservations/reoccurring", server.getActiveReoccurringReservations)
-	authRoutes.DELETE("/reservations/reoccurring/:reoccurring-reservation-id", server.deleteReoccurringReservation)
-	authRoutes.GET("/users", server.getUserById)
+
+	authRoutes.GET("/reservations/recurring", server.getActiveRecurringReservations)
+	authRoutes.GET("/reservations/recurring/all-users", server.getActiveRecurringReservationsOfAllUsers)
+	authRoutes.POST("/reservations/recurring", server.addRecurringReservation)
+	authRoutes.DELETE("/reservations/recurring/:recurring-reservation-id", server.deleteRecurringReservation)
 
 	router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

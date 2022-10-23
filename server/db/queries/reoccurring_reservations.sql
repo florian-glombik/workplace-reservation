@@ -3,7 +3,7 @@ INSERT INTO reoccurring_reservations (id, interval_in_days, repeated_reservation
 VALUES ($1, $2, $3, $4) RETURNING *;
 
 -- name: ActiveReoccurringReservationsOfUser :many
-SELECT reoccurringReservationsWithStartDate.*, workplaces.name AS workplaceName
+SELECT reoccurringReservationsWithStartDate.*, workplaces.name AS workplace_name
 FROM (SELECT activeReoccuringReservations.*, reservationsOfUser.start_date, reservationsOfUser.reserved_workplace_id
       FROM (SELECT *
             FROM reservations
@@ -15,6 +15,17 @@ FROM (SELECT activeReoccuringReservations.*, reservationsOfUser.start_date, rese
                        reservationsOfUser.id) AS reoccurringReservationsWithStartDate
          JOIN workplaces
               ON workplaces.id = reoccurringReservationsWithStartDate.reserved_workplace_id;
+
+-- name: ActiveRecurringReservationsOfAllUsers :many
+SELECT recurringReservationsWithStartDate.*, workplaces.name as workplace_name
+FROM (SELECT activeRecurringReservations.*, reservations.start_date, reservations.reserved_workplace_id, reservations.reserving_user_id
+      FROM reservations
+               JOIN (SELECT *
+                     FROM reoccurring_reservations
+                     WHERE repeat_until >= (SELECT now())) AS activeRecurringReservations
+                    ON activeRecurringReservations.repeated_reservation_id = reservations.id) AS recurringReservationsWithStartDate
+         JOIN workplaces
+              ON workplaces.id = recurringReservationsWithStartDate.reserved_workplace_id;
 
 -- name: GetReoccurringReservationByRepeatedReservationId :one
 SELECT *
