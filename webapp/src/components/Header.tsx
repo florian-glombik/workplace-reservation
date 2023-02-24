@@ -14,7 +14,11 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import GitHubIcon from '@mui/icons-material/GitHub'
 
-export function getUserDisplayName(user: Account): string {
+export function getUserDisplayName(user?: Account): string {
+  if (!user) {
+    return ''
+  }
+
   return user.username.Valid && user.username.String != ''
     ? user.username.String
     : user.email
@@ -24,7 +28,6 @@ const WORKPLACE_RESERVATION_BUG_OR_FEATURE_REQUEST_LINK =
   'https://github.com/florian-glombik/workplace-reservation/issues/new/choose'
 
 export const Header = () => {
-  //@ts-ignore
   const { logout, user } = useAuth()
   const [anchorEl, setAnchorEl] = useState(null)
   const navigate = useNavigate()
@@ -96,7 +99,7 @@ export const Header = () => {
                 justifyContent: 'center',
               }}
             >
-              <Typography>{getUserDisplayName(user)}</Typography>
+              <Typography>{getUserDisplayName(user!)}</Typography>
               <IconButton
                 size="large"
                 aria-label="account of current user"
@@ -123,7 +126,7 @@ export const Header = () => {
                 onClose={handleClose}
               >
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                {isAdmin(user) && (
+                {isAdmin(user!) && (
                   <MenuItem onClick={handleFixedOccupancySchedule} disabled>
                     Fixed occupancy schedule
                   </MenuItem>

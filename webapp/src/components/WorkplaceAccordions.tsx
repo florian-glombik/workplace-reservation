@@ -21,15 +21,11 @@ const WEEKS_AFTER_DEFAULT = 4
 export const DAYS_PER_WEEK = 7
 
 export const WorkplaceAccordions = () => {
-  //@ts-ignore
-  const { user } = useAuth()
+  const { user, jwtToken } = useAuth()
 
   const [today] = useState(Date.now())
   const startOfTheWeek = startOfWeek(today, WEEK_STARTS_ON_MONDAY)
   const endOfTheWeek = endOfWeek(today, WEEK_STARTS_ON_MONDAY)
-
-  // @ts-ignore
-  const token = useAuth().jwtToken
 
   const [availableUsers, setAvailableUsers] = useState<Account[]>([])
 
@@ -42,7 +38,7 @@ export const WorkplaceAccordions = () => {
   const loadUsers = async () => {
     const requestConfig = {
       headers: {
-        Authorization: 'Bearer ' + token,
+        Authorization: 'Bearer ' + jwtToken,
       },
     }
 

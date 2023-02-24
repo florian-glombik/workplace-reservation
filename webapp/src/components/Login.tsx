@@ -9,7 +9,6 @@ import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 
 export const Login = () => {
-  // @ts-ignore
   const { login } = useAuth()
   const [details, setDetails] = useState({ email: '', password: '' })
 

@@ -1,14 +1,14 @@
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../utils/AuthProvider'
 // @ts-ignore
-import jwt_decode from 'jwt-decode';
+import jwt_decode from 'jwt-decode'
 import { isBefore } from 'date-fns'
 
 type JwtToken = {
-  id: string,
+  id: string
   userId: string
-  issuedAt: Date,
-  expiredAt: Date,
+  issuedAt: Date
+  expiredAt: Date
 }
 
 function convertJwtToken(token: string): JwtToken | null {
@@ -23,17 +23,17 @@ function convertJwtToken(token: string): JwtToken | null {
     id: convertedToken.id,
     userId: convertedToken.userId,
     issuedAt: new Date(convertedToken.issuedAt),
-    expiredAt: new Date(convertedToken.expiredAt)
+    expiredAt: new Date(convertedToken.expiredAt),
   }
 }
 
 export const ProtectedRoute = ({ children }: any) => {
-  //@ts-ignore
-  const {user, jwtToken, logout} = useAuth()
+  const { user, jwtToken, logout } = useAuth()
 
   const convertedToken: JwtToken | null = convertJwtToken(jwtToken)
 
-  const userIsAuthenticated = user && convertedToken && isBefore(Date.now(), convertedToken.expiredAt)
+  const userIsAuthenticated =
+    user && convertedToken && isBefore(Date.now(), convertedToken.expiredAt)
   if (!userIsAuthenticated) {
     logout()
     return <Navigate to="/login" />
