@@ -57,6 +57,11 @@ export const Header = () => {
     navigate('/reservations/recurring')
   }
 
+  const handleManageOfficesClicked = () => {
+    handleClose()
+    navigate('/offices')
+  }
+
   const handleEditAccount = () => {
     handleClose()
     navigate('/account/edit')
@@ -126,7 +131,7 @@ export const Header = () => {
                 onClose={handleClose}
               >
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                {isAdmin(user!) && (
+                {isAdmin(user) && (
                   <MenuItem onClick={handleFixedOccupancySchedule} disabled>
                     Fixed occupancy schedule
                   </MenuItem>
@@ -135,6 +140,11 @@ export const Header = () => {
                   Recurring Reservations
                 </MenuItem>
                 <MenuItem onClick={handleEditAccount}>Edit account</MenuItem>
+                {isAdmin(user) && (
+                  <MenuItem onClick={handleManageOfficesClicked}>
+                    Manage Offices
+                  </MenuItem>
+                )}
                 <MenuItem onClick={handleLinkToRepo}>
                   Found a bug? &nbsp; <GitHubIcon />
                 </MenuItem>

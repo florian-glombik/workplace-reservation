@@ -1,5 +1,5 @@
 import { Navigate } from 'react-router-dom'
-import { useAuth } from '../utils/AuthProvider'
+import { isAdmin, useAuth } from '../utils/AuthProvider'
 // @ts-ignore
 import jwt_decode from 'jwt-decode'
 import { isBefore } from 'date-fns'
@@ -27,7 +27,13 @@ function convertJwtToken(token: string): JwtToken | null {
   }
 }
 
-export const ProtectedRoute = ({ children }: any) => {
+export const ProtectedRoute = ({
+  children,
+  isAdminRoute,
+}: {
+  children: any
+  isAdminRoute?: boolean
+}) => {
   const { user, jwtToken, logout } = useAuth()
 
   const convertedToken: JwtToken | null = convertJwtToken(jwtToken)
@@ -37,6 +43,9 @@ export const ProtectedRoute = ({ children }: any) => {
   if (!userIsAuthenticated) {
     logout()
     return <Navigate to="/login" />
+  }
+  if (isAdminRoute && !isAdmin(user)) {
+    return <Navigate to={'/'} />
   }
   return children
 }
