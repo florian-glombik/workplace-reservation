@@ -142,7 +142,7 @@ export const Header = () => {
                 <MenuItem onClick={handleEditAccount}>Edit account</MenuItem>
                 {isAdmin(user) && (
                   <MenuItem onClick={handleManageOfficesClicked}>
-                    Manage Offices
+                    Edit Offices
                   </MenuItem>
                 )}
                 <MenuItem onClick={handleLinkToRepo}>
