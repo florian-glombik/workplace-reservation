@@ -102,7 +102,6 @@ export function getWorkplaceName(workplace: WorkplaceWithName): string {
 }
 
 export const RecurringReservationsForm = () => {
-  // @ts-ignore
   const { jwtToken, user, availableUsers } = useAuth()
   const [open, setOpen] = useState(false)
   const [workplaces, setWorkplaces] = useState<WorkplaceWithName[]>([])

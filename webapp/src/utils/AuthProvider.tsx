@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo } from 'react'
+import { createContext, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocalStorage } from './LocalStorageUtil'
 import { NullString } from '../components/Workplaces'
@@ -8,8 +8,34 @@ import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from './NotificationUtil'
 
-//@ts-ignore
-const AuthContext = createContext()
+const DEFAULT_USER: Account = {
+  id: '',
+  email: '',
+  username: {
+    String: '',
+    Valid: false,
+  },
+  role: 'notAuthenticated',
+}
+
+// TODO use Redux store instead
+const AuthContext = createContext<AuthContextType>({
+  jwtToken: '',
+  user: DEFAULT_USER,
+  availableUsers: [],
+  login: () => {},
+  logout: () => {},
+  setUser: () => {},
+})
+
+type AuthContextType = {
+  jwtToken: string
+  user: Account
+  availableUsers: Account[]
+  login: (jwtToken: string, user: Account) => void
+  logout: () => void
+  setUser: (user: Account) => void
+}
 
 export type Token = {
   id: string
@@ -26,7 +52,7 @@ export type Account = {
   role: Role
 }
 
-export type Role = 'user' | 'admin'
+export type Role = 'user' | 'admin' | 'notAuthenticated'
 
 export function isAdmin(user: Account): boolean {
   return user.role === 'admin'
@@ -81,19 +107,20 @@ export const AuthProvider = ({ children }: any) => {
     navigate('/login', { replace: true })
   }
 
-  const value = useMemo(
-    () => ({
-      jwtToken: jwtToken,
-      user: user,
-      availableUsers: availableUsers,
-      login,
-      logout,
-      setUser,
-    }),
-    [jwtToken, user, availableUsers]
+  return (
+    <AuthContext.Provider
+      value={{
+        jwtToken: jwtToken,
+        user: user,
+        availableUsers: availableUsers,
+        login: login,
+        logout: logout,
+        setUser: setUser,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
   )
-
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
 
 export const useAuth = () => {

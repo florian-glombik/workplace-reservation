@@ -1,5 +1,5 @@
 import './Login.css'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, TextField } from '@material-ui/core'
 import Button from '@mui/material/Button'
 import axios, { AxiosRequestConfig } from 'axios'
@@ -9,7 +9,6 @@ import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useAuth } from '../utils/AuthProvider'
 
 export const EditAccount = () => {
-  // @ts-ignore
   const { jwtToken, user, setUser } = useAuth()
   const [noChangesMade, setNoChangesMade] = useState(true)
   const [details, setDetails] = useState({
@@ -19,21 +18,16 @@ export const EditAccount = () => {
     role: user.role,
   })
 
-  // const initialValues: Account = {
-  //   id: user.id,
-  //   email: user.email,
-  //   username: user.username,
-  //   role: user.role,
-  // }
+  useEffect(() => {
+    updateChangesMade()
+  }, [details.username, details.email])
 
   const updateChangesMade = () => {
-    console.log('----------')
-    console.log(user.username.String)
-    console.log(details.username)
-    setNoChangesMade(
-      user.username == details.username && user.email == details.username
-    )
-    console.log({ noChangesMade })
+    const isUsernameChanged = user.username.String != details.username
+    const isEmailChanged = user.email != details.email
+
+    const changesMade = isUsernameChanged || isEmailChanged
+    setNoChangesMade(!changesMade)
   }
 
   const saveChanges = async (e: any) => {
@@ -68,8 +62,6 @@ export const EditAccount = () => {
               variant={'outlined'}
               onChange={(e) => {
                 setDetails({ ...details, username: e.target.value })
-                updateChangesMade()
-                console.log('current value', e.target.value)
               }}
               fullWidth
               defaultValue={details.username}

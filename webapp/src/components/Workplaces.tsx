@@ -91,11 +91,7 @@ export const Workplaces = ({
   defaultExpanded,
   availableUsers,
 }: WorkplacesProps) => {
-  // @ts-ignore
-  const token = useAuth().jwtToken
-  // @ts-ignore
-  const loggedInUser = useAuth().user
-
+  const { jwtToken, user: loggedInUser } = useAuth()
   const [workplaces, setWorkplaces] = useState<Workplaces[]>([])
 
   useEffect(() => {
@@ -105,7 +101,7 @@ export const Workplaces = ({
   const updateWorkplaces = async () => {
     const requestConfig: AxiosRequestConfig = {
       headers: {
-        Authorization: 'Bearer ' + token,
+        Authorization: 'Bearer ' + jwtToken,
       },
       params: {
         start: startOfTheWeek.toISOString(),
@@ -157,7 +153,7 @@ export const Workplaces = ({
   async function cancelReservation(reservation: Reservation) {
     const requestConfig = {
       headers: {
-        Authorization: 'Bearer ' + token,
+        Authorization: 'Bearer ' + jwtToken,
       },
       params: {
         start: reservation.StartDate,
@@ -216,7 +212,7 @@ export const Workplaces = ({
     }
     const requestConfig = {
       headers: {
-        Authorization: 'Bearer ' + token,
+        Authorization: 'Bearer ' + jwtToken,
       },
     }
 
