@@ -6,10 +6,46 @@ info:
   title: Workplace Reservation API
   version: "1.0"
 paths:
-  /reservations/reoccurring:
+  /offices:
+    get:
+      responses: {}
+      summary: Returns all offices
+      tags:
+      - offices
+    post:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses: {}
+      summary: Create a new office
+      tags:
+      - offices
+  /offices/edit:
+    patch:
+      responses: {}
+      tags:
+      - offices
+  /reservations/recurring:
+    delete:
+      responses: {}
+      summary: Deletes recurring reservation
+      tags:
+      - reservation
+    get:
+      responses: {}
+      summary: Returns recurring reservations of authenticated user
+      tags:
+      - reservation
     post:
       responses: {}
-      summary: Adds a reoccurring reservation
+      summary: Adds a recurring reservation
+      tags:
+      - reservation
+  /reservations/recurring/all-users:
+    get:
+      responses: {}
+      summary: Returns reoccurring reservations of all users
       tags:
       - reservation
   /users:
@@ -37,18 +73,15 @@ paths:
         in: path
         name: username
         type: string
-      - description: TODO
-        in: path
-        name: firstName
-        type: string
-      - description: TODO
-        in: path
-        name: lastName
-        type: string
       produces:
       - application/json
       responses: {}
       summary: Create a new account
+      tags:
+      - accounts
+  /users/all-available:
+    get:
+      responses: {}
       tags:
       - accounts
   /users/edit:
@@ -72,12 +105,6 @@ paths:
     delete:
       responses: {}
       summary: Deletes a reservation
-      tags:
-      - reservation
-  /workplace/reservations:
-    get:
-      responses: {}
-      summary: Returns all reservations of the specified timespan
       tags:
       - reservation
   /workplace/reserve:

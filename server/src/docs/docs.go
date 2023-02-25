@@ -18,12 +18,65 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/reservations/reoccurring": {
+        "/offices": {
+            "get": {
+                "tags": [
+                    "offices"
+                ],
+                "summary": "Returns all offices",
+                "responses": {}
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "offices"
+                ],
+                "summary": "Create a new office",
+                "responses": {}
+            }
+        },
+        "/offices/edit": {
+            "patch": {
+                "tags": [
+                    "offices"
+                ],
+                "responses": {}
+            }
+        },
+        "/reservations/recurring": {
+            "get": {
+                "tags": [
+                    "reservation"
+                ],
+                "summary": "Returns recurring reservations of authenticated user",
+                "responses": {}
+            },
             "post": {
                 "tags": [
                     "reservation"
                 ],
-                "summary": "Adds a reoccurring reservation",
+                "summary": "Adds a recurring reservation",
+                "responses": {}
+            },
+            "delete": {
+                "tags": [
+                    "reservation"
+                ],
+                "summary": "Deletes recurring reservation",
+                "responses": {}
+            }
+        },
+        "/reservations/recurring/all-users": {
+            "get": {
+                "tags": [
+                    "reservation"
+                ],
+                "summary": "Returns reoccurring reservations of all users",
                 "responses": {}
             }
         },
@@ -67,19 +120,15 @@ const docTemplate = `{
                         "description": "TODO",
                         "name": "username",
                         "in": "path"
-                    },
-                    {
-                        "type": "string",
-                        "description": "TODO",
-                        "name": "firstName",
-                        "in": "path"
-                    },
-                    {
-                        "type": "string",
-                        "description": "TODO",
-                        "name": "lastName",
-                        "in": "path"
                     }
+                ],
+                "responses": {}
+            }
+        },
+        "/users/all-available": {
+            "get": {
+                "tags": [
+                    "accounts"
                 ],
                 "responses": {}
             }
@@ -116,15 +165,6 @@ const docTemplate = `{
                     "reservation"
                 ],
                 "summary": "Deletes a reservation",
-                "responses": {}
-            }
-        },
-        "/workplace/reservations": {
-            "get": {
-                "tags": [
-                    "reservation"
-                ],
-                "summary": "Returns all reservations of the specified timespan",
                 "responses": {}
             }
         },

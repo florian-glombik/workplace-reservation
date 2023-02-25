@@ -47,7 +47,7 @@ func getUserResponse(user db.User) userWithoutHashedPassword {
 	}
 }
 
-// ShowAccount
+// CreateAccount
 // @Summary      Create a new account
 // @Tags         accounts
 // @Accept       json
