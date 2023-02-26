@@ -1,4 +1,13 @@
-import { Box, Button, Card, Stack, TextField, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Card,
+  Grid,
+  IconButton,
+  Stack,
+  TextField,
+  Typography,
+} from '@mui/material'
 import { Form, FormikProvider, useFormik } from 'formik'
 import { Office } from './OfficeList'
 import * as Yup from 'yup'
@@ -8,14 +17,10 @@ import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 import { useAuth } from '../../utils/AuthProvider'
 import { useNavigate } from 'react-router-dom'
+import AddIcon from '@mui/icons-material/Add'
+import * as React from 'react'
 
-export function EditOffice({
-  office,
-  closeEdit,
-}: {
-  office?: Office
-  closeEdit?: () => void
-}) {
+export function EditOffice({ office }: { office?: Office }) {
   const { jwtToken } = useAuth()
   const navigate = useNavigate()
 
@@ -81,17 +86,10 @@ export function EditOffice({
   }
 
   return (
-    <Card sx={{ p: 2 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Typography variant={'h6'} mb={2}>
-          {isEdit ? 'Edit office' : 'Add new office'}
-        </Typography>
-        {closeEdit && <Button onClick={closeEdit}>Close</Button>}
-      </Box>
-
-      <FormikProvider value={formik}>
-        <Form onSubmit={handleSubmit} autoComplete="off">
-          <Stack spacing={3}>
+    <FormikProvider value={formik}>
+      <Form onSubmit={handleSubmit} autoComplete="off">
+        <Grid container spacing={2}>
+          <Grid item>
             <TextField
               label={'Name'}
               {...getFieldProps('name')}
@@ -99,30 +97,52 @@ export function EditOffice({
               helperText={touched.name && errors.name}
               autoFocus={isEdit}
             />
+          </Grid>
+          <Grid item>
+            {' '}
             <TextField
               label={'Description'}
               {...getFieldProps('description')}
             />
+          </Grid>
+          <Grid item>
+            {' '}
             <TextField
               label={'Location'}
               {...getFieldProps('location')}
               error={Boolean(touched.location && errors.location)}
               helperText={touched.location && errors.location}
             />
+          </Grid>
+          <Grid item>
+            {' '}
             <TextField
               label={'LocationURL'}
               {...getFieldProps('locationUrl')}
             />
-            <Button
-              type={'submit'}
-              variant={'contained'}
-              sx={{ width: 'max-content' }}
-            >
-              {isEdit ? 'Save changes' : 'Add Office'}
-            </Button>
-          </Stack>
-        </Form>
-      </FormikProvider>
-    </Card>
+          </Grid>
+          <Grid item>
+            <SubmitButton isEdit={isEdit} />
+          </Grid>
+        </Grid>
+      </Form>
+    </FormikProvider>
+  )
+}
+
+function SubmitButton({ isEdit }: { isEdit: boolean }) {
+  if (isEdit) {
+    return (
+      <IconButton color={'primary'} type={'submit'}>
+        <AddIcon />
+        <Typography>Add new office</Typography>
+      </IconButton>
+    )
+  }
+
+  return (
+    <Button type={'submit'} variant={'contained'} sx={{ width: 'max-content' }}>
+      {isEdit ? 'Save changes' : 'Add Office'}
+    </Button>
   )
 }

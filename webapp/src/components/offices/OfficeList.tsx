@@ -1,12 +1,21 @@
 import { useAuth } from '../../utils/AuthProvider'
-import { Box, Button, Card, Typography } from '@mui/material'
+import {
+  Box,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  Typography,
+} from '@mui/material'
 import { useEffect, useState } from 'react'
 import axios, { AxiosRequestConfig } from 'axios'
 import { BASE_URL } from '../../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 import { NullString, WorkplaceWithoutReservations } from '../Workplaces'
-import { EditOffice } from './EditOffice'
+import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit'
+import { TableHead, TableRow } from '@material-ui/core'
 
 export type Office = {
   ID: string
@@ -18,8 +27,7 @@ export type Office = {
 }
 
 export function OfficeList() {
-  const { jwtToken } = useAuth()
-
+  const { jwtToken, user } = useAuth()
   const [offices, setOffices] = useState<Office[]>([])
 
   useEffect(() => {
@@ -45,43 +53,47 @@ export function OfficeList() {
     }
   }
 
-  const noOfficeLoaded = offices.length == 0
-  return (
-    <Box>
-      {noOfficeLoaded && <Typography>No offices created yet</Typography>}
-      {offices.map((office) => {
-        return <Office office={office} key={`office-${office.ID}`} />
-      })}
-    </Box>
-  )
-}
-
-function Office({ office }: { office: Office }) {
-  const [displayEditForm, setDisplayEditForm] = useState(false)
+  const handleEdit = () => {}
 
   const handleDelete = () => {
     // TODO
   }
-  const handleEdit = () => {
-    setDisplayEditForm(!displayEditForm)
-  }
 
-  const closeEdit = () => {
-    setDisplayEditForm(false)
-  }
-
+  const noOfficeLoaded = offices.length == 0
   return (
-    <Card sx={{ mb: 4, p: 2 }}>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Typography variant={'h5'}>{office.Name.String}</Typography>
-        <Box>
-          <Button onClick={handleEdit}>Edit</Button>
-          <Button disabled={true} onClick={handleDelete}>
-            Delete
-          </Button>
-        </Box>
-      </Box>
-      {displayEditForm && <EditOffice office={office} closeEdit={closeEdit} />}
-    </Card>
+    <Box>
+      {!noOfficeLoaded && (
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Workplace</TableCell>
+              <TableCell></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {offices.map((office: Office) => {
+              return (
+                <TableRow key={office.ID}>
+                  <TableCell>{office.Name.String}</TableCell>
+                  <TableCell>
+                    <IconButton onClick={handleEdit} aria-label="edit office">
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton
+                      disabled={true}
+                      onClick={handleDelete}
+                      aria-label="delete office"
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              )
+            })}
+          </TableBody>
+        </Table>
+      )}
+      {noOfficeLoaded && <Typography>No offices created yet</Typography>}
+    </Box>
   )
 }

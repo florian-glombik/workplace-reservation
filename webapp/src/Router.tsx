@@ -8,7 +8,8 @@ import { Login } from './components/Login'
 import { Registration } from './components/Registration'
 import { PageNotFound } from './components/PageNotFound'
 import React from 'react'
-import { EditOfficesPage } from './pages/EditOfficesPage'
+import { OfficePage } from './pages/OfficePage'
+import { EditOfficePage } from './pages/EditOfficePage'
 
 export function Router() {
   return (
@@ -49,7 +50,15 @@ export function Router() {
         path={'/offices'}
         element={
           <ProtectedRoute>
-            <EditOfficesPage />
+            <OfficePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={'/offices:officeId'}
+        element={
+          <ProtectedRoute>
+            <EditOfficePage />
           </ProtectedRoute>
         }
       />
