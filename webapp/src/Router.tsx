@@ -49,7 +49,7 @@ export function Router() {
       <Route
         path={'/offices'}
         element={
-          <ProtectedRoute>
+          <ProtectedRoute isAdminRoute={true}>
             <OfficePage />
           </ProtectedRoute>
         }
@@ -57,7 +57,7 @@ export function Router() {
       <Route
         path={'/offices/:officeId'}
         element={
-          <ProtectedRoute>
+          <ProtectedRoute isAdminRoute={true}>
             <EditOfficePage />
           </ProtectedRoute>
         }
