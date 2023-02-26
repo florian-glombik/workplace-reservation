@@ -6,7 +6,9 @@ import (
 	db "github.com/florian-glombik/workplace-reservation/db/sqlc"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	uuidConversion "github.com/satori/go.uuid"
 	"net/http"
+	"path"
 )
 
 type Office struct {
@@ -92,6 +94,35 @@ func (server *Server) editOffice(context *gin.Context) {
 		Description: request.Description,
 	}
 	office, err := server.queries.UpdateOffice(context, updateOfficeSqlParams)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		return
+	}
+
+	context.JSON(http.StatusOK, office)
+}
+
+// TODO add on delete cascade to workplaces
+// DeleteOffice
+// @Summary
+// @Tags         offices
+// @Router       /offices/delete [delete]
+func (server *Server) deleteOffice(context *gin.Context) {
+	if !isAdmin(context) {
+		err := errors.New("you are not allowed to delete offices")
+		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
+		return
+	}
+
+	officeIdString := path.Base(context.Request.URL.Path)
+	parsedUuid, err := uuidConversion.FromString(officeIdString)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, errorResponse("Invalid reoccurring reservation uuid", err))
+		return
+	}
+	officeId := uuid.UUID(parsedUuid)
+
+	office, err := server.queries.DeleteOffice(context, officeId)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
 		return
