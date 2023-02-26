@@ -46,7 +46,7 @@ export const MultipleWorkplaces = ({
           endOfTheWeek={workplaceInput.endDate}
           defaultExpanded={false}
           availableUsers={availableUsers}
-        ></Workplaces>
+        />
       ))}
     </Box>
   )

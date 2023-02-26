@@ -8,7 +8,7 @@ import { Login } from './components/Login'
 import { Registration } from './components/Registration'
 import { PageNotFound } from './components/PageNotFound'
 import React from 'react'
-import { EditOfficesPage } from './components/EditOfficesPage'
+import { EditOfficesPage } from './pages/EditOfficesPage'
 
 export function Router() {
   return (

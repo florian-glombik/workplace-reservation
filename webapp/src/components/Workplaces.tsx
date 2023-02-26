@@ -51,9 +51,10 @@ export type Workplaces = {
   reservations: Reservation[] | null
 }
 
-export type WorkplaceWithName = {
+export type WorkplaceWithoutReservations = {
   ID: string
   Name: NullString
+  description?: string
 }
 
 export type Reservation = {
