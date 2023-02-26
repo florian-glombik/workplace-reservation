@@ -16,6 +16,7 @@ import { NullString, WorkplaceWithoutReservations } from '../Workplaces'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import { TableHead, TableRow } from '@material-ui/core'
+import { useNavigate } from 'react-router-dom'
 
 export type Office = {
   ID: string
@@ -29,6 +30,7 @@ export type Office = {
 export function OfficeList() {
   const { jwtToken, user } = useAuth()
   const [offices, setOffices] = useState<Office[]>([])
+  const navigate = useNavigate()
 
   useEffect(() => {
     loadOffices()
@@ -53,7 +55,9 @@ export function OfficeList() {
     }
   }
 
-  const handleEdit = () => {}
+  const handleEdit = (office: Office) => {
+    navigate(`${office.ID}`)
+  }
 
   const handleDelete = () => {
     // TODO
@@ -76,7 +80,10 @@ export function OfficeList() {
                 <TableRow key={office.ID}>
                   <TableCell>{office.Name.String}</TableCell>
                   <TableCell>
-                    <IconButton onClick={handleEdit} aria-label="edit office">
+                    <IconButton
+                      onClick={() => handleEdit(office)}
+                      aria-label="edit office"
+                    >
                       <EditIcon />
                     </IconButton>
                     <IconButton

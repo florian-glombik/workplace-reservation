@@ -55,7 +55,7 @@ export function Router() {
         }
       />
       <Route
-        path={'/offices:officeId'}
+        path={'/offices/:officeId'}
         element={
           <ProtectedRoute>
             <EditOfficePage />

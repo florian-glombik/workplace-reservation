@@ -1,10 +1,8 @@
 import {
   Box,
   Button,
-  Card,
   Grid,
   IconButton,
-  Stack,
   TextField,
   Typography,
 } from '@mui/material'
@@ -19,6 +17,7 @@ import { useAuth } from '../../utils/AuthProvider'
 import { useNavigate } from 'react-router-dom'
 import AddIcon from '@mui/icons-material/Add'
 import * as React from 'react'
+import SaveIcon from '@mui/icons-material/Save'
 
 export function EditOffice({ office }: { office?: Office }) {
   const { jwtToken } = useAuth()
@@ -131,18 +130,21 @@ export function EditOffice({ office }: { office?: Office }) {
 }
 
 function SubmitButton({ isEdit }: { isEdit: boolean }) {
-  if (isEdit) {
-    return (
-      <IconButton color={'primary'} type={'submit'}>
-        <AddIcon />
-        <Typography>Add new office</Typography>
-      </IconButton>
-    )
-  }
-
   return (
-    <Button type={'submit'} variant={'contained'} sx={{ width: 'max-content' }}>
-      {isEdit ? 'Save changes' : 'Add Office'}
-    </Button>
+    <IconButton color={'primary'} type={'submit'}>
+      {isEdit ? (
+        <Box sx={{ display: 'flex' }}>
+          <SaveIcon />
+          &nbsp;
+          <Typography>Save changes</Typography>
+        </Box>
+      ) : (
+        <Box sx={{ display: 'flex' }}>
+          <AddIcon />
+          &nbsp;
+          <Typography>Add new office</Typography>
+        </Box>
+      )}
+    </IconButton>
   )
 }

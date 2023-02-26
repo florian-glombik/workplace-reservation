@@ -31,6 +31,28 @@ func (server *Server) getOffices(context *gin.Context) {
 	context.JSON(http.StatusOK, offices)
 }
 
+// GetOfficeById
+// @Summary      Returns office for supplied ID
+// @Tags         offices
+// @Router       /offices/office-id [get]
+func (server *Server) getOfficeById(context *gin.Context) {
+	officeIdString := path.Base(context.Request.URL.Path)
+	parsedUuid, err := uuidConversion.FromString(officeIdString)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, errorResponse("Invalid uuid", err))
+		return
+	}
+	officeId := uuid.UUID(parsedUuid)
+
+	office, err := server.queries.GetOfficeById(context, officeId)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		return
+	}
+
+	context.JSON(http.StatusOK, office)
+}
+
 type CreateOfficeRequest struct {
 	Name        string `json:"name" binding:"required"`
 	Description string `json:"description" binding:"omitempty"`

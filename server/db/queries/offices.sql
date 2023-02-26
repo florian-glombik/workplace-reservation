@@ -2,6 +2,11 @@
 SELECT *
 FROM offices;
 
+-- name: GetOfficeById :one
+SELECT *
+FROM offices
+WHERE id = $1;
+
 -- name: CreateOffices :one
 INSERT INTO offices (id, name, description)
 VALUES ($1, $2, $3) RETURNING *;
