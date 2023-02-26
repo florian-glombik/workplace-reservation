@@ -21,7 +21,7 @@ export function EditOfficePage() {
   const loadOffice = async () => {
     const requestConfig: AxiosRequestConfig = {
       headers: {
-        Authorization: 'Bearer ' + jwtToke  n,
+        Authorization: 'Bearer ' + jwtToken,
       },
     }
 
