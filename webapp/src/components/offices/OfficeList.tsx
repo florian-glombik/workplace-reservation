@@ -52,11 +52,11 @@ export function OfficeList() {
     }
   }
 
-  const handleEdit = (office: Office) => {
+  const handleEditOffice = (office: Office) => {
     navigate(`${office.ID}`)
   }
 
-  const handleDelete = async (office: Office) => {
+  const handleDeleteOffice = async (office: Office) => {
     const requestConfig: AxiosRequestConfig = {
       headers: {
         Authorization: 'Bearer ' + jwtToken,
@@ -93,13 +93,13 @@ export function OfficeList() {
                   <TableCell>{office.Name.String}</TableCell>
                   <TableCell>
                     <IconButton
-                      onClick={() => handleEdit(office)}
+                      onClick={() => handleEditOffice(office)}
                       aria-label="edit office"
                     >
                       <EditIcon />
                     </IconButton>
                     <IconButton
-                      onClick={() => handleDelete(office)}
+                      onClick={() => handleDeleteOffice(office)}
                       aria-label="delete office"
                     >
                       <DeleteIcon />

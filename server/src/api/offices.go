@@ -11,12 +11,6 @@ import (
 	"path"
 )
 
-type Office struct {
-	ID          uuid.UUID      `json:"id"`
-	Name        sql.NullString `json:"name"`
-	Description sql.NullString `json:"description"`
-}
-
 // GetOffices
 // @Summary      Returns all offices
 // @Tags         offices
@@ -53,9 +47,11 @@ func (server *Server) getOfficeById(context *gin.Context) {
 	context.JSON(http.StatusOK, office)
 }
 
-type CreateOfficeRequest struct {
-	Name        string `json:"name" binding:"required"`
-	Description string `json:"description" binding:"omitempty"`
+type Office struct {
+	Name        string `binding:"required"`
+	Description string `binding:"omitempty"`
+	Location    string `binding:"required"`
+	LocationUrl string `binding:"omitempty"`
 }
 
 // CreateOffice
@@ -71,7 +67,7 @@ func (server *Server) createOffice(context *gin.Context) {
 		return
 	}
 
-	var request CreateOfficeRequest
+	var request Office
 
 	if err := context.ShouldBindJSON(&request); err != nil {
 		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
@@ -80,8 +76,10 @@ func (server *Server) createOffice(context *gin.Context) {
 
 	createOfficeParams := db.CreateOfficesParams{
 		ID:          uuid.New(),
-		Name:        sql.NullString{String: request.Name, Valid: true},
-		Description: sql.NullString{String: request.Description, Valid: true},
+		Name:        toNullString(request.Name),
+		Description: toNullString(request.Description),
+		Location:    request.Location,
+		LocationUrl: toNullString(request.LocationUrl),
 	}
 
 	newOffice, err := server.queries.CreateOffices(context, createOfficeParams)
@@ -91,6 +89,14 @@ func (server *Server) createOffice(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, newOffice)
+}
+
+func isValidString(str string) bool {
+	return len(str) > 0
+}
+
+func toNullString(str string) sql.NullString {
+	return sql.NullString{String: str, Valid: isValidString(str)}
 }
 
 // EditOffice
@@ -104,6 +110,14 @@ func (server *Server) editOffice(context *gin.Context) {
 		return
 	}
 
+	officeIdString := path.Base(context.Request.URL.Path)
+	parsedUuid, err := uuidConversion.FromString(officeIdString)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, errorResponse("Invalid reoccurring reservation uuid", err))
+		return
+	}
+	officeId := uuid.UUID(parsedUuid)
+
 	var request Office
 	if err := context.ShouldBindJSON(&request); err != nil {
 		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
@@ -111,17 +125,19 @@ func (server *Server) editOffice(context *gin.Context) {
 	}
 
 	updateOfficeSqlParams := db.UpdateOfficeParams{
-		ID:          request.ID,
-		Name:        request.Name,
-		Description: request.Description,
+		ID:          officeId,
+		Name:        toNullString(request.Name),
+		Description: toNullString(request.Description),
+		Location:    request.Location,
+		LocationUrl: toNullString(request.LocationUrl),
 	}
-	office, err := server.queries.UpdateOffice(context, updateOfficeSqlParams)
+	_, err = server.queries.UpdateOffice(context, updateOfficeSqlParams)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
 		return
 	}
 
-	context.JSON(http.StatusOK, office)
+	context.JSON(http.StatusOK, updateOfficeSqlParams)
 }
 
 // TODO add on delete cascade to workplaces

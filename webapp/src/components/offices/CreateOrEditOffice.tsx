@@ -16,20 +16,20 @@ export function CreateOrEditOffice({ office }: { office?: Office }) {
   const { jwtToken } = useAuth()
   const navigate = useNavigate()
 
-  const isEdit = !!office
-
   const OfficeValidationSchema = Yup.object().shape({
-    name: Yup.string().required('Name must be set'),
-    location: Yup.string().required('Location must be set'),
+    Name: Yup.string().required('Name must be set'),
+    Location: Yup.string().required('Location must be set'),
   })
+
+  const isEdit = !!office
 
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
-      name: office?.Name.String ?? '',
-      description: office?.Description.String ?? '',
-      location: office?.Location ?? '',
-      locationUrl: office?.LocationUrl?.String ?? '',
+      Name: office?.Name.String ?? '',
+      Description: office?.Description.String ?? '',
+      Location: office?.Location ?? '',
+      LocationUrl: office?.LocationUrl?.String ?? '',
     },
     validationSchema: OfficeValidationSchema,
     onSubmit: async () => {
@@ -56,21 +56,28 @@ export function CreateOrEditOffice({ office }: { office?: Office }) {
     }
 
     try {
-      let requestUrl = BASE_URL + 'offices'
-
-      const office: Office = (
-        await axios.post(requestUrl, values, requestConfig)
-      ).data
+      let createdOrEditedOffice: Office | undefined = undefined
+      if (isEdit) {
+        const requestUrl = BASE_URL + 'offices/' + office!.ID
+        createdOrEditedOffice = (
+          await axios.patch(requestUrl, values, requestConfig)
+        ).data
+      } else {
+        const requestUrl = BASE_URL + 'offices'
+        createdOrEditedOffice = (
+          await axios.post(requestUrl, values, requestConfig)
+        ).data
+      }
       resetForm()
       setSubmitting(false)
       toast.success(
         isEdit
-          ? `Office ${office.Name.String} updated`
-          : `Office ${office.Name.String} created!`
+          ? `Office ${createdOrEditedOffice?.Name.String} updated`
+          : `Office ${createdOrEditedOffice?.Name.String} created!`
       )
       navigate('/offices', { replace: true })
     } catch (error: any) {
-      console.log(error)
+      console.error(error)
       setSubmitting(false)
       setErrors(error.message)
       toast.error(getDisplayResponseMessage(error))
@@ -84,30 +91,30 @@ export function CreateOrEditOffice({ office }: { office?: Office }) {
           <Grid item>
             <TextField
               label={'Name'}
-              {...getFieldProps('name')}
-              error={Boolean(touched.name && errors.name)}
-              helperText={touched.name && errors.name}
+              {...getFieldProps('Name')}
+              error={Boolean(touched.Name && errors.Name)}
+              helperText={touched.Name && errors.Name}
               autoFocus={isEdit}
             />
           </Grid>
           <Grid item>
             <TextField
               label={'Description'}
-              {...getFieldProps('description')}
+              {...getFieldProps('Description')}
             />
           </Grid>
           <Grid item>
             <TextField
               label={'Location'}
-              {...getFieldProps('location')}
-              error={Boolean(touched.location && errors.location)}
-              helperText={touched.location && errors.location}
+              {...getFieldProps('Location')}
+              error={Boolean(touched.Location && errors.Location)}
+              helperText={touched.Location && errors.Location}
             />
           </Grid>
           <Grid item>
             <TextField
               label={'LocationURL'}
-              {...getFieldProps('locationUrl')}
+              {...getFieldProps('LocationUrl')}
             />
           </Grid>
           <Grid item>
