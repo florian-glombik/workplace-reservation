@@ -22,13 +22,13 @@ export type Office = {
   ID: string
   Name: NullString
   Description: NullString
-  location: string
-  locationURL?: string
+  Location: string
+  LocationUrl?: NullString
   workplaces: WorkplaceWithoutReservations[]
 }
 
 export function OfficeList() {
-  const { jwtToken, user } = useAuth()
+  const { jwtToken } = useAuth()
   const [offices, setOffices] = useState<Office[]>([])
   const navigate = useNavigate()
 
@@ -44,11 +44,8 @@ export function OfficeList() {
     }
 
     try {
-      let requestUrl = BASE_URL + 'offices'
-
+      const requestUrl = BASE_URL + 'offices'
       const offices = (await axios.get(requestUrl, requestConfig)).data
-      console.log({ offices })
-
       setOffices(offices ?? [])
     } catch (error) {
       toast.error(getDisplayResponseMessage(error))
@@ -59,8 +56,23 @@ export function OfficeList() {
     navigate(`${office.ID}`)
   }
 
-  const handleDelete = () => {
-    // TODO
+  const handleDelete = async (office: Office) => {
+    const requestConfig: AxiosRequestConfig = {
+      headers: {
+        Authorization: 'Bearer ' + jwtToken,
+      },
+    }
+    try {
+      const requestUrl = BASE_URL + 'offices/' + office.ID
+      await axios.delete(requestUrl, requestConfig)
+
+      setOffices(
+        offices.filter((officeInList) => officeInList.ID !== office.ID)
+      )
+      toast.success(`Office ${office.ID} was deleted`)
+    } catch (error) {
+      toast.error(getDisplayResponseMessage(error))
+    }
   }
 
   const noOfficeLoaded = offices.length == 0
@@ -87,8 +99,7 @@ export function OfficeList() {
                       <EditIcon />
                     </IconButton>
                     <IconButton
-                      disabled={true}
-                      onClick={handleDelete}
+                      onClick={() => handleDelete(office)}
                       aria-label="delete office"
                     >
                       <DeleteIcon />

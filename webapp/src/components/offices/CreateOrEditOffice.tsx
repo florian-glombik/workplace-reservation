@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  Grid,
-  IconButton,
-  TextField,
-  Typography,
-} from '@mui/material'
+import { Box, Grid, IconButton, TextField, Typography } from '@mui/material'
 import { Form, FormikProvider, useFormik } from 'formik'
 import { Office } from './OfficeList'
 import * as Yup from 'yup'
@@ -19,7 +12,7 @@ import AddIcon from '@mui/icons-material/Add'
 import * as React from 'react'
 import SaveIcon from '@mui/icons-material/Save'
 
-export function EditOffice({ office }: { office?: Office }) {
+export function CreateOrEditOffice({ office }: { office?: Office }) {
   const { jwtToken } = useAuth()
   const navigate = useNavigate()
 
@@ -35,8 +28,8 @@ export function EditOffice({ office }: { office?: Office }) {
     initialValues: {
       name: office?.Name.String ?? '',
       description: office?.Description.String ?? '',
-      location: office?.location ?? '',
-      locationUrl: office?.locationURL ?? '',
+      location: office?.Location ?? '',
+      locationUrl: office?.LocationUrl?.String ?? '',
     },
     validationSchema: OfficeValidationSchema,
     onSubmit: async () => {
@@ -98,14 +91,12 @@ export function EditOffice({ office }: { office?: Office }) {
             />
           </Grid>
           <Grid item>
-            {' '}
             <TextField
               label={'Description'}
               {...getFieldProps('description')}
             />
           </Grid>
           <Grid item>
-            {' '}
             <TextField
               label={'Location'}
               {...getFieldProps('location')}
@@ -114,7 +105,6 @@ export function EditOffice({ office }: { office?: Office }) {
             />
           </Grid>
           <Grid item>
-            {' '}
             <TextField
               label={'LocationURL'}
               {...getFieldProps('locationUrl')}

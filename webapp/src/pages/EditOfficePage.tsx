@@ -1,4 +1,4 @@
-import { Box, Stack, Typography } from '@mui/material'
+import { Stack, Typography } from '@mui/material'
 import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Office } from '../components/offices/OfficeList'
@@ -7,7 +7,7 @@ import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useAuth } from '../utils/AuthProvider'
-import { EditOffice } from '../components/offices/EditOffice'
+import { CreateOrEditOffice } from '../components/offices/CreateOrEditOffice'
 
 export function EditOfficePage() {
   const { officeId } = useParams()
@@ -38,7 +38,7 @@ export function EditOfficePage() {
   return (
     <Stack sx={{ m: 2 }} spacing={3}>
       <Typography variant={'h4'}>Edit office: {office?.Name.String}</Typography>
-      <EditOffice office={office} />
+      <CreateOrEditOffice office={office} />
     </Stack>
   )
 }

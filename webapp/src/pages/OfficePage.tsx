@@ -1,5 +1,5 @@
 import { Box, Divider, Stack, Typography } from '@mui/material'
-import { EditOffice } from '../components/offices/EditOffice'
+import { CreateOrEditOffice } from '../components/offices/CreateOrEditOffice'
 import { OfficeList } from '../components/offices/OfficeList'
 import { OFFICE_MENU_ENTRY } from '../components/Header'
 
@@ -11,7 +11,7 @@ export function OfficePage() {
       </Typography>
 
       <Stack spacing={6}>
-        <EditOffice />
+        <CreateOrEditOffice />
         <Divider />
         <OfficeList />
       </Stack>
