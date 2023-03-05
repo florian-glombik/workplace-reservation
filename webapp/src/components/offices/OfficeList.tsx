@@ -5,6 +5,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  Tooltip,
   Typography,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
@@ -69,7 +70,7 @@ export function OfficeList() {
       setOffices(
         offices.filter((officeInList) => officeInList.ID !== office.ID)
       )
-      toast.success(`Office ${office.ID} was deleted`)
+      toast.success(`Office '${office.Name.String}' was deleted`)
     } catch (error) {
       toast.error(getDisplayResponseMessage(error))
     }
@@ -82,7 +83,7 @@ export function OfficeList() {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Workplace</TableCell>
+              <TableCell>Office</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
@@ -92,18 +93,23 @@ export function OfficeList() {
                 <TableRow key={office.ID}>
                   <TableCell>{office.Name.String}</TableCell>
                   <TableCell>
-                    <IconButton
-                      onClick={() => handleEditOffice(office)}
-                      aria-label="edit office"
-                    >
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => handleDeleteOffice(office)}
-                      aria-label="delete office"
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+                    <Tooltip title={'Edit office and associated workplaces'}>
+                      <IconButton
+                        onClick={() => handleEditOffice(office)}
+                        aria-label="edit office"
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
+
+                    <Tooltip title={'Delete office and associated workplaces'}>
+                      <IconButton
+                        onClick={() => handleDeleteOffice(office)}
+                        aria-label="delete office"
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
                   </TableCell>
                 </TableRow>
               )
