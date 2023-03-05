@@ -53,8 +53,9 @@ export type Workplaces = {
 
 export type WorkplaceWithoutReservations = {
   ID: string
+  OfficeID: string
   Name: NullString
-  description?: string
+  Description: NullString
 }
 
 export type Reservation = {

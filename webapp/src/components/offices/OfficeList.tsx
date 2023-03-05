@@ -25,7 +25,6 @@ export type Office = {
   Description: NullString
   Location: string
   LocationUrl?: NullString
-  workplaces: WorkplaceWithoutReservations[]
 }
 
 export function OfficeList() {

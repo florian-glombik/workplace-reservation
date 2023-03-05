@@ -11,6 +11,21 @@ WHERE id = $1;
 SELECT *
 FROM workplaces;
 
+-- name: UpdateWorkplace :execresult
+UPDATE workplaces
+SET name = $2, description = $3
+WHERE id = $1;
+
+-- name: GetWorkplacesByOfficeId :many
+SELECT *
+FROM workplaces
+WHERE office_id = $1;
+
+-- name: DeleteWorkplace :execresult
+DELETE
+FROM workplaces
+WHERE id = $1;
+
 -- name: GetNamesOfWorkplaces :many
 SELECT workplaces.id, workplaces.name
 FROM workplaces;

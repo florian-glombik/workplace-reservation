@@ -11,6 +11,11 @@ import (
 	"path"
 )
 
+type OfficeWithWorkplaces struct {
+	Office     db.Office
+	Workplaces []db.Workplace
+}
+
 // GetOffices
 // @Summary      Returns all offices
 // @Tags         offices
@@ -44,7 +49,13 @@ func (server *Server) getOfficeById(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusOK, office)
+	associatedWorkplaces, err := server.queries.GetWorkplacesByOfficeId(context, office.ID)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		return
+	}
+
+	context.JSON(http.StatusOK, OfficeWithWorkplaces{Office: office, Workplaces: associatedWorkplaces})
 }
 
 type Office struct {
@@ -102,7 +113,7 @@ func toNullString(str string) sql.NullString {
 // EditOffice
 // @Summary
 // @Tags         offices
-// @Router       /offices/edit [patch]
+// @Router       /offices/edit/:officeId [patch]
 func (server *Server) editOffice(context *gin.Context) {
 	if !isAdmin(context) {
 		err := errors.New("you are not allowed to edit offices")
@@ -110,13 +121,11 @@ func (server *Server) editOffice(context *gin.Context) {
 		return
 	}
 
-	officeIdString := path.Base(context.Request.URL.Path)
-	parsedUuid, err := uuidConversion.FromString(officeIdString)
+	officeId, err := getUuidFromUrl(context)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, errorResponse("Invalid reoccurring reservation uuid", err))
 		return
 	}
-	officeId := uuid.UUID(parsedUuid)
 
 	var request Office
 	if err := context.ShouldBindJSON(&request); err != nil {
@@ -125,7 +134,7 @@ func (server *Server) editOffice(context *gin.Context) {
 	}
 
 	updateOfficeSqlParams := db.UpdateOfficeParams{
-		ID:          officeId,
+		ID:          *officeId,
 		Name:        toNullString(request.Name),
 		Description: toNullString(request.Description),
 		Location:    request.Location,
@@ -152,15 +161,13 @@ func (server *Server) deleteOffice(context *gin.Context) {
 		return
 	}
 
-	officeIdString := path.Base(context.Request.URL.Path)
-	parsedUuid, err := uuidConversion.FromString(officeIdString)
+	officeId, err := getUuidFromUrl(context)
 	if err != nil {
 		context.JSON(http.StatusBadRequest, errorResponse("Invalid reoccurring reservation uuid", err))
 		return
 	}
-	officeId := uuid.UUID(parsedUuid)
 
-	office, err := server.queries.DeleteOffice(context, officeId)
+	office, err := server.queries.DeleteOffice(context, *officeId)
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
 		return

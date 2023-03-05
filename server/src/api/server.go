@@ -77,8 +77,10 @@ func (server *Server) setupRouter() {
 
 	authRoutes.GET("/workplaces", server.getWorkplaces)
 	authRoutes.GET("/workplaces/names", server.getNamesOfWorkplaces)
+	authRoutes.POST("/workplaces", server.createWorkplace)
+	authRoutes.PATCH("/workplaces/:workplaceId", server.editWorkplace)
+	authRoutes.DELETE("/workplaces/:workplaceId", server.deleteWorkplace)
 
-	authRoutes.POST("/workplace/create", server.createWorkplace)
 	authRoutes.POST("/workplace/reserve", server.handleCreateReservation)
 	authRoutes.DELETE("/workplace/reservations/:reservation-id", server.handleDeleteReservation)
 

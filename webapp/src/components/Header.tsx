@@ -24,7 +24,7 @@ export function getUserDisplayName(user?: Account): string {
     : user.email
 }
 
-export const OFFICE_MENU_ENTRY = 'Offices'
+export const OFFICE_MENU_ENTRY = 'Offices & Workplaces'
 
 const WORKPLACE_RESERVATION_BUG_OR_FEATURE_REQUEST_LINK =
   'https://github.com/florian-glombik/workplace-reservation/issues/new/choose'

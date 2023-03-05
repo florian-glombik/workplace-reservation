@@ -118,6 +118,8 @@ export const ActiveRecurringReservations = () => {
                     {getWorkplaceName({
                       ID: recurringReservation.ReservedWorkplaceID,
                       Name: recurringReservation.WorkplaceName,
+                      OfficeID: '',
+                      Description: { String: '', Valid: false },
                     })}
                   </TableCell>
                   <TableCell>
