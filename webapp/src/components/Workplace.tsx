@@ -26,6 +26,7 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  Stack,
   TableCell,
   Typography,
 } from '@mui/material'
@@ -33,6 +34,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import withStyles from '@material-ui/core/styles/withStyles'
 import NoAccountsIcon from '@mui/icons-material/NoAccounts'
 import { WEEK_STARTS_ON_MONDAY } from './WorkplaceAccordions'
+import { useNavigate } from 'react-router-dom'
 
 const IconLeftAccordionSummary = withStyles({
   expandIcon: {
@@ -320,8 +322,27 @@ function WorkplaceReservationTable(props: {
 }
 
 function NoWorkplacesFound() {
-  // const { is } = useAuth()
-  return <Typography>No workplaces found</Typography>
+  const { isAdmin } = useAuth()
+  const navigate = useNavigate()
+
+  return (
+    <Box
+      sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+    >
+      {isAdmin && (
+        <Stack sx={{ alignItems: 'center' }} gap={2}>
+          <Typography>No workplaces created yet</Typography>
+          <Button
+            onClick={() => navigate('/offices', { replace: true })}
+            variant={'contained'}
+          >
+            Create Offices & Workplaces
+          </Button>
+        </Stack>
+      )}
+      {!isAdmin && <Typography>No workplaces found</Typography>}
+    </Box>
+  )
 }
 
 async function reserveWorkplace(
