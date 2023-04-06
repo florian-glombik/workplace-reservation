@@ -9,7 +9,7 @@ import {
   startOfDay,
 } from 'date-fns'
 import { Box } from '@mui/material'
-import { ACCORDION_LABEL_DATE_FORMAT, Workplaces } from './Workplaces'
+import { ACCORDION_LABEL_DATE_FORMAT, Workplace, Workplaces } from './Workplace'
 import {
   DAYS_PER_WEEK,
   MONDAY_NUMBER_CODE,
@@ -46,7 +46,7 @@ export const MultipleWorkplaces = ({
           endOfTheWeek={workplaceInput.endDate}
           defaultExpanded={false}
           availableUsers={availableUsers}
-        ></Workplaces>
+        />
       ))}
     </Box>
   )

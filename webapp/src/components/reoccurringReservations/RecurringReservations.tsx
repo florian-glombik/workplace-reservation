@@ -6,8 +6,8 @@ import { ActiveRecurringReservations } from './ActiveRecurringReservations'
 
 export const RecurringReservations = () => {
   return (
-    <Box>
-      <Typography variant={'h4'} sx={{ mt: 2, mb: 2 }}>
+    <Box sx={{ m: 2 }}>
+      <Typography variant={'h4'} sx={{ mt: 2, mb: 4 }}>
         Recurring Reservations
       </Typography>
       <RecurringReservationsForm></RecurringReservationsForm>

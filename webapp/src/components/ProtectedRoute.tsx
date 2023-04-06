@@ -27,8 +27,14 @@ function convertJwtToken(token: string): JwtToken | null {
   }
 }
 
-export const ProtectedRoute = ({ children }: any) => {
-  const { user, jwtToken, logout } = useAuth()
+export const ProtectedRoute = ({
+  children,
+  isAdminRoute,
+}: {
+  children: any
+  isAdminRoute?: boolean
+}) => {
+  const { user, jwtToken, isAdmin, logout } = useAuth()
 
   const convertedToken: JwtToken | null = convertJwtToken(jwtToken)
 
@@ -37,6 +43,9 @@ export const ProtectedRoute = ({ children }: any) => {
   if (!userIsAuthenticated) {
     logout()
     return <Navigate to="/login" />
+  }
+  if (isAdminRoute && !isAdmin) {
+    return <Navigate to={'/'} />
   }
   return children
 }

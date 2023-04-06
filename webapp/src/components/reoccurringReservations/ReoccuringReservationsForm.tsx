@@ -12,7 +12,10 @@ import AddIcon from '@mui/icons-material/Add'
 import { DateRange, DateRangePicker } from 'mui-daterange-picker'
 import * as React from 'react'
 import { useEffect, useState } from 'react'
-import { ACCORDION_LABEL_DATE_FORMAT, WorkplaceWithName } from '../Workplaces'
+import {
+  ACCORDION_LABEL_DATE_FORMAT,
+  WorkplaceWithoutReservations,
+} from '../Workplace'
 import { DAYS_PER_WEEK } from '../WorkplaceAccordions'
 import axios, { AxiosRequestConfig } from 'axios'
 import { format } from 'date-fns-tz'
@@ -30,7 +33,7 @@ import {
 import { BASE_URL } from '../../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
-import { Account, isAdmin, useAuth } from '../../utils/AuthProvider'
+import { Account, useAuth } from '../../utils/AuthProvider'
 import { getUserDisplayName } from '../Header'
 
 export enum RepetitionInterval {
@@ -97,14 +100,18 @@ const nextWeekday = (weekday: Weekday, startDate: Date): Date => {
   return startDate
 }
 
-export function getWorkplaceName(workplace: WorkplaceWithName): string {
+export function getWorkplaceName(
+  workplace: WorkplaceWithoutReservations
+): string {
   return workplace?.Name?.String ? workplace.Name.String : workplace.ID
 }
 
 export const RecurringReservationsForm = () => {
-  const { jwtToken, user, availableUsers } = useAuth()
+  const { jwtToken, user, isAdmin, availableUsers } = useAuth()
   const [open, setOpen] = useState(false)
-  const [workplaces, setWorkplaces] = useState<WorkplaceWithName[]>([])
+  const [workplaces, setWorkplaces] = useState<WorkplaceWithoutReservations[]>(
+    []
+  )
   const [selectedWorkplaceId, setSelectedWorkplaceId] = useState('')
   const [selectedUserId, setSelectedUserId] = useState(user.id)
   const [dayOfTheWeek, setDayOfTheWeek] = useState<Weekday>(
@@ -142,7 +149,7 @@ export const RecurringReservationsForm = () => {
     }
   }
 
-  const setDefaultWorkplace = (workplaces: WorkplaceWithName[]) => {
+  const setDefaultWorkplace = (workplaces: WorkplaceWithoutReservations[]) => {
     if (workplaces.length > 0) {
       setSelectedWorkplaceId(workplaces[0].ID)
     }
@@ -217,7 +224,7 @@ export const RecurringReservationsForm = () => {
 
   return (
     <Box>
-      {isAdmin(user) && (
+      {isAdmin && (
         <FormControl>
           <InputLabel id="user-selection-label">User</InputLabel>
           <Select

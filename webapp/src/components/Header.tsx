@@ -1,5 +1,5 @@
 import './Header.css'
-import { Account, isAdmin, useAuth } from '../utils/AuthProvider'
+import { Account, useAuth } from '../utils/AuthProvider'
 import { Box, Typography } from '@material-ui/core'
 import {
   AppBar,
@@ -24,11 +24,13 @@ export function getUserDisplayName(user?: Account): string {
     : user.email
 }
 
+export const OFFICE_MENU_ENTRY = 'Offices & Workplaces'
+
 const WORKPLACE_RESERVATION_BUG_OR_FEATURE_REQUEST_LINK =
   'https://github.com/florian-glombik/workplace-reservation/issues/new/choose'
 
 export const Header = () => {
-  const { logout, user } = useAuth()
+  const { logout, user, isAdmin } = useAuth()
   const [anchorEl, setAnchorEl] = useState(null)
   const navigate = useNavigate()
 
@@ -55,6 +57,11 @@ export const Header = () => {
   const handleRecurringReservations = () => {
     handleClose()
     navigate('/reservations/recurring')
+  }
+
+  const handleManageOfficesClicked = () => {
+    handleClose()
+    navigate('/offices')
   }
 
   const handleEditAccount = () => {
@@ -126,7 +133,7 @@ export const Header = () => {
                 onClose={handleClose}
               >
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                {isAdmin(user!) && (
+                {isAdmin && (
                   <MenuItem onClick={handleFixedOccupancySchedule} disabled>
                     Fixed occupancy schedule
                   </MenuItem>
@@ -135,6 +142,11 @@ export const Header = () => {
                   Recurring Reservations
                 </MenuItem>
                 <MenuItem onClick={handleEditAccount}>Edit account</MenuItem>
+                {isAdmin && (
+                  <MenuItem onClick={handleManageOfficesClicked}>
+                    {OFFICE_MENU_ENTRY}
+                  </MenuItem>
+                )}
                 <MenuItem onClick={handleLinkToRepo}>
                   Found a bug? &nbsp; <GitHubIcon />
                 </MenuItem>

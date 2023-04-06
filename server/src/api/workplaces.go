@@ -2,18 +2,21 @@ package api
 
 import (
 	"database/sql"
+	"errors"
 	db "github.com/florian-glombik/workplace-reservation/db/sqlc"
 	"github.com/florian-glombik/workplace-reservation/src/util"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	uuidConversion "github.com/satori/go.uuid"
 	"net/http"
+	"path"
 	"time"
 )
 
 type CreateWorkplaceRequest struct {
-	Name        sql.NullString `json:"name"`
-	Description sql.NullString `json:"description"`
-	OfficeId    uuid.NullUUID  `json:"officeId"`
+	Name        string `binding:"omitempty"`
+	Description string `binding:"omitempty"`
+	OfficeID    uuid.UUID
 }
 
 // CreateWorkplace
@@ -30,9 +33,9 @@ func (server *Server) createWorkplace(context *gin.Context) {
 
 	createWorkplaceSqlParams := db.CreateWorkplaceParams{
 		ID:          uuid.New(),
-		Name:        request.Name,
-		Description: request.Description,
-		OfficeID:    request.OfficeId,
+		Name:        toNullString(request.Name),
+		Description: toNullString(request.Description),
+		OfficeID:    request.OfficeID,
 	}
 	newWorkplace, err := server.queries.CreateWorkplace(context, createWorkplaceSqlParams)
 	if err != nil {
@@ -41,6 +44,86 @@ func (server *Server) createWorkplace(context *gin.Context) {
 	}
 
 	context.JSON(http.StatusOK, newWorkplace)
+}
+
+// DeleteWorkplace
+// @Summary
+// @Tags         workplaces
+// @Router       /workplaces/:workplaceId [delete]
+func (server *Server) deleteWorkplace(context *gin.Context) {
+	if !isAdmin(context) {
+		err := errors.New("you are not allowed to delete workplaces")
+		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
+		return
+	}
+
+	workplaceId, err := getUuidFromUrl(context)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, errorResponse("Invalid workplace uuid", err))
+		return
+	}
+
+	sqlResult, err := server.queries.DeleteWorkplace(context, *workplaceId)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		return
+	}
+
+	context.JSON(http.StatusOK, sqlResult)
+}
+
+func getUuidFromUrl(context *gin.Context) (*uuid.UUID, error) {
+	officeIdString := path.Base(context.Request.URL.Path)
+	parsedUuid, err := uuidConversion.FromString(officeIdString)
+	if err != nil {
+		return nil, err
+	}
+	officeId := uuid.UUID(parsedUuid)
+
+	return &officeId, nil
+}
+
+type UpdateWorkplaceRequest struct {
+	Name        string `binding:"omitempty"`
+	Description string `binding:"omitempty"`
+}
+
+// UpdateWorkplace
+// @Summary      Updating a workplace
+// @Tags         workplaces
+// @Router       /workplace/:workplaceId [patch]
+func (server *Server) editWorkplace(context *gin.Context) {
+	if !isAdmin(context) {
+		err := errors.New("you are not allowed to edit workplaces")
+		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
+		return
+	}
+
+	workplaceId, err := getUuidFromUrl(context)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, errorResponse("Invalid workplace uuid", err))
+		return
+	}
+
+	var requestWorkplace UpdateWorkplaceRequest
+	if err := context.ShouldBindJSON(&requestWorkplace); err != nil {
+		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
+		return
+	}
+
+	updateWorkplaceSqlParams := db.UpdateWorkplaceParams{
+		ID:          *workplaceId,
+		Name:        toNullString(requestWorkplace.Name),
+		Description: toNullString(requestWorkplace.Description),
+	}
+
+	_, err = server.queries.UpdateWorkplace(context, updateWorkplaceSqlParams)
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		return
+	}
+
+	context.JSON(http.StatusOK, updateWorkplaceSqlParams)
 }
 
 type WorkplaceWithReservations struct {
@@ -202,7 +285,7 @@ func calculateSingleReservationsFromReoccurringReservations(server *Server, cont
 				})
 			}
 
-			if currentStartDate.Before(reoccurringReservation.RepeatUntil) {
+			if currentStartDate.After(reoccurringReservation.RepeatUntil) {
 				break
 			}
 		}

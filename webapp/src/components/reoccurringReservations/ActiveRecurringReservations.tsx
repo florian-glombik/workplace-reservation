@@ -8,7 +8,7 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import axios, { AxiosRequestConfig } from 'axios'
-import { Account, isAdmin, useAuth } from '../../utils/AuthProvider'
+import { Account, useAuth } from '../../utils/AuthProvider'
 import { BASE_URL } from '../../config'
 import DeleteIcon from '@mui/icons-material/Delete'
 import {
@@ -18,7 +18,7 @@ import {
   Weekday,
 } from './ReoccuringReservationsForm'
 import { getDay, parseISO } from 'date-fns'
-import { NullString } from '../Workplaces'
+import { NullString } from '../Workplace'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 import { TableHead, TableRow } from '@material-ui/core'
@@ -36,7 +36,7 @@ type ActiveRecurringReservation = {
 }
 
 export const ActiveRecurringReservations = () => {
-  const { jwtToken, user, availableUsers } = useAuth()
+  const { jwtToken, user, isAdmin, availableUsers } = useAuth()
   const [activeRecurringReservations, setActiveRecurringReservations] =
     useState<ActiveRecurringReservation[]>([])
 
@@ -53,7 +53,7 @@ export const ActiveRecurringReservations = () => {
 
     try {
       let requestUrl = BASE_URL
-      if (isAdmin(user)) {
+      if (isAdmin) {
         requestUrl += 'reservations/recurring/all-users'
       } else {
         requestUrl += 'reservations/recurring'
@@ -92,7 +92,7 @@ export const ActiveRecurringReservations = () => {
         <Table>
           <TableHead>
             <TableRow>
-              {isAdmin(user) && <TableCell>User</TableCell>}
+              {isAdmin && <TableCell>User</TableCell>}
               <TableCell>Workplace</TableCell>
               <TableCell>Weekday</TableCell>
               <TableCell>Repetition interval</TableCell>
@@ -104,7 +104,7 @@ export const ActiveRecurringReservations = () => {
             {activeRecurringReservations.map(
               (recurringReservation: ActiveRecurringReservation) => (
                 <TableRow key={recurringReservation.ID}>
-                  {isAdmin(user) && (
+                  {isAdmin && (
                     <TableCell>
                       {getUserDisplayName(
                         availableUsers.find(
@@ -118,6 +118,8 @@ export const ActiveRecurringReservations = () => {
                     {getWorkplaceName({
                       ID: recurringReservation.ReservedWorkplaceID,
                       Name: recurringReservation.WorkplaceName,
+                      OfficeID: '',
+                      Description: { String: '', Valid: false },
                     })}
                   </TableCell>
                   <TableCell>

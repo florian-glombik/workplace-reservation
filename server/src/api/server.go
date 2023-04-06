@@ -77,8 +77,10 @@ func (server *Server) setupRouter() {
 
 	authRoutes.GET("/workplaces", server.getWorkplaces)
 	authRoutes.GET("/workplaces/names", server.getNamesOfWorkplaces)
+	authRoutes.POST("/workplaces", server.createWorkplace)
+	authRoutes.PATCH("/workplaces/:workplaceId", server.editWorkplace)
+	authRoutes.DELETE("/workplaces/:workplaceId", server.deleteWorkplace)
 
-	authRoutes.POST("/workplace/create", server.createWorkplace)
 	authRoutes.POST("/workplace/reserve", server.handleCreateReservation)
 	authRoutes.DELETE("/workplace/reservations/:reservation-id", server.handleDeleteReservation)
 
@@ -86,6 +88,12 @@ func (server *Server) setupRouter() {
 	authRoutes.GET("/reservations/recurring/all-users", server.getActiveRecurringReservationsOfAllUsers)
 	authRoutes.POST("/reservations/recurring", server.addRecurringReservation)
 	authRoutes.DELETE("/reservations/recurring/:recurring-reservation-id", server.deleteRecurringReservation)
+
+	authRoutes.GET("/offices", server.getOffices)
+	authRoutes.GET("/offices/:office-id", server.getOfficeById)
+	authRoutes.POST("/offices", server.createOffice)
+	authRoutes.PATCH("/offices/:office-id", server.editOffice)
+	authRoutes.DELETE("/offices/:office-id", server.deleteOffice)
 
 	router.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
