@@ -1,5 +1,5 @@
 ALTER TABLE offices
-    DROP COLUMN location;
+    DROP COLUMN IF EXISTS location;
 
 ALTER TABLE offices
-    DROP COLUMN location_url;
+    DROP COLUMN IF EXISTS location_url;
