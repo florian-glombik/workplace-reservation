@@ -17,6 +17,7 @@ sqlc/
 package-lock.json
 
 # custom configuration files
+/.idea
 dataSources.xml
 
 # Dependency directories (remove the comment below to include it)
