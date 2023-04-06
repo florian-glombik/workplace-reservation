@@ -39,7 +39,7 @@ export function CreateOrEditOffice({
   const [changesWereMade, setChangesWereMade] = useState(false)
 
   const OfficeValidationSchema = Yup.object().shape({
-    Name: Yup.string().required('Name must be set'),
+    Name: Yup.string().required('Office name must be set'),
     Location: Yup.string().required('Location must be set'),
   })
 
@@ -74,12 +74,14 @@ export function CreateOrEditOffice({
     if (!isEdit) {
       return
     }
+
     setChangesWereMade(
       !(
-        values.Name === officeWithWorkplaces.Office.Name.String &&
-        values.Description === officeWithWorkplaces.Office.Description.String &&
-        values.Location === officeWithWorkplaces.Office.Location &&
-        values.LocationUrl === officeWithWorkplaces.Office.LocationUrl?.String
+        values.Name === officeWithWorkplaces?.Office.Name.String &&
+        values.Description ===
+          officeWithWorkplaces?.Office.Description.String &&
+        values.Location === officeWithWorkplaces?.Office.Location &&
+        values.LocationUrl === officeWithWorkplaces?.Office.LocationUrl?.String
       )
     )
   }, [values])
@@ -121,7 +123,7 @@ export function CreateOrEditOffice({
     }
   }
 
-  const noWorkplaceLoaded = officeWithWorkplaces?.Workplaces.length ?? 0 < 1
+  const noWorkplaceLoaded = officeWithWorkplaces?.Workplaces?.length ?? 0 < 1
 
   return (
     <Box>
@@ -130,7 +132,7 @@ export function CreateOrEditOffice({
           <Grid container spacing={2}>
             <Grid item>
               <TextField
-                label={'Name'}
+                label={'Office name'}
                 {...getFieldProps('Name')}
                 error={Boolean(touched.Name && errors.Name)}
                 helperText={touched.Name && errors.Name}
@@ -158,7 +160,7 @@ export function CreateOrEditOffice({
               />
             </Grid>
             <Grid item>
-              <SubmitButton isEdit={isEdit} isDisabled={!changesWereMade} />
+              <SubmitButton isEdit={isEdit} />
             </Grid>
           </Grid>
         </Form>
@@ -169,7 +171,7 @@ export function CreateOrEditOffice({
       {officeWithWorkplaces && (
         <CreateOrEditWorkplace officeId={officeWithWorkplaces.Office.ID} />
       )}
-      {officeWithWorkplaces?.Workplaces.map((workplace) => (
+      {officeWithWorkplaces?.Workplaces?.map((workplace) => (
         <CreateOrEditWorkplace
           officeId={officeWithWorkplaces.Office.ID}
           workplace={workplace}

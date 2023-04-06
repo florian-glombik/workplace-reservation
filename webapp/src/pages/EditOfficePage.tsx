@@ -12,7 +12,7 @@ import { WorkplaceWithoutReservations } from '../components/Workplaces'
 
 export type OfficeWithWorkplaces = {
   Office: Office
-  Workplaces: WorkplaceWithoutReservations[]
+  Workplaces?: WorkplaceWithoutReservations[]
 }
 
 export function EditOfficePage() {
