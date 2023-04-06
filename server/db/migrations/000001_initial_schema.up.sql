@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS workplaces
     name        VARCHAR(50),
     description VARCHAR(255),
     office_id   UUID,
-    FOREIGN KEY (office_id) REFERENCES offices (id)
+    FOREIGN KEY (office_id) REFERENCES offices (id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS reservations
@@ -31,6 +31,6 @@ CREATE TABLE IF NOT EXISTS reservations
     end_date              TIMESTAMPTZ             NOT NULL,
     reserving_user_id     UUID                    NOT NULL,
     reserved_workplace_id UUID                    NOT NULL,
-    FOREIGN KEY (reserving_user_id) REFERENCES users (id),
-    FOREIGN KEY (reserved_workplace_id) REFERENCES workplaces (id)
+    FOREIGN KEY (reserving_user_id) REFERENCES users (id) ON DELETE CASCADE,
+    FOREIGN KEY (reserved_workplace_id) REFERENCES workplaces (id) ON DELETE CASCADE
 );
