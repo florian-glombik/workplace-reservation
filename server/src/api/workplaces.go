@@ -285,7 +285,7 @@ func calculateSingleReservationsFromReoccurringReservations(server *Server, cont
 				})
 			}
 
-			if currentStartDate.Before(reoccurringReservation.RepeatUntil) {
+			if currentStartDate.After(reoccurringReservation.RepeatUntil) {
 				break
 			}
 		}
