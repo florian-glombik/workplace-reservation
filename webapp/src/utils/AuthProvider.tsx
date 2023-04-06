@@ -23,6 +23,7 @@ const AuthContext = createContext<AuthContextType>({
   jwtToken: '',
   user: DEFAULT_USER,
   availableUsers: [],
+  isAdmin: false,
   login: () => {},
   logout: () => {},
   setUser: () => {},
@@ -31,6 +32,7 @@ const AuthContext = createContext<AuthContextType>({
 type AuthContextType = {
   jwtToken: string
   user: Account
+  isAdmin: boolean
   availableUsers: Account[]
   login: (jwtToken: string, user: Account) => void
   logout: () => void
@@ -54,13 +56,14 @@ export type Account = {
 
 export type Role = 'user' | 'admin' | 'notAuthenticated'
 
-export function isAdmin(user: Account): boolean {
+function isAdmin(user: Account): boolean {
   return user.role === 'admin'
 }
 
 export const AuthProvider = ({ children }: any) => {
   const [jwtToken, setJwtToken] = useLocalStorage('jwtToken', null)
   const [user, setUser] = useLocalStorage('user', null)
+  const [isAdmin, setIsAdmin] = useLocalStorage('isAdmin', false)
   const [availableUsers, setAvailableUsers] = useLocalStorage(
     'availableUsers',
     null
@@ -75,8 +78,9 @@ export const AuthProvider = ({ children }: any) => {
     user.role = decodedToken.role
 
     setUser(user)
+    setIsAdmin(isAdmin(user))
 
-    if (isAdmin(user)) {
+    if (isAdmin) {
       await loadUsers(jwtToken)
     }
     navigate('/', { replace: true })
@@ -103,6 +107,7 @@ export const AuthProvider = ({ children }: any) => {
   const logout = () => {
     setJwtToken(null)
     setUser(null)
+    setIsAdmin(false)
     setAvailableUsers(null)
     navigate('/login', { replace: true })
   }
@@ -112,6 +117,7 @@ export const AuthProvider = ({ children }: any) => {
       value={{
         jwtToken: jwtToken,
         user: user,
+        isAdmin: isAdmin,
         availableUsers: availableUsers,
         login: login,
         logout: logout,

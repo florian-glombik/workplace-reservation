@@ -3,7 +3,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
-import { Account, isAdmin, useAuth } from '../utils/AuthProvider'
+import { Account, useAuth } from '../utils/AuthProvider'
 import { useEffect, useState } from 'react'
 import {
   addDays,
@@ -139,7 +139,7 @@ export const Workplaces = ({
         </Typography>
       </IconLeftAccordionSummary>
       <AccordionDetails>
-        {noWorkplacesFound && <Typography>No workplaces found</Typography>}
+        {noWorkplacesFound && <NoWorkplacesFound />}
         {!noWorkplacesFound && (
           <WorkplaceReservationTable
             workplaces={workplaces}
@@ -160,8 +160,7 @@ function WorkplaceReservationTable(props: {
   updateWorkplaces: () => void
 }) {
   const { workplaces, startOfTheWeek, availableUsers, updateWorkplaces } = props
-  const { jwtToken, user: loggedInUser } = useAuth()
-  const loggedInUserIsAdmin = isAdmin(loggedInUser)
+  const { jwtToken, user: loggedInUser, isAdmin } = useAuth()
 
   return (
     <Table>
@@ -213,7 +212,7 @@ function WorkplaceReservationTable(props: {
                 const isReservedByCurrentUser =
                   reservation?.ReservingUserID === loggedInUser.id
 
-                const displayAdminSelection = loggedInUserIsAdmin && !isReserved
+                const displayAdminSelection = isAdmin && !isReserved
 
                 const displayNoUserIcon = !isReserved && isDayInThePast
 
@@ -276,15 +275,12 @@ function WorkplaceReservationTable(props: {
                             : 'contained'
                         }
                         disabled={
-                          (isDayInThePast && !loggedInUserIsAdmin) ||
-                          (isReserved &&
-                            !isReservedByCurrentUser &&
-                            !loggedInUserIsAdmin)
+                          (isDayInThePast && !isAdmin) ||
+                          (isReserved && !isReservedByCurrentUser && !isAdmin)
                         }
                         color={isReserved ? 'error' : 'success'}
                         onClick={
-                          isReservedByCurrentUser ||
-                          (isReserved && loggedInUserIsAdmin)
+                          isReservedByCurrentUser || (isReserved && isAdmin)
                             ? () =>
                                 cancelReservation(
                                   reservation!,
@@ -321,6 +317,11 @@ function WorkplaceReservationTable(props: {
       </TableBody>
     </Table>
   )
+}
+
+function NoWorkplacesFound() {
+  // const { is } = useAuth()
+  return <Typography>No workplaces found</Typography>
 }
 
 async function reserveWorkplace(

@@ -33,7 +33,7 @@ import {
 import { BASE_URL } from '../../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
-import { Account, isAdmin, useAuth } from '../../utils/AuthProvider'
+import { Account, useAuth } from '../../utils/AuthProvider'
 import { getUserDisplayName } from '../Header'
 
 export enum RepetitionInterval {
@@ -107,7 +107,7 @@ export function getWorkplaceName(
 }
 
 export const RecurringReservationsForm = () => {
-  const { jwtToken, user, availableUsers } = useAuth()
+  const { jwtToken, user, isAdmin, availableUsers } = useAuth()
   const [open, setOpen] = useState(false)
   const [workplaces, setWorkplaces] = useState<WorkplaceWithoutReservations[]>(
     []
@@ -224,7 +224,7 @@ export const RecurringReservationsForm = () => {
 
   return (
     <Box>
-      {isAdmin(user) && (
+      {isAdmin && (
         <FormControl>
           <InputLabel id="user-selection-label">User</InputLabel>
           <Select
