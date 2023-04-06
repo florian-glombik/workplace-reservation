@@ -56,7 +56,7 @@ export type Account = {
 
 export type Role = 'user' | 'admin' | 'notAuthenticated'
 
-function isAdmin(user: Account): boolean {
+function checkIsAdmin(user: Account): boolean {
   return user.role === 'admin'
 }
 
@@ -78,9 +78,10 @@ export const AuthProvider = ({ children }: any) => {
     user.role = decodedToken.role
 
     setUser(user)
-    setIsAdmin(isAdmin(user))
 
-    if (isAdmin) {
+    const userIsAdmin = checkIsAdmin(user)
+    setIsAdmin(userIsAdmin)
+    if (userIsAdmin) {
       await loadUsers(jwtToken)
     }
     navigate('/', { replace: true })
