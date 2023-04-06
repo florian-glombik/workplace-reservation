@@ -18,7 +18,7 @@ import {
   Weekday,
 } from './ReoccuringReservationsForm'
 import { getDay, parseISO } from 'date-fns'
-import { NullString } from '../Workplaces'
+import { NullString } from '../Workplace'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 import { TableHead, TableRow } from '@material-ui/core'

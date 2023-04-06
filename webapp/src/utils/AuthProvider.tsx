@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocalStorage } from './LocalStorageUtil'
-import { NullString } from '../components/Workplaces'
+import { NullString } from '../components/Workplace'
 import jwtDecode from 'jwt-decode'
 import axios from 'axios'
 import { BASE_URL } from '../config'

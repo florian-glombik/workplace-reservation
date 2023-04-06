@@ -15,7 +15,7 @@ import { useEffect, useState } from 'react'
 import {
   ACCORDION_LABEL_DATE_FORMAT,
   WorkplaceWithoutReservations,
-} from '../Workplaces'
+} from '../Workplace'
 import { DAYS_PER_WEEK } from '../WorkplaceAccordions'
 import axios, { AxiosRequestConfig } from 'axios'
 import { format } from 'date-fns-tz'

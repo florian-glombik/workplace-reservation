@@ -1,6 +1,6 @@
 import { MultipleWorkplaces } from './MultipleWorkplaces'
 import { addDays, endOfWeek, nextMonday, startOfWeek } from 'date-fns'
-import { Workplaces } from './Workplaces'
+import { Workplace, Workplaces } from './Workplace'
 import React, { useEffect, useState } from 'react'
 import { Box } from '@mui/material'
 import { Account, isAdmin, useAuth } from '../utils/AuthProvider'

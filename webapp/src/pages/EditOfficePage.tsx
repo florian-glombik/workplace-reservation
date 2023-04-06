@@ -8,7 +8,7 @@ import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useAuth } from '../utils/AuthProvider'
 import { CreateOrEditOffice } from '../components/offices/CreateOrEditOffice'
-import { WorkplaceWithoutReservations } from '../components/Workplaces'
+import { WorkplaceWithoutReservations } from '../components/Workplace'
 
 export type OfficeWithWorkplaces = {
   Office: Office
