@@ -2,9 +2,6 @@ import {
   Box,
   Grid,
   IconButton,
-  Table,
-  TableBody,
-  TableCell,
   TextField,
   Tooltip,
   Typography,
@@ -22,11 +19,7 @@ import AddIcon from '@mui/icons-material/Add'
 import * as React from 'react'
 import SaveIcon from '@mui/icons-material/Save'
 import { OfficeWithWorkplaces } from '../../pages/EditOfficePage'
-import { TableHead, TableRow } from '@material-ui/core'
-import EditIcon from '@mui/icons-material/Edit'
-import DeleteIcon from '@mui/icons-material/Delete'
 import { CreateOrEditWorkplace } from './CreateOrEditWorkplace'
-import { isDisabled } from '@testing-library/user-event/dist/utils'
 import { useEffect, useState } from 'react'
 
 export function CreateOrEditOffice({
@@ -173,6 +166,7 @@ export function CreateOrEditOffice({
       )}
       {officeWithWorkplaces?.Workplaces?.map((workplace) => (
         <CreateOrEditWorkplace
+          key={`create-or-edit-workplace-${workplace.ID}`}
           officeId={officeWithWorkplaces.Office.ID}
           workplace={workplace}
         />
