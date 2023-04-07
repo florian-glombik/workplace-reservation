@@ -17,7 +17,7 @@ COPY ./src/*.go ./
 RUN swag init
 
 # Build
-RUN CGO_ENABLED=0 GOOS=linux go build -o /workplace-reservation-server
+# RUN CGO_ENABLED=0 GOOS=linux go build -o /workplace-reservation-server
 
 # Optional:
 # To bind to a TCP port, runtime parameters must be supplied to the docker command.
@@ -30,4 +30,4 @@ EXPOSE 8080
 #CMD ["./main"]
 
 # Run
-CMD [ "/workplace-reservation-server" ]
+# CMD [ "/workplace-reservation-server" ]
