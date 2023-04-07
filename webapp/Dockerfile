@@ -1,20 +1,28 @@
-# Use an official Node.js runtime as a parent image
-FROM node:14-alpine
-
-# Set the working directory to /app
+# build environment
+FROM node:14-alpine as builder
 WORKDIR /app
 
-# Copy the package.json and package-lock.json files to the container
-COPY package*.json ./
-
 # Install the dependencies
-RUN npm install
+COPY package*.json ./
+RUN npm install --silent
+RUN npm install react-scripts@3.4.1 -g --silent
 
 # Copy the rest of the app to the container
-COPY . .
+COPY . ./
 
 # Build the app for production
 RUN npm run build
 
-# Set the command to run the app
-CMD ["npm", "start"]
+# production environment
+FROM nginx:1.16.0-alpine
+
+COPY --from=builder /app/build /usr/share/nginx/html
+COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
+
+# configuration of nginx to work with react router
+RUN rm /etc/nginx/conf.d/default.conf
+COPY nginx/nginx.conf /etc/nginx/conf.d
+
+EXPOSE 80
+CMD ["nginx", "-g", "daemon off;"]
+# ENTRYPOINT ["/app/workplace-reservation-client"]

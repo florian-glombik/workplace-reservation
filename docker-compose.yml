@@ -22,7 +22,7 @@ services:
       context: ./webapp
     container_name: "client"
     ports:
-      - "3000:3000"
+      - "3000:80"
     environment:
       - REACT_APP_API_URL=http://go-server:8080/api
     depends_on:
