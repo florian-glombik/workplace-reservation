@@ -7,6 +7,8 @@ services:
       - POSTGRES_DB=workplace_reservation
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
+    ports:
+      - "5432:5432"
   server:
     build:
       context: ./server
