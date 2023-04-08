@@ -17,14 +17,21 @@ import (
 
 // User Roles
 
-const admin = "admin"
-const staticReservationPlanner = "static-reservation-planner"
-const user = "user"
+const (
+	admin                    = "admin"
+	staticReservationPlanner = "static-reservation-planner"
+	user                     = "user"
+)
 
-const ErrRequestCouldNotBeParsed = "The request could not be parsed."
-const UnexpectedErrContactMessage = "An unexpected error has occurred. Please contact CONTACT_PERSON to contribute in resolving the problem as soon as possible."
+const (
+	ErrRequestCouldNotBeParsed  = "The request could not be parsed."
+	UnexpectedErrContactMessage = "An unexpected error has occurred. Please contact CONTACT_PERSON to contribute in resolving the problem as soon as possible."
+)
 
-const DuplicateKeyValueViolatesUniqueConstraint = "23505"
+const (
+	DuplicateKeyValueViolatesUniqueConstraint = "23505"
+	CanNotConnectToDatabase                   = "dial tcp 127.0.0.1:5432: connect: connection refused"
+)
 
 type CreateUserRequest struct {
 	Username string `json:"username" binding:"omitempty"`
@@ -155,27 +162,26 @@ type loginUserResponse struct {
 // @Tags         accounts
 // @Router       /users/login [post]
 func (server *Server) loginUser(context *gin.Context) {
-	log.Println("entered login user")
-
 	var request loginUserRequest
 	if err := context.ShouldBindJSON(&request); err != nil {
 		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
 		return
 	}
 
-	log.Println("bound variables")
-
 	user, err := server.queries.GetUserByMail(context, request.Email)
 	if err != nil {
+		log.Println(err.Error())
 		if err == sql.ErrNoRows {
 			context.JSON(http.StatusNotFound, errorResponse("There is no user with the entered E-Mail.", err))
+			return
+		}
+		if err.Error() == CanNotConnectToDatabase {
+			context.JSON(http.StatusInternalServerError, errorResponse("Can not connected to database", err))
 			return
 		}
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
 		return
 	}
-
-	log.Println("tried to get user by mail")
 
 	err = util.CheckPassword(user.Password, request.Password)
 	if err != nil {
