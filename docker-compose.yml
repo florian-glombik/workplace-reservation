@@ -5,6 +5,8 @@ services:
     restart: always
     user: root
     container_name: "database"
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
@@ -30,3 +32,7 @@ services:
       - REACT_APP_API_URL=http://go-server:8080/api
     depends_on:
       - server
+volumes:
+  postgres-db:
+networks:
+  workplace-reservation-network:
