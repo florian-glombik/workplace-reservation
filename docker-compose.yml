@@ -2,9 +2,10 @@ version: '3'
 services:
   database:
     image: postgres:14-alpine
+    restart: always
+    user: root
     container_name: "database"
     environment:
-      - POSTGRES_DB=workplace_reservation
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
     ports:
