@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -59,6 +60,11 @@ func (server *Server) Start(address string) error {
 
 func (server *Server) setupRouter() {
 	router := gin.Default()
+
+	err := router.SetTrustedProxies(nil)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 
 	corsConfig := cors.DefaultConfig()
 

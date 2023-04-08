@@ -31,7 +31,7 @@ const (
 
 const (
 	DuplicateKeyValueViolatesUniqueConstraint = "23505"
-	CanNotConnectToDatabase                   = "5432: connect: connection refused"
+	CanNotConnectToDatabase                   = "connection refused"
 )
 
 type CreateUserRequest struct {
