@@ -10,7 +10,7 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import axios, { AxiosRequestConfig } from 'axios'
-import { BASE_URL } from '../../config'
+import { SERVER_BASE_URL } from '../../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 import { NullString, WorkplaceWithoutReservations } from '../Workplace'
@@ -44,7 +44,7 @@ export function OfficeList() {
     }
 
     try {
-      const requestUrl = BASE_URL + 'offices'
+      const requestUrl = SERVER_BASE_URL + 'offices'
       const offices = (await axios.get(requestUrl, requestConfig)).data
       setOffices(offices ?? [])
     } catch (error) {
@@ -63,7 +63,7 @@ export function OfficeList() {
       },
     }
     try {
-      const requestUrl = BASE_URL + 'offices/' + office.ID
+      const requestUrl = SERVER_BASE_URL + 'offices/' + office.ID
       await axios.delete(requestUrl, requestConfig)
 
       setOffices(

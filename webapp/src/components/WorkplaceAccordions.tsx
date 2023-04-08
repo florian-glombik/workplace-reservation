@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { Box } from '@mui/material'
 import { Account, useAuth } from '../utils/AuthProvider'
 import axios from 'axios'
-import { BASE_URL } from '../config'
+import { SERVER_BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 
@@ -44,7 +44,7 @@ export const WorkplaceAccordions = () => {
 
     try {
       const availableUsersResponse = await axios.get(
-        BASE_URL + 'users/all-available',
+        SERVER_BASE_URL + 'users/all-available',
         requestConfig
       )
       setAvailableUsers(availableUsersResponse.data)

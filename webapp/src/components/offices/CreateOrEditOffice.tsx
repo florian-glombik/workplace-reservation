@@ -10,7 +10,7 @@ import { Form, FormikProvider, useFormik } from 'formik'
 import { Office } from './OfficeList'
 import * as Yup from 'yup'
 import axios, { AxiosRequestConfig } from 'axios'
-import { BASE_URL } from '../../config'
+import { SERVER_BASE_URL } from '../../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 import { useAuth } from '../../utils/AuthProvider'
@@ -90,12 +90,12 @@ export function CreateOrEditOffice({
       let createdOrEditedOffice: Office | undefined = undefined
       if (isEdit) {
         const requestUrl =
-          BASE_URL + 'offices/' + officeWithWorkplaces!.Office.ID
+          SERVER_BASE_URL + 'offices/' + officeWithWorkplaces!.Office.ID
         createdOrEditedOffice = (
           await axios.patch(requestUrl, values, requestConfig)
         ).data
       } else {
-        const requestUrl = BASE_URL + 'offices'
+        const requestUrl = SERVER_BASE_URL + 'offices'
         createdOrEditedOffice = (
           await axios.post(requestUrl, values, requestConfig)
         ).data

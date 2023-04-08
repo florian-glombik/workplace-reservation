@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Office } from '../components/offices/OfficeList'
 import axios, { AxiosRequestConfig } from 'axios'
-import { BASE_URL } from '../config'
+import { SERVER_BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useAuth } from '../utils/AuthProvider'
@@ -34,7 +34,7 @@ export function EditOfficePage() {
     }
 
     try {
-      let requestUrl = BASE_URL + `offices/${officeId}`
+      let requestUrl = SERVER_BASE_URL + `offices/${officeId}`
       const officeWithWorkplaces: OfficeWithWorkplaces = (
         await axios.get(requestUrl, requestConfig)
       ).data

@@ -9,7 +9,7 @@ import {
 import { useEffect, useState } from 'react'
 import axios, { AxiosRequestConfig } from 'axios'
 import { Account, useAuth } from '../../utils/AuthProvider'
-import { BASE_URL } from '../../config'
+import { SERVER_BASE_URL } from '../../config'
 import DeleteIcon from '@mui/icons-material/Delete'
 import {
   convertDateRangeToString,
@@ -52,7 +52,7 @@ export const ActiveRecurringReservations = () => {
     }
 
     try {
-      let requestUrl = BASE_URL
+      let requestUrl = SERVER_BASE_URL
       if (isAdmin) {
         requestUrl += 'reservations/recurring/all-users'
       } else {
@@ -77,7 +77,7 @@ export const ActiveRecurringReservations = () => {
 
     try {
       await axios.delete(
-        BASE_URL + 'reservations/recurring/' + recurringReservationId,
+        SERVER_BASE_URL + 'reservations/recurring/' + recurringReservationId,
         requestConfig
       )
       toast.success('Reoccurring reservation was deleted!')

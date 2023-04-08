@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Box, TextField } from '@material-ui/core'
 import Button from '@mui/material/Button'
 import axios from 'axios'
-import { BASE_URL } from '../config'
+import { SERVER_BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useNavigate } from 'react-router-dom'
@@ -22,7 +22,7 @@ export const Registration = () => {
     e.preventDefault() // page shall not re-render
 
     try {
-      await axios.post(BASE_URL + 'users', details)
+      await axios.post(SERVER_BASE_URL + 'users', details)
     } catch (error: any) {
       toast.error(getDisplayResponseMessage(error))
       return

@@ -30,7 +30,7 @@ import {
   nextWednesday,
   startOfDay,
 } from 'date-fns'
-import { BASE_URL } from '../../config'
+import { SERVER_BASE_URL } from '../../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 import { Account, useAuth } from '../../utils/AuthProvider'
@@ -139,7 +139,7 @@ export const RecurringReservationsForm = () => {
 
     try {
       const response = (
-        await axios.get(BASE_URL + 'workplaces/names', requestConfig)
+        await axios.get(SERVER_BASE_URL + 'workplaces/names', requestConfig)
       ).data
 
       setWorkplaces(response)
@@ -204,7 +204,7 @@ export const RecurringReservationsForm = () => {
 
     try {
       await axios.post(
-        BASE_URL + 'reservations/recurring',
+        SERVER_BASE_URL + 'reservations/recurring',
         requestData,
         requestConfig
       )

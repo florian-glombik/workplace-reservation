@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../utils/AuthProvider'
 import axios from 'axios'
-import { BASE_URL } from '../config'
+import { SERVER_BASE_URL } from '../config'
 import Button from '@mui/material/Button'
 import { Box, TextField } from '@material-ui/core'
 import { toast } from 'react-toastify'
@@ -14,7 +14,7 @@ export const Login = () => {
   const handleLogin = async (e: any) => {
     e.preventDefault() // page shall not re-render
     try {
-      const response = await axios.post(BASE_URL + 'users/login', details)
+      const response = await axios.post(SERVER_BASE_URL + 'users/login', details)
       login(response.data.accessToken, response.data.user)
     } catch (error: any) {
       toast.error(getDisplayResponseMessage(error))

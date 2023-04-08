@@ -11,6 +11,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -28,8 +29,14 @@ type Server struct {
 }
 
 func NewServer(database *sql.DB) *Server {
-	// TODO load secret key from config file
-	tokenGenerator, err := token.NewJWTGenerator("dlgdjflgjsadfjlsjdfljsldjflsjddflkgj")
+	EnvJwtTokenGeneratorSecretKey := "JWT_TOKEN_GENERATOR_SECRET_KEY"
+
+	JwtTokenGeneratorSecretKey, isSet := os.LookupEnv(EnvJwtTokenGeneratorSecretKey)
+	if !isSet {
+		errorString, _ := fmt.Printf("Environment variable is not set: %d", EnvJwtTokenGeneratorSecretKey)
+		panic(errorString)
+	}
+	tokenGenerator, err := token.NewJWTGenerator(JwtTokenGeneratorSecretKey)
 	if err != nil {
 		fmt.Println("cannot instantiate token generator: %w", err)
 		return nil
@@ -46,6 +53,8 @@ func NewServer(database *sql.DB) *Server {
 }
 
 func (server *Server) Start(address string) error {
+	// TODO get cert when starting container
+	// return server.router.RunTLS(":8080", "/etc/letsencrypt/live/florian-g.vm.selectcode.io/cert.pem", "/etc/letsencrypt/live/florian-g.vm.selectcode.io/privkey.pem")
 	return server.router.Run(address)
 }
 
@@ -54,14 +63,14 @@ func (server *Server) setupRouter() {
 
 	corsConfig := cors.DefaultConfig()
 
-	ClientAddress := "http://localhost:3000"
+	ClientAddress := "http://localhost:80"
 
 	// TODO move client address to config file
-	corsConfig.AllowOrigins = []string{ClientAddress}
+	corsConfig.AllowOrigins = []string{ClientAddress, "http://localhost"}
 	// To be able to send tokens to the server.
 	corsConfig.AllowCredentials = true
 	// OPTIONS method for ReactJS
-	corsConfig.AddAllowMethods("OPTIONS, GET")
+	corsConfig.AddAllowMethods("OPTIONS, GET, POST")
 	corsConfig.AddAllowHeaders("Access-Control-Allow-Headers", "*")
 	// Register the middleware
 	router.Use(cors.New(corsConfig))

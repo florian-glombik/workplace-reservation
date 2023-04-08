@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Box, TextField } from '@material-ui/core'
 import Button from '@mui/material/Button'
 import axios, { AxiosRequestConfig } from 'axios'
-import { BASE_URL } from '../config'
+import { SERVER_BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useAuth } from '../utils/AuthProvider'
@@ -40,7 +40,7 @@ export const EditAccount = () => {
 
     try {
       const updatedUser = (
-        await axios.patch(BASE_URL + 'users/edit', details, requestConfig)
+        await axios.patch(SERVER_BASE_URL + 'users/edit', details, requestConfig)
       ).data
       setUser(updatedUser)
       setNoChangesMade(true)

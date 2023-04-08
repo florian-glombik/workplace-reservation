@@ -13,6 +13,8 @@ services:
     build:
       context: ./server
     container_name: "server"
+    environment:
+      - JWT_TOKEN_GENERATOR_SECRET_KEY=dlgdjflgjsadfjlsjdfljsldjflsjddflkgj
     ports:
       - "8080:8080"
     depends_on:
@@ -22,7 +24,7 @@ services:
       context: ./webapp
     container_name: "client"
     ports:
-      - "3000:80"
+      - "80:80"
     environment:
       - REACT_APP_API_URL=http://go-server:8080/api
     depends_on:

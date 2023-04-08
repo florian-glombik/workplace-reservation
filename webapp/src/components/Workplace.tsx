@@ -1,6 +1,6 @@
 import { Table, TableBody, TableHead, TableRow } from '@material-ui/core'
 import axios, { AxiosRequestConfig } from 'axios'
-import { BASE_URL } from '../config'
+import { SERVER_BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { Account, useAuth } from '../utils/AuthProvider'
@@ -115,7 +115,7 @@ export const Workplaces = ({
     }
 
     try {
-      const workplaces = await axios.get(BASE_URL + 'workplaces', requestConfig)
+      const workplaces = await axios.get(SERVER_BASE_URL + 'workplaces', requestConfig)
       setWorkplaces(workplaces.data)
     } catch (error) {
       toast.error(
@@ -366,7 +366,7 @@ async function reserveWorkplace(
   }
 
   try {
-    await axios.post(BASE_URL + 'workplace/reserve', data, requestConfig)
+    await axios.post(SERVER_BASE_URL + 'workplace/reserve', data, requestConfig)
     updateWorkplaces()
   } catch (error) {
     toast.error(getDisplayResponseMessage(error))
@@ -392,7 +392,7 @@ async function cancelReservation(
 
   try {
     await axios.delete(
-      BASE_URL + 'workplace/reservations/' + reservation.ID,
+      SERVER_BASE_URL + 'workplace/reservations/' + reservation.ID,
       requestConfig
     )
     updateWorkplaces()
