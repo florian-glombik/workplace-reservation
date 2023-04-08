@@ -177,7 +177,7 @@ func (server *Server) loginUser(context *gin.Context) {
 			return
 		}
 		if strings.Contains(err.Error(), CanNotConnectToDatabase) {
-			context.JSON(http.StatusInternalServerError, errorResponse("Can not connected to database", err))
+			context.JSON(http.StatusInternalServerError, errorResponse("Can not connect to database", err))
 			return
 		}
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
