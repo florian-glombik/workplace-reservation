@@ -12,6 +12,7 @@ import (
 	"github.com/lib/pq"
 	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -30,7 +31,7 @@ const (
 
 const (
 	DuplicateKeyValueViolatesUniqueConstraint = "23505"
-	CanNotConnectToDatabase                   = "dial tcp 127.0.0.1:5432: connect: connection refused"
+	CanNotConnectToDatabase                   = "5432: connect: connection refused"
 )
 
 type CreateUserRequest struct {
@@ -175,7 +176,7 @@ func (server *Server) loginUser(context *gin.Context) {
 			context.JSON(http.StatusNotFound, errorResponse("There is no user with the entered E-Mail.", err))
 			return
 		}
-		if err.Error() == CanNotConnectToDatabase {
+		if strings.Contains(err.Error(), CanNotConnectToDatabase) {
 			context.JSON(http.StatusInternalServerError, errorResponse("Can not connected to database", err))
 			return
 		}
