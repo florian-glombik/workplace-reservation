@@ -169,6 +169,8 @@ func (server *Server) loginUser(context *gin.Context) {
 		return
 	}
 
+	log.Println("login attempt for email '%d'", request.Email)
+
 	user, err := server.queries.GetUserByMail(context, request.Email)
 	if err != nil {
 		log.Println(err.Error())

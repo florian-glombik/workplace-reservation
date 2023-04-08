@@ -21,6 +21,8 @@ const (
 	authorizationTypeBearer       = "bearer"
 	authorizationPayloadKey       = "authorization_payload"
 	EnvJwtTokenGeneratorSecretKey = "JWT_TOKEN_GENERATOR_SECRET_KEY"
+	EnvCertFilePath               = "CERT_FILE_PATH"
+	EnvCertKeyPath                = "CERT_KEY_PATH"
 )
 
 type Server struct {
@@ -53,9 +55,21 @@ func NewServer(database *sql.DB) *Server {
 }
 
 func (server *Server) Start(address string) error {
-	// TODO get cert when starting container
-	// return server.router.RunTLS(":8080", "/etc/letsencrypt/live/florian-g.vm.selectcode.io/cert.pem", "/etc/letsencrypt/live/florian-g.vm.selectcode.io/privkey.pem")
-	return server.router.Run(address)
+	log.Println("starting server ...")
+
+	certFilePath, certFileIsSet := os.LookupEnv(EnvCertFilePath)
+	certKeyPath, certKeyIsSet := os.LookupEnv(EnvCertKeyPath)
+
+	log.Println("\t certFilePath: &d", certFilePath)
+	log.Println("\t certKeyPath: &d", certKeyPath)
+
+	if certFileIsSet && certKeyIsSet {
+		return server.router.RunTLS(":8080", certFilePath, certKeyPath)
+	} else {
+		log.Println("\t starting server without TLS due to unset certFile/certKey path")
+		return server.router.Run(address)
+	}
+
 }
 
 func (server *Server) setupRouter() {
