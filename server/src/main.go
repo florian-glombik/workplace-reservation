@@ -15,10 +15,9 @@ import (
 )
 
 const (
-	databaseDriver    = "postgres"
-	databaseSource    = "postgresql://root:root@localhost:5432/workplace_reservation?sslmode=disable"
-	DnsDatabaseSource = "user=root password=root dbname=workplace_reservation port=5432 sslmode=disable"
-	serverAddress     = "0.0.0.0:8080"
+	databaseDriver = "postgres"
+	databaseSource = "postgresql://root:root@database:5432/workplace_reservation?sslmode=disable"
+	serverAddress  = "0.0.0.0:8080"
 )
 
 // @title           Workplace Reservation API
@@ -32,7 +31,6 @@ func main() {
 
 	log.Println("attempting to open database connection ...")
 	databaseConnection, err := sql.Open(databaseDriver, databaseSource)
-	//databaseConnection, err := sql.Open(databaseDriver, DnsDatabaseSource)
 	if err != nil {
 		log.Fatal("cannot establish database connection:", err)
 	}
