@@ -16,9 +16,10 @@ import (
 )
 
 const (
-	authorizationHeaderKey  = "authorization"
-	authorizationTypeBearer = "bearer"
-	authorizationPayloadKey = "authorization_payload"
+	authorizationHeaderKey        = "authorization"
+	authorizationTypeBearer       = "bearer"
+	authorizationPayloadKey       = "authorization_payload"
+	EnvJwtTokenGeneratorSecretKey = "JWT_TOKEN_GENERATOR_SECRET_KEY"
 )
 
 type Server struct {
@@ -29,8 +30,6 @@ type Server struct {
 }
 
 func NewServer(database *sql.DB) *Server {
-	EnvJwtTokenGeneratorSecretKey := "JWT_TOKEN_GENERATOR_SECRET_KEY"
-
 	JwtTokenGeneratorSecretKey, isSet := os.LookupEnv(EnvJwtTokenGeneratorSecretKey)
 	if !isSet {
 		errorString, _ := fmt.Printf("Environment variable is not set: %d", EnvJwtTokenGeneratorSecretKey)

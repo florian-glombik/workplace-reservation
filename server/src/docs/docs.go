@@ -40,11 +40,28 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/offices/edit": {
+        "/offices/delete": {
+            "delete": {
+                "tags": [
+                    "offices"
+                ],
+                "responses": {}
+            }
+        },
+        "/offices/edit/:officeId": {
             "patch": {
                 "tags": [
                     "offices"
                 ],
+                "responses": {}
+            }
+        },
+        "/offices/office-id": {
+            "get": {
+                "tags": [
+                    "offices"
+                ],
+                "summary": "Returns office for supplied ID",
                 "responses": {}
             }
         },
@@ -150,6 +167,15 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/workplace/:workplaceId": {
+            "patch": {
+                "tags": [
+                    "workplaces"
+                ],
+                "summary": "Updating a workplace",
+                "responses": {}
+            }
+        },
         "/workplace/create": {
             "post": {
                 "tags": [
@@ -183,6 +209,14 @@ const docTemplate = `{
                     "workplaces"
                 ],
                 "summary": "Returns all workplaces with reservations in the requested timespan and the linked office",
+                "responses": {}
+            }
+        },
+        "/workplaces/:workplaceId": {
+            "delete": {
+                "tags": [
+                    "workplaces"
+                ],
                 "responses": {}
             }
         },

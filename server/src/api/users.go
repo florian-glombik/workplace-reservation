@@ -10,6 +10,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+	"log"
 	"net/http"
 	"time"
 )
@@ -68,6 +69,8 @@ func (server *Server) createUser(context *gin.Context) {
 			context.JSON(http.StatusBadRequest, errorResponse("Invalid E-Mail Address! Make sure to follow the format 'example@example.com' - include a '.' after the '@'", err))
 			return
 		}
+
+		log.Println(err)
 
 		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed+" Consider changing the input for "+invalidInputTag, err))
 		return
@@ -152,11 +155,15 @@ type loginUserResponse struct {
 // @Tags         accounts
 // @Router       /users/login [post]
 func (server *Server) loginUser(context *gin.Context) {
+	log.Println("entered login user")
+
 	var request loginUserRequest
 	if err := context.ShouldBindJSON(&request); err != nil {
 		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
 		return
 	}
+
+	log.Println("bound variables")
 
 	user, err := server.queries.GetUserByMail(context, request.Email)
 	if err != nil {
@@ -167,6 +174,8 @@ func (server *Server) loginUser(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
 		return
 	}
+
+	log.Println("tried to get user by mail")
 
 	err = util.CheckPassword(user.Password, request.Password)
 	if err != nil {
