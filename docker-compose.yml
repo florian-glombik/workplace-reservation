@@ -1,4 +1,4 @@
-version: '3'
+version: '3.9'
 services:
   database:
     image: postgres:14-alpine
@@ -12,26 +12,24 @@ services:
       - POSTGRES_PASSWORD=root
     ports:
       - "5432:5432"
-  server:
+  backend:
     build:
       context: ./server
-    container_name: "server"
+    container_name: "backend"
     environment:
       - JWT_TOKEN_GENERATOR_SECRET_KEY=dlgdjflgjsadfjlsjdfljsldjflsjddflkgj
     ports:
       - "8080:8080"
     depends_on:
       - database
-  client:
+  frontend:
     build:
       context: ./webapp
-    container_name: "client"
+    container_name: "frontend"
     ports:
       - "80:80"
-    environment:
-      - REACT_APP_API_URL=http://go-server:8080/api
     depends_on:
-      - server
+      - backend
 volumes:
   postgres-db:
 networks:
