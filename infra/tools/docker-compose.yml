@@ -16,6 +16,8 @@ services:
       caddy.log.output: "stdout"
     environment:
       CADDY_INGRESS_NETWORKS: "web"
+    networks:
+      web:
 networks:
   web:
     external: true

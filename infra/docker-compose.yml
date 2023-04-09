@@ -13,28 +13,32 @@ services:
       - POSTGRES_PASSWORD=${DB_ROOT_PASSWORD}
     ports:
       - "5432:5432"
+    networks:
+      web:
   backend:
-    build:
-      context: ../server/
+    image: workplace-reservation4_backend:latest
+#    build:
+#      context: ../server/
     container_name: backend
     depends_on:
       - database
     restart: always
     environment:
       - JWT_TOKEN_GENERATOR_SECRET_KEY=${ENV_JWT_TOKEN_GENERATOR_SECRET_KEY}
-    expose:
-      - 8080
+    ports:
+      - "8080:8080"
+#    expose:
+#      - 8080
     labels:
       caddy: ${BACKEND_DOMAINS}
       caddy.reverse.proxy: "{{upstreams 8080}}"
+      caddy.directive: /
     networks:
       - web
   frontend:
     build:
       context: ../webapp/
     container_name: frontend
-    depends_on:
-      - backend
     restart: always
     expose:
       - 80
