@@ -32,6 +32,7 @@ const (
 const (
 	DuplicateKeyValueViolatesUniqueConstraint = "23505"
 	CanNotConnectToDatabase                   = "connection refused"
+	WrongDatabasePassword                     = "password authentication failed"
 )
 
 type CreateUserRequest struct {
@@ -165,11 +166,12 @@ type loginUserResponse struct {
 func (server *Server) loginUser(context *gin.Context) {
 	var request loginUserRequest
 	if err := context.ShouldBindJSON(&request); err != nil {
+		log.Println(err.Error())
 		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
 		return
 	}
 
-	log.Println("login attempt for email '%d'", request.Email)
+	log.Println("login attempt for email '%s'", request.Email)
 
 	user, err := server.queries.GetUserByMail(context, request.Email)
 	if err != nil {
@@ -178,10 +180,11 @@ func (server *Server) loginUser(context *gin.Context) {
 			context.JSON(http.StatusNotFound, errorResponse("There is no user with the entered E-Mail.", err))
 			return
 		}
-		if strings.Contains(err.Error(), CanNotConnectToDatabase) {
+		if strings.Contains(err.Error(), CanNotConnectToDatabase) || strings.Contains(err.Error(), WrongDatabasePassword) {
 			context.JSON(http.StatusInternalServerError, errorResponse("Can not connect to database", err))
 			return
 		}
+
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
 		return
 	}
