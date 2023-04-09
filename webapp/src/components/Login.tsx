@@ -33,6 +33,7 @@ export const Login = () => {
               onChange={(e) =>
                 setDetails({ ...details, email: e.target.value })
               }
+              type={'email'}
               fullWidth
               autoFocus
             />
