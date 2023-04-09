@@ -11,8 +11,10 @@ services:
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=${DB_ROOT_PASSWORD}
-    ports:
-      - "5432:5432"
+#    ports:
+#      - "5432:5432"
+    expose:
+      - 5432
     networks:
       web:
   backend:
@@ -25,6 +27,7 @@ services:
     restart: always
     environment:
       - JWT_TOKEN_GENERATOR_SECRET_KEY=${ENV_JWT_TOKEN_GENERATOR_SECRET_KEY}
+      - DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
     ports:
       - "8080:8080"
 #    expose:
