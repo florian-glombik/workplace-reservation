@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  caddy:
+    image: lucaslorentz/caddy-docker-proxy:alpine
+    container_name: caddy
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /srv/workplace-reservation/data/caddy
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      caddy.email: ${ADMIN_EMAIL}
+      caddy.log.output: "stdout"
+    environment:
+      CADDY_INGRESS_NETWORKS: "web"
+networks:
+  web:
+    external: true
