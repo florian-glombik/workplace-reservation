@@ -69,7 +69,6 @@ func (server *Server) Start(address string) error {
 		log.Println("\t starting server without TLS due to unset certFile/certKey path")
 		return server.router.Run(address)
 	}
-
 }
 
 func (server *Server) setupRouter() {
@@ -85,7 +84,7 @@ func (server *Server) setupRouter() {
 	ClientAddress := "http://localhost:80"
 
 	// TODO move client address to config file
-	corsConfig.AllowOrigins = []string{ClientAddress, "http://localhost"}
+	corsConfig.AllowOrigins = []string{ClientAddress, "http://localhost", "https://localhost", "https://localhost:80"}
 	// To be able to send tokens to the server.
 	corsConfig.AllowCredentials = true
 	// OPTIONS method for ReactJS
