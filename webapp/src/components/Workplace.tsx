@@ -1,6 +1,5 @@
 import { Table, TableBody, TableHead, TableRow } from '@material-ui/core'
 import axios, { AxiosRequestConfig } from 'axios'
-import { SERVER_BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { Account, useAuth } from '../utils/AuthProvider'
@@ -35,6 +34,7 @@ import withStyles from '@material-ui/core/styles/withStyles'
 import NoAccountsIcon from '@mui/icons-material/NoAccounts'
 import { WEEK_STARTS_ON_MONDAY } from './WorkplaceAccordions'
 import { useNavigate } from 'react-router-dom'
+import {composeBackendUrl} from "../App";
 
 const IconLeftAccordionSummary = withStyles({
   expandIcon: {
@@ -115,7 +115,7 @@ export const Workplaces = ({
     }
 
     try {
-      const workplaces = await axios.get(SERVER_BASE_URL + 'workplaces', requestConfig)
+      const workplaces = await axios.get(composeBackendUrl('workplaces'), requestConfig)
       setWorkplaces(workplaces.data)
     } catch (error) {
       toast.error(
@@ -366,7 +366,7 @@ async function reserveWorkplace(
   }
 
   try {
-    await axios.post(SERVER_BASE_URL + 'workplace/reserve', data, requestConfig)
+    await axios.post(composeBackendUrl('workplace/reserve'), data, requestConfig)
     updateWorkplaces()
   } catch (error) {
     toast.error(getDisplayResponseMessage(error))
@@ -391,8 +391,7 @@ async function cancelReservation(
   }
 
   try {
-    await axios.delete(
-      SERVER_BASE_URL + 'workplace/reservations/' + reservation.ID,
+    await axios.delete(composeBackendUrl('workplace/reservations/') + reservation.ID,
       requestConfig
     )
     updateWorkplaces()

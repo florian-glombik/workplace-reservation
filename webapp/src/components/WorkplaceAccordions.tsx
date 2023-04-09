@@ -5,9 +5,9 @@ import React, { useEffect, useState } from 'react'
 import { Box } from '@mui/material'
 import { Account, useAuth } from '../utils/AuthProvider'
 import axios from 'axios'
-import { SERVER_BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
+import {BACKEND_URL} from "../App";
 
 export const MONDAY_NUMBER_CODE = 1
 export const WEEK_STARTS_ON_MONDAY: {
@@ -44,7 +44,7 @@ export const WorkplaceAccordions = () => {
 
     try {
       const availableUsersResponse = await axios.get(
-        SERVER_BASE_URL + 'users/all-available',
+        BACKEND_URL + 'users/all-available',
         requestConfig
       )
       setAvailableUsers(availableUsersResponse.data)

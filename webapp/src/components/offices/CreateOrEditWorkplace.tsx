@@ -2,7 +2,6 @@ import { Box, Grid, IconButton, TextField, Tooltip } from '@mui/material'
 import { Form, FormikProvider, useFormik } from 'formik'
 import * as Yup from 'yup'
 import axios, { AxiosRequestConfig } from 'axios'
-import { SERVER_BASE_URL } from '../../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 import { useAuth } from '../../utils/AuthProvider'
@@ -12,6 +11,7 @@ import SaveIcon from '@mui/icons-material/Save'
 import { WorkplaceWithoutReservations } from '../Workplace'
 import { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete'
+import {composeBackendUrl} from "../../App";
 
 export function CreateOrEditWorkplace({
   officeId,
@@ -73,12 +73,12 @@ export function CreateOrEditWorkplace({
       let createdOrEditedWorkplace: WorkplaceWithoutReservations | undefined =
         undefined
       if (isEdit) {
-        const requestUrl = SERVER_BASE_URL + 'workplaces/' + workplace!.ID
+        const requestUrl = composeBackendUrl('workplaces/' + workplace!.ID)
         createdOrEditedWorkplace = (
           await axios.patch(requestUrl, values, requestConfig)
         ).data
       } else {
-        const requestUrl = SERVER_BASE_URL + 'workplaces'
+        const requestUrl = composeBackendUrl('workplaces')
         createdOrEditedWorkplace = (
           await axios.post(requestUrl, values, requestConfig)
         ).data
@@ -149,7 +149,7 @@ function DeleteWorkplaceButton({
     }
 
     try {
-      const requestUrl = SERVER_BASE_URL + 'workplaces/' + workplace.ID
+      const requestUrl = composeBackendUrl('workplaces/' + workplace.ID)
       await axios.delete(requestUrl, requestConfig)
       toast.success(
         `Workplace ${workplace?.Name.String} and associated reservations have been deleted!`

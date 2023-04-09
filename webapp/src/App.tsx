@@ -7,6 +7,12 @@ import 'react-toastify/dist/ReactToastify.css'
 import { ToastContainer } from 'react-toastify'
 import { Router } from './Router'
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL
+
+export function composeBackendUrl(path: string) {
+    return BACKEND_URL + (path.startsWith("/") ? path : `/${path}`)
+}
+
 function App() {
   return (
     <BrowserRouter>

@@ -3,12 +3,12 @@ import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { Office } from '../components/offices/OfficeList'
 import axios, { AxiosRequestConfig } from 'axios'
-import { SERVER_BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useAuth } from '../utils/AuthProvider'
 import { CreateOrEditOffice } from '../components/offices/CreateOrEditOffice'
 import { WorkplaceWithoutReservations } from '../components/Workplace'
+import {composeBackendUrl} from "../App";
 
 export type OfficeWithWorkplaces = {
   Office: Office
@@ -34,7 +34,7 @@ export function EditOfficePage() {
     }
 
     try {
-      let requestUrl = SERVER_BASE_URL + `offices/${officeId}`
+      let requestUrl = composeBackendUrl(`offices/${officeId}`)
       const officeWithWorkplaces: OfficeWithWorkplaces = (
         await axios.get(requestUrl, requestConfig)
       ).data
