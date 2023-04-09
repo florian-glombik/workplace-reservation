@@ -33,6 +33,7 @@ const (
 	DuplicateKeyValueViolatesUniqueConstraint = "23505"
 	CanNotConnectToDatabase                   = "connection refused"
 	WrongDatabasePassword                     = "password authentication failed"
+	DatabaseNotCreated                        = "does not exist"
 )
 
 type CreateUserRequest struct {
@@ -188,6 +189,10 @@ func (server *Server) loginUser(context *gin.Context) {
 		}
 		if strings.Contains(err.Error(), CanNotConnectToDatabase) || strings.Contains(err.Error(), WrongDatabasePassword) {
 			context.JSON(http.StatusInternalServerError, errorResponse("Login not possible - can not connect to database", err))
+			return
+		}
+		if strings.Contains(err.Error(), DatabaseNotCreated) {
+			context.JSON(http.StatusInternalServerError, errorResponse("Login not possible - database does not exist", err))
 			return
 		}
 
