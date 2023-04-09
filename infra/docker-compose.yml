@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  database:
+    image: postgres:14-alpine
+    restart: always
+    user: root
+    container_name: "database"
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=${DB_ROOT_PASSWORD}
+    ports:
+      - "5432:5432"
+  backend:
+    build:
+      context: ../server/
+    container_name: backend
+    depends_on:
+      - database
+    restart: always
+    environment:
+      - JWT_TOKEN_GENERATOR_SECRET_KEY=${ENV_JWT_TOKEN_GENERATOR_SECRET_KEY}
+    expose:
+      - 8080
+    labels:
+      caddy: ${BACKEND_DOMAINS}
+      caddy.reverse.proxy: "{{upstreams 8080}}"
+    networks:
+      - web
+  frontend:
+    build:
+      context: ../webapp/
+    container_name: frontend
+    depends_on:
+      - backend
+    restart: always
+    expose:
+      - 80
+    labels:
+      caddy: ${FRONTEND_DOMAINS}
+      caddy.reverse_proxy: "{{upstreams 80}}"
+    networks:
+      - web
+volumes:
+  postgres-db:
+networks:
+  web:
+    external: true
