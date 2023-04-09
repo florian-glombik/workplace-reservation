@@ -16,7 +16,9 @@ services:
     networks:
       web:
   backend:
-    image: workplace-reservation4_backend:latest
+#    image: workplace-reservation4_backend:latest
+    build:
+      context: ../server
     container_name: backend
     depends_on:
       - database
@@ -33,12 +35,13 @@ services:
     networks:
       - web
   frontend:
-    image: workplace-reservation4_frontend:latest
+#    image: workplace-reservation4_frontend:latest
+    build:
+      context: ../webapp
     container_name: frontend
     restart: always
     environment:
-      - PRIMARY_FRONTEND_DOMAIN=${PRIMARY_FRONTEND_DOMAIN}
-      - PRIMARY_BACKEND_DOMAIN=${PRIMARY_BACKEND_DOMAIN}
+      - BACKEND_URL=${PRIMARY_BACKEND_DOMAIN}
     expose:
       - 80
     labels:
