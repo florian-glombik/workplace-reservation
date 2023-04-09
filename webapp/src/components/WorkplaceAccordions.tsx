@@ -7,7 +7,7 @@ import { Account, useAuth } from '../utils/AuthProvider'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
-import {BACKEND_URL} from "../App";
+import {composeBackendUrl} from "../App";
 
 export const MONDAY_NUMBER_CODE = 1
 export const WEEK_STARTS_ON_MONDAY: {
@@ -44,7 +44,7 @@ export const WorkplaceAccordions = () => {
 
     try {
       const availableUsersResponse = await axios.get(
-        BACKEND_URL + 'users/all-available',
+        composeBackendUrl('users/all-available'),
         requestConfig
       )
       setAvailableUsers(availableUsersResponse.data)
