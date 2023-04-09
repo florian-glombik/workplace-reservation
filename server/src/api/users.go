@@ -71,6 +71,8 @@ func (server *Server) createUser(context *gin.Context) {
 	var request CreateUserRequest
 
 	if err := context.ShouldBindJSON(&request); err != nil {
+		log.Println(err.Error())
+
 		validationErr := err.(validator.ValidationErrors)
 
 		invalidInputTag := validationErr[0].Tag()
@@ -79,14 +81,13 @@ func (server *Server) createUser(context *gin.Context) {
 			return
 		}
 
-		log.Println(err)
-
 		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed+" Consider changing the input for "+invalidInputTag, err))
 		return
 	}
 
 	hashedPassword, err := util.HashPassword(request.Password)
 	if err != nil {
+		log.Println(err.Error())
 		context.JSON(http.StatusInternalServerError, "Problems occurred on saving the user credential.")
 		return
 	}
@@ -102,10 +103,15 @@ func (server *Server) createUser(context *gin.Context) {
 	newUser, err := server.queries.CreateUser(context, createUserSqlParams)
 
 	if err != nil {
+		log.Println(err.Error())
 		pqErr := err.(*pq.Error)
 
 		if pqErr.Code == DuplicateKeyValueViolatesUniqueConstraint {
 			context.JSON(http.StatusForbidden, errorResponse("E-Mail is already in use!", err))
+			return
+		}
+		if strings.Contains(err.Error(), CanNotConnectToDatabase) || strings.Contains(err.Error(), WrongDatabasePassword) {
+			context.JSON(http.StatusInternalServerError, errorResponse("The user could not be created - can not connect to database", err))
 			return
 		}
 
@@ -181,7 +187,7 @@ func (server *Server) loginUser(context *gin.Context) {
 			return
 		}
 		if strings.Contains(err.Error(), CanNotConnectToDatabase) || strings.Contains(err.Error(), WrongDatabasePassword) {
-			context.JSON(http.StatusInternalServerError, errorResponse("Can not connect to database", err))
+			context.JSON(http.StatusInternalServerError, errorResponse("Login not possible - can not connect to database", err))
 			return
 		}
 
