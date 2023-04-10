@@ -5,7 +5,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useAuth } from '../utils/AuthProvider'
-import {composeBackendUrl} from "../utils/accessBackend";
+import { composeBackendUrl } from '../utils/accessBackend'
 
 export const EditAccount = () => {
   const { jwtToken, user, setUser } = useAuth()
@@ -40,7 +40,11 @@ export const EditAccount = () => {
 
     try {
       const updatedUser = (
-        await axios.patch(composeBackendUrl('users/edit'), details, requestConfig)
+        await axios.patch(
+          composeBackendUrl('users/edit'),
+          details,
+          requestConfig
+        )
       ).data
       setUser(updatedUser)
       setNoChangesMade(true)

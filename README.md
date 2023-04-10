@@ -11,16 +11,17 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
 1. Install Docker and docker-compose on the VM *(e.g. linux:ubuntu)*
 2. Clone this Repository on your VM 
 3. Fill in your custom data in `/infra/.env` *(frontend and backend need to have different domains for the reverse proxy caddy to work)*
-4. Create the network `web`
+4. Adjust your primary backend URL in the config file `webapp/.env`
+5. Create the network `web`
    ```
    docker network create web
    ```
-5. Move to the directory `infra` and execute
+6. Move to the directory `infra` and execute
    ```
    docker-compose up
    ```
-6. Create the database by manually executing the command for `create_db` in your shell *(make sure to adjust the statement according to your environment variables)*
-7. install [migrate](https://github.com/golang-migrate/migrate/blob/master/cmd/migrate/README.md) for database migrations
+7. Create the database by manually executing the command for `create_db` in your shell *(make sure to adjust the statement according to your environment variables)*
+8. install [migrate](https://github.com/golang-migrate/migrate/blob/master/cmd/migrate/README.md) for database migrations
    1. Find the [release that fits your environment]((https://github.com/golang-migrate/migrate/releases))
    2. Adjust the download command accordingly *(`$version`, `$os` and `$arch` need to be adjusted according to the fitting release from the previous step)*
       ```
@@ -32,8 +33,8 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
       ```
    3. Execute the adjusted command in the directory `/$usr/bin`
    4. You have installed migrate :raised_hands:
-8. Execute the migration in the folder `server` by copying the underlying statement for `migrate_up` to your shell *(and executing it, make sure to adjust the statement according to your environment variables)*
-9. The service should be up and running, checkout your domain!
+9. Execute the migration in the folder `server` by copying the underlying statement for `migrate_up` to your shell *(and executing it, make sure to adjust the statement according to your environment variables)*
+10. The service should be up and running, checkout your domain!
    1. Create a user by Navigating to your frontendURL and registering as user
    2. Give your user Admin rights manually
       1. Open a shell on the `database` container, *e.g. with*
