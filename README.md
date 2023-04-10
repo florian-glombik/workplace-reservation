@@ -3,14 +3,61 @@
 TODO
 
 ## Demo
-TODO
 
-## Get Started
- - install Docker and docker-compose on the VM (e.g. linux:ubuntu)
- - clone this Repository on your VM
- - fill in your custom data in /infra/.env (frontend and backend need to have different domains for the reverse proxy caddy to work)
- - create the network "docker network create web"
- - docker-compose up
+Test the features with the [live-demo](https://workplace-reservation-frontend.florian-glombik.de/)! 
+
+## Get Started (~15 min)
+
+1. Install Docker and docker-compose on the VM *(e.g. linux:ubuntu)*
+2. Clone this Repository on your VM 
+3. Fill in your custom data in `/infra/.env` *(frontend and backend need to have different domains for the reverse proxy caddy to work)*
+4. Create the network `web`
+   ```
+   docker network create web
+   ```
+5. Move to the directory `infra` and execute
+   ```
+   docker-compose up
+   ```
+6. Create the database by manually executing the command for `create_db` in your shell *(make sure to adjust the statement according to your environment variables)*
+7. install [migrate](https://github.com/golang-migrate/migrate/blob/master/cmd/migrate/README.md) for database migrations
+   1. Find the [release that fits your environment]((https://github.com/golang-migrate/migrate/releases))
+   2. Adjust the download command accordingly *(`$version`, `$os` and `$arch` need to be adjusted according to the fitting release from the previous step)*
+      ```
+      curl -L https://github.com/golang-migrate/migrate/releases/download/$version/migrate.$os-$arch.tar.gz | tar xvz
+      ```
+      *e.g. this could look like this for an ubuntu VM:*
+      ```
+      curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.2/migrate.linux-amd64.tar.gz | tar xvz
+      ```
+   3. Execute the adjusted command in the directory `/$usr/bin`
+   4. You have installed migrate :raised_hands:
+8. Execute the migration in the folder `server` by copying the underlying statement for `migrate_up` to your shell *(and executing it, make sure to adjust the statement according to your environment variables)*
+9. The service should be up and running, checkout your domain!
+   1. Create a user by Navigating to your frontendURL and registering as user
+   2. Give your user Admin rights manually
+      1. Open a shell on the `database` container, *e.g. with*
+         ```
+         docker exec -it postgres14 bash
+         ```
+      2. Start psql by executing 
+         ```
+         psql
+         ```
+      3. Connect to the database *(list databases with ``\l`)*
+         ```
+         \connect workplace_reservation
+         ```
+      4. Update the `role` of your user with SQL to 
+         ```
+         admin
+         ```
+         *(`\dt` will list you all tables that are available, you might want to view the table )*
+
+Your instance is running and ready to be used by your and your colleagues! :tada:
+
+*(You might want to create the offices and workplaces in the application before you share the link with your colleagues :wink:)* 
+      
 
 ## Developer Setup Guide
 
@@ -58,11 +105,6 @@ Make sure to install:
 - [docker](https://www.docker.com/get-started/) _- keeps our PostgresSQL database_
 - [npm](https://www.npmjs.com/) _- used as package manager, e.g. for importing [React](https://reactjs.org/)_
 - [migrate](https://github.com/golang-migrate/migrate/blob/master/cmd/migrate/README.md) _- framework used for database migrations_
-  <details>
-  <summary>Linux distribution</summary>
-  
-  There might be issues when working on a custom Linux distribution, this [installation process](https://stackoverflow.com/a/66621758/16540383) might work for you
-  </details>
 - [sqlc](https://docs.sqlc.dev/en/latest/overview/install.html) _- used for generation of Go code from SQL queries; there is currently (1.13) no support for Postgres sqlc for Windows_
 
 ### Before First Startup
