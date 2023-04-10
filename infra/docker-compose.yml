@@ -8,9 +8,8 @@ services:
     container_name: "database"
     volumes:
       - postgres-db:/var/lib/postgresql/data
-    environment:
-      - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=${DB_ROOT_PASSWORD}
+    env_file:
+      - .env
     expose:
       - 5432
     networks:
@@ -23,10 +22,8 @@ services:
     depends_on:
       - database
     restart: always
-    environment:
-      - JWT_TOKEN_GENERATOR_SECRET_KEY=${ENV_JWT_TOKEN_GENERATOR_SECRET_KEY}
-      - DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
-      - PRIMARY_BACKEND_DOMAIN=${PRIMARY_BACKEND_DOMAIN}
+    env_file:
+      - .env
     expose:
       - 8080
     labels:
@@ -40,8 +37,8 @@ services:
       context: ../webapp
     container_name: frontend
     restart: always
-    environment:
-      - BACKEND_URL=${PRIMARY_BACKEND_URL}
+    env_file:
+      - .env
     expose:
       - 80
     labels:

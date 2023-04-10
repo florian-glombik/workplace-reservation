@@ -94,4 +94,4 @@ You will need to install the [prettier plugin](https://plugins.jetbrains.com/plu
 https://github.com/swaggo/gin-swagger
 
 execute `swag init` in `server/src`
-Once you have started the server you can find a visual representation of the [Swagger API](http://localhost:8080/swagger/index.html).
+Once you have started the server you can find a visual representation of the [Swagger API](http://0.0.0.0:8080/swagger/index.html).

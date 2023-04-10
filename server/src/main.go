@@ -19,7 +19,7 @@ import (
 const (
 	databaseDriver      = "postgres"
 	serverAddress       = "0.0.0.0:8080"
-	EnvDatabasePassword = "DB_ROOT_PASSWORD"
+	EnvDatabasePassword = "POSTGRES_PASSWORD"
 )
 
 // @title           Workplace Reservation API
@@ -27,7 +27,7 @@ const (
 
 // @contact.name   API Support
 
-// @host      localhost:8080
+// @host      0.0.0.0:8080
 // @BasePath  /api/v1
 func main() {
 	databasePassword, isSet := os.LookupEnv(EnvDatabasePassword)
