@@ -3,9 +3,9 @@ create_db:
 drop_db:
 	docker exec -it database dropdb workplace_reservation
 migrate_up:
-	migrate -path db/migrations -database "postgresql://root:root@0.0.0.0:5432/workplace_reservation?sslmode=disable" -verbose up
+	migrate -path db/migrations -database "postgresql://root:root@database:5432/workplace_reservation?sslmode=disable" -verbose up
 migrate_down:
-	yes | migrate -path db/migrations -database "postgresql://root:root@0.0.0.0:5432/workplace_reservation?sslmode=disable" -verbose down
+	yes | migrate -path db/migrations -database "postgresql://root:root@database:5432/workplace_reservation?sslmode=disable" -verbose down
 sqlc:
 	sqlc generate
 generate_api:
