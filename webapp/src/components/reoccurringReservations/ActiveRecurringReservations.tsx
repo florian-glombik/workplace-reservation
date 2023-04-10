@@ -22,7 +22,7 @@ import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 import { TableHead, TableRow } from '@material-ui/core'
 import { getUserDisplayName } from '../Header'
-import {composeBackendUrl} from "../../utils/accessBackend";
+import { composeBackendUrl } from '../../utils/accessBackend'
 
 type ActiveRecurringReservation = {
   ID: string
@@ -36,7 +36,7 @@ type ActiveRecurringReservation = {
 }
 
 export const ActiveRecurringReservations = () => {
-  const { jwtToken, user, isAdmin, availableUsers } = useAuth()
+  const { jwtToken, isAdmin, availableUsers } = useAuth()
   const [activeRecurringReservations, setActiveRecurringReservations] =
     useState<ActiveRecurringReservation[]>([])
 

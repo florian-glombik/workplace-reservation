@@ -12,12 +12,12 @@ import { useEffect, useState } from 'react'
 import axios, { AxiosRequestConfig } from 'axios'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
-import { NullString, WorkplaceWithoutReservations } from '../Workplace'
+import { NullString } from '../Workplace'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import { TableHead, TableRow } from '@material-ui/core'
 import { useNavigate } from 'react-router-dom'
-import {composeBackendUrl} from "../../utils/accessBackend";
+import { composeBackendUrl } from '../../utils/accessBackend'
 
 export type Office = {
   ID: string
