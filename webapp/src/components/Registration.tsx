@@ -5,7 +5,7 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useNavigate } from 'react-router-dom'
-import {composeBackendUrl} from "../App";
+import {composeBackendUrl} from "../utils/accessBackend";
 
 export const Registration = () => {
   const [details, setDetails] = useState({

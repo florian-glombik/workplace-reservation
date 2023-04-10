@@ -5,7 +5,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useAuth } from '../utils/AuthProvider'
-import {composeBackendUrl} from "../App";
+import {composeBackendUrl} from "../utils/accessBackend";
 
 export const EditAccount = () => {
   const { jwtToken, user, setUser } = useAuth()

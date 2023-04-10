@@ -17,7 +17,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import { TableHead, TableRow } from '@material-ui/core'
 import { useNavigate } from 'react-router-dom'
-import {composeBackendUrl} from "../../App";
+import {composeBackendUrl} from "../../utils/accessBackend";
 
 export type Office = {
   ID: string

@@ -5,7 +5,7 @@ import Button from '@mui/material/Button'
 import { Box, TextField } from '@material-ui/core'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
-import {composeBackendUrl} from "../App";
+import {composeBackendUrl} from "../utils/accessBackend";
 
 export const Login = () => {
   const { login } = useAuth()

@@ -20,7 +20,7 @@ import SaveIcon from '@mui/icons-material/Save'
 import { OfficeWithWorkplaces } from '../../pages/EditOfficePage'
 import { CreateOrEditWorkplace } from './CreateOrEditWorkplace'
 import { useEffect, useState } from 'react'
-import {composeBackendUrl} from "../../App";
+import {composeBackendUrl} from "../../utils/accessBackend";
 
 export function CreateOrEditOffice({
   officeWithWorkplaces,

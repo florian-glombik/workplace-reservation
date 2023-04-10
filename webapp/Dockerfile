@@ -2,8 +2,8 @@
 FROM node:14-alpine as builder
 WORKDIR /app
 
-ARG BACKEND_URL
-ENV REACT_APP_BACKEND_URL=$BACKEND_URL
+# ARG BACKEND_URL
+# ENV REACT_APP_BACKEND_URL=$BACKEND_URL
 
 # Install the dependencies
 COPY package*.json ./

@@ -34,7 +34,7 @@ import withStyles from '@material-ui/core/styles/withStyles'
 import NoAccountsIcon from '@mui/icons-material/NoAccounts'
 import { WEEK_STARTS_ON_MONDAY } from './WorkplaceAccordions'
 import { useNavigate } from 'react-router-dom'
-import {composeBackendUrl} from "../App";
+import {composeBackendUrl} from "../utils/accessBackend";
 
 const IconLeftAccordionSummary = withStyles({
   expandIcon: {

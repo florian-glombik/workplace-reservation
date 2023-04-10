@@ -8,7 +8,7 @@ import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useAuth } from '../utils/AuthProvider'
 import { CreateOrEditOffice } from '../components/offices/CreateOrEditOffice'
 import { WorkplaceWithoutReservations } from '../components/Workplace'
-import {composeBackendUrl} from "../App";
+import {composeBackendUrl} from "../utils/accessBackend";
 
 export type OfficeWithWorkplaces = {
   Office: Office

@@ -7,7 +7,7 @@ import { Account, useAuth } from '../utils/AuthProvider'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
-import {composeBackendUrl} from "../App";
+import {composeBackendUrl} from "../utils/accessBackend";
 
 export const MONDAY_NUMBER_CODE = 1
 export const WEEK_STARTS_ON_MONDAY: {

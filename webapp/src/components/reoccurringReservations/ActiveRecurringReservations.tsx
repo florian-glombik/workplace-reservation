@@ -22,7 +22,7 @@ import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 import { TableHead, TableRow } from '@material-ui/core'
 import { getUserDisplayName } from '../Header'
-import {composeBackendUrl} from "../../App";
+import {composeBackendUrl} from "../../utils/accessBackend";
 
 type ActiveRecurringReservation = {
   ID: string

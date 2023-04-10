@@ -11,7 +11,7 @@ import SaveIcon from '@mui/icons-material/Save'
 import { WorkplaceWithoutReservations } from '../Workplace'
 import { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete'
-import {composeBackendUrl} from "../../App";
+import {composeBackendUrl} from "../../utils/accessBackend";
 
 export function CreateOrEditWorkplace({
   officeId,

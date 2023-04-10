@@ -34,7 +34,7 @@ import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 import { Account, useAuth } from '../../utils/AuthProvider'
 import { getUserDisplayName } from '../Header'
-import {composeBackendUrl} from "../../App";
+import {composeBackendUrl} from "../../utils/accessBackend";
 
 export enum RepetitionInterval {
   weekly = DAYS_PER_WEEK,
