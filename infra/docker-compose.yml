@@ -10,8 +10,10 @@ services:
       - postgres-db:/var/lib/postgresql/data
     env_file:
       - .env
-    expose:
-      - 5432
+    ports:
+      - "5432:5432"
+#    expose:
+#      - 5432
     networks:
       web:
   backend:
@@ -28,7 +30,7 @@ services:
       - 8080
     labels:
       caddy: ${BACKEND_DOMAINS}
-      caddy.reverse.proxy: "{{upstreams 8080}}"
+      caddy.reverse_proxy: "{{upstreams 8080}}"
     networks:
       - web
   frontend:
