@@ -1,14 +1,23 @@
 # :calendar: workplace-reservation :computer:
-## Get Started
-### Prerequisite Installations
-Make sure to install:
+## Features
 TODO
 
+## Demo
+TODO
+
+## Get Started
+ - install Docker and docker-compose on the VM (e.g. linux:ubuntu)
+ - clone this Repository on your VM
+ - fill in your custom data in /infra/.env (frontend and backend need to have different domains for the reverse proxy caddy to work)
+ - create the network "docker network create web"
+ - docker-compose up
+
+## Developer Setup Guide
 
 ### Create the Database
 Within this step I describe the process of creating a PostgreSQL when using docker.
 
-Pull your favourite [PostgreSQL docker image](https://hub.docker.com/_/postgres). I decided to use the tag `14-alpine`, 
+Pull your favourite [PostgreSQL docker image](https://hub.docker.com/_/postgres). I decided to use the tag `14-alpine`,
 resulting in the CLI-command
 ```
 docker pull postgres:14-alpine
@@ -43,10 +52,6 @@ Execute the following command within the `server` folder:
 make sqlc
 ```
 
-
-TODO
-
-## Developer Setup Guide
 ### Prerequisite Installations
 Make sure to install:
 - [Go](https://go.dev/) _- at least version 1.18_
