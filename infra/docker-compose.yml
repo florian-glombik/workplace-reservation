@@ -16,9 +16,9 @@ services:
     networks:
       web:
   backend:
-    image: workplace-reservation4_backend:latest
-#    build:
-#      context: ../server
+#    image: workplace-reservation4_backend:latest
+    build:
+      context: ../server
     container_name: backend
     depends_on:
       - database
@@ -35,9 +35,9 @@ services:
     networks:
       - web
   frontend:
-    image: workplace-reservation4_frontend:latest
-#    build:
-#      context: ../webapp
+#    image: workplace-reservation4_frontend:latest
+    build:
+      context: ../webapp
     container_name: frontend
     restart: always
     environment:
@@ -49,6 +49,23 @@ services:
       caddy.reverse_proxy: "{{upstreams 80}}"
     networks:
       - web
+  caddy:
+    image: lucaslorentz/caddy-docker-proxy:alpine
+    container_name: caddy
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /srv/workplace-reservation/data/caddy
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      caddy.email: ${ADMIN_EMAIL}
+      caddy.log.output: "stdout"
+    environment:
+      CADDY_INGRESS_NETWORKS: "web"
+    networks:
+      web:
 volumes:
   postgres-db:
 networks:
