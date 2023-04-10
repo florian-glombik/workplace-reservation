@@ -3,6 +3,7 @@ package api
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	db "github.com/florian-glombik/workplace-reservation/db/sqlc"
 	"github.com/florian-glombik/workplace-reservation/src/token"
 	"github.com/florian-glombik/workplace-reservation/src/util"
@@ -178,7 +179,7 @@ func (server *Server) loginUser(context *gin.Context) {
 		return
 	}
 
-	log.Println("login attempt for email '%s'", request.Email)
+	log.Println(fmt.Sprintf("login attempt for email '%s'", request.Email))
 
 	user, err := server.queries.GetUserByMail(context, request.Email)
 	if err != nil {
