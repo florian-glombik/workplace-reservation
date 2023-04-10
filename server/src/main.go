@@ -36,6 +36,9 @@ func main() {
 	}
 	databaseSource := fmt.Sprintf("postgresql://root:%s@database:5432/workplace_reservation?sslmode=disable", databasePassword)
 
+	// TODO remove log
+	log.Println(databaseSource)
+
 	log.Println("attempting to open database connection ...")
 	databaseConnection, err := sql.Open(databaseDriver, databaseSource)
 	if err != nil {
