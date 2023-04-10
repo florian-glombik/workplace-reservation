@@ -10,6 +10,7 @@ services:
       - postgres-db:/var/lib/postgresql/data
     env_file:
       - .env
+# TODO configure server -> database connection to work without exposed port outside of network
     ports:
       - "5432:5432"
 #    expose:
