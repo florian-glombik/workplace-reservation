@@ -10,13 +10,13 @@ RUN go mod download
 
 COPY . .
 
-#RUN go install github.com/kyleconroy/sqlc/cmd/sqlc@latest
-#RUN sqlc generate
+RUN go install github.com/kyleconroy/sqlc/cmd/sqlc@latest
+RUN sqlc generate
 
 WORKDIR /app/src
 
-#RUN go install github.com/swaggo/swag/cmd/swag@latest
-#RUN swag init
+RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN swag init
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /workplace-reservation-server
 
