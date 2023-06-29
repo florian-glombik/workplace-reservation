@@ -15,7 +15,7 @@ RUN sqlc generate
 
 WORKDIR /app/src
 
-RUN go install github.com/swaggo/swag/cmd/swag@latest
+RUN go install github.com/swaggo/swag/cmd/swag@v1.8.12
 RUN swag init
 
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /workplace-reservation-server
