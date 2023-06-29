@@ -35,7 +35,7 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
    4. You have installed migrate :raised_hands:
 9. Execute the migration in the folder `server` by copying the underlying statement for `migrate_up` to your shell *(and executing it, make sure to adjust the statement according to your environment variables)*
 10. The service should be up and running, checkout your domain!
-   1. Create a user by Navigating to your frontendURL and registering as user
+   1. Create a user by navigating to your frontend URL and registering as user
    2. Give your user Admin rights manually
       1. Open a shell on the `database` container, *e.g. with*
          ```
