@@ -16,7 +16,7 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
    ```
    docker network create web
    ```
-6. Move to the directory `infra` and execute
+6. Execute the docker-compose file in the folder `infra`
    ```
    docker-compose up
    ```
