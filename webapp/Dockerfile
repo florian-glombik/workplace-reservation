@@ -1,5 +1,7 @@
 # build environment
-FROM node:14-alpine as builder
+#FROM node:14-alpine as builder # for x86
+FROM arm64v8/node:14-alpine as builder
+
 WORKDIR /app
 
 ARG PRIMARY_BACKEND_URL
@@ -17,7 +19,8 @@ COPY . ./
 RUN npm run build
 
 # production environment
-FROM nginx:1.16.0-alpine
+#FROM nginx:1.16.0-alpine for x86
+FROM arm64v8/nginx:1.16.0-alpine
 
 ## Copy custom nginx configuration
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
