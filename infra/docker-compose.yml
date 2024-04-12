@@ -13,8 +13,8 @@ services:
 # TODO configure server -> database connection to work without exposed port outside of network
     ports:
       - "5432:5432"
-#    expose:
-#      - 5432
+    expose: # Exposing port to be able to run database migrations
+      - 5432
     networks:
       web:
   backend:
