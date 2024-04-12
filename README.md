@@ -20,7 +20,10 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
    ```
    docker-compose up
    ```
-7. Create the database by manually executing the command for `make create_db` in the `server` folder *(make sure to adjust the statement according to your environment variables and docker container names)*
+7. Create the database by manually executing the following command in the `server` folder *(make sure to adjust the statement according to your environment variables and docker container names)*
+   ```
+      make create_db
+   ```
 8. install [migrate](https://github.com/golang-migrate/migrate/blob/master/cmd/migrate/README.md) for database migrations
    1. Find the [release that fits your environment]((https://github.com/golang-migrate/migrate/releases))
    2. Adjust the download command accordingly *(`$version`, `$os` and `$arch` need to be adjusted according to the fitting release from the previous step)*
@@ -33,27 +36,46 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
       ```
    3. Execute the adjusted command in the directory `/$usr/bin`
    4. You have installed migrate :raised_hands:
-9. Execute the migration in the folder `server` by copying the underlying statement for `migrate_up` to your shell *(and executing it, make sure to adjust the statement according to your environment variables)*
+9. Execute the database migration in the folder `server` *(make sure to adjust the migrate_up command according to your environment variables and docker container names)*
+   ```
+      make migrate_up
+   ```
 10. The service should be up and running, checkout your domain!
-   1. Create a user by navigating to your client URL and registering as user
-   2. Give your user Admin rights manually
-      1. Open a shell on the `database` container, *e.g. with*
-         ```
-         docker exec -it database bash
-         ```
-      2. Start psql by executing 
-         ```
-         psql
-         ```
-      3. Connect to the database *(list databases with ``\l`)*
-         ```
-         \connect workplace_reservation
-         ```
-      4. Update the `role` of your user with SQL to 
-         ```
-         admin
-         ```
-         *(`\dt` will list you all tables that are available, you might want to view the table )*
+11. Create a user by navigating to your client URL and registering as user
+12. Give your user Admin rights manually
+    1. Open a shell on the `database` container, *e.g. with*
+        ```
+        docker exec -it database bash
+        ```
+    2. Start psql by executing 
+        ```
+        psql
+        ```
+    3. Connect to the database *(list databases with ``\l`)*
+        ```
+        \connect workplace_reservation
+        ```
+    4. Update the `role` of your user with SQL to `admin`
+       1. List the available tables
+            ```
+                \dt
+            ```
+       2. View the entry of your user in the database
+            ```
+                SELECT * FROM users;
+            ```
+       3.  Update the role of your user
+            ```
+                UPDATE users SET role = 'admin' WHERE id = '<your-user-id>';
+            ```
+       4.  Check if the role has been updated properly
+             ```
+                   SELECT * FROM users;
+             ```
+        5.  Exit the psql shell
+            ```
+                \q
+            ```
 
 Your instance is running and ready to be used by your and your colleagues! :tada:
 
