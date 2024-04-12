@@ -10,8 +10,8 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
 
 1. Install Docker and docker-compose on the VM *(e.g. linux:ubuntu)*
 2. Clone this Repository on your VM 
-3. Fill in your custom data in `/infra/.env` *(frontend and backend need to have different domains for the reverse proxy caddy to work)*
-4. Adjust your primary backend URL in the config file `webapp/.env`
+3. Fill in your custom data in `/infra/.env` *(client and server need to have different domains for the reverse proxy caddy to work)*
+4. Adjust your primary server URL in the config file `webapp/.env`
 5. Create the network `web`
    ```
    docker network create web
@@ -35,7 +35,7 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
    4. You have installed migrate :raised_hands:
 9. Execute the migration in the folder `server` by copying the underlying statement for `migrate_up` to your shell *(and executing it, make sure to adjust the statement according to your environment variables)*
 10. The service should be up and running, checkout your domain!
-   1. Create a user by navigating to your frontend URL and registering as user
+   1. Create a user by navigating to your client URL and registering as user
    2. Give your user Admin rights manually
       1. Open a shell on the `database` container, *e.g. with*
          ```
