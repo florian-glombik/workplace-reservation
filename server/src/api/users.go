@@ -26,8 +26,9 @@ const (
 )
 
 const (
-	ErrRequestCouldNotBeParsed  = "The request could not be parsed."
-	UnexpectedErrContactMessage = "An unexpected error has occurred. Please contact CONTACT_PERSON to contribute in resolving the problem as soon as possible."
+	ErrRequestCouldNotBeParsed = "The request could not be parsed."
+	// TODO add mail of admin to error message
+	UnexpectedErrContactMessage = "An unexpected error has occurred. Please contact the admin to contribute in resolving the problem as soon as possible."
 )
 
 const (
