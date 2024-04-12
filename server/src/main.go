@@ -34,7 +34,7 @@ func main() {
 	if !isSet {
 		log.Fatal(fmt.Sprintf("Environment variable '%s' is not defined", EnvDatabasePassword))
 	}
-	databaseSource := fmt.Sprintf("postgresql://root:%s@database:5432/workplace_reservation?sslmode=disable", databasePassword)
+	databaseSource := fmt.Sprintf("postgresql://root:%s@0.0.0.0:5432/workplace_reservation?sslmode=disable", databasePassword)
 
 	// TODO remove log
 	log.Println(databaseSource)
