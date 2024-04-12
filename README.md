@@ -20,7 +20,7 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
    ```
    docker-compose up
    ```
-7. Create the database by manually executing the command for `create_db` in the `server` folder *(make sure to adjust the statement according to your environment variables)*
+7. Create the database by manually executing the command for `make create_db` in the `server` folder *(make sure to adjust the statement according to your environment variables and docker container names)*
 8. install [migrate](https://github.com/golang-migrate/migrate/blob/master/cmd/migrate/README.md) for database migrations
    1. Find the [release that fits your environment]((https://github.com/golang-migrate/migrate/releases))
    2. Adjust the download command accordingly *(`$version`, `$os` and `$arch` need to be adjusted according to the fitting release from the previous step)*
@@ -39,7 +39,7 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
    2. Give your user Admin rights manually
       1. Open a shell on the `database` container, *e.g. with*
          ```
-         docker exec -it postgres14 bash
+         docker exec -it databse bash
          ```
       2. Start psql by executing 
          ```
