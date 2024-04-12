@@ -39,7 +39,7 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
    2. Give your user Admin rights manually
       1. Open a shell on the `database` container, *e.g. with*
          ```
-         docker exec -it databse bash
+         docker exec -it database bash
          ```
       2. Start psql by executing 
          ```
