@@ -19,8 +19,8 @@ RUN npm run build
 # production environment
 FROM nginx:1.16.0-alpine
 
-COPY --from=builder /app/build /usr/share/nginx/html
-COPY nginx/nginx.conf /etc/nginx/conf.d/default.conf
+## Copy custom nginx configuration
+COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
 # configuration of nginx to work with react router
 RUN rm /etc/nginx/conf.d/default.conf
