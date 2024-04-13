@@ -50,6 +50,7 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
       sudo mv migrate /usr/local/bin/
       ```
    5. You have installed migrate :raised_hands:
+      
       *Execute the following to double-check the installation was successfull*
       ```
       migrate -version
