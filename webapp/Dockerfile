@@ -6,9 +6,6 @@ FROM arm64v8/node:14-alpine as builder
 
 WORKDIR /app
 
-ARG PRIMARY_BACKEND_URL
-ENV REACT_APP_BACKEND_URL=$PRIMARY_BACKEND_URL
-
 # Install the dependencies
 COPY package*.json ./
 RUN npm install --silent

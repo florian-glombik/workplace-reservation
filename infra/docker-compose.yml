@@ -18,7 +18,6 @@ services:
     networks:
       web:
   backend:
-#    image: workplace-reservation4_backend:latest
     build:
       context: ../server
     container_name: backend
@@ -35,7 +34,6 @@ services:
     networks:
       - web
   frontend:
-#    image: workplace-reservation4_frontend:latest
     build:
       context: ../webapp
     container_name: frontend
