@@ -21,7 +21,9 @@ COPY . ./
 RUN npm run build
 
 # production environment
-#FROM nginx:1.16.0-alpine for x86
+# for x86
+#FROM nginx:1.16.0-alpine
+# for arm64
 FROM arm64v8/nginx:1.16.0-alpine
 
 # Copy the build output to replace the default nginx contents.
