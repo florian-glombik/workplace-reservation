@@ -1,6 +1,9 @@
 # :calendar: workplace-reservation :computer:
 ## Features
-TODO
+* Full day workplace reservations _(only 1 click needed)_
+* Recurring reservations
+* Admin panel for managing reservations, offices and workplaces
+* Overview of office occupancy
 
 ## Demo
 
@@ -16,7 +19,7 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
    ```
    docker network create web
    ```
-6. Execute the docker-compose file in the folder `infra`
+6. Execute the docker-compose file in the folder `infra` :warning:
    ```
    docker-compose up -d
    ```
