@@ -1,5 +1,7 @@
 # build stage
-#FROM golang:1.21 as builder # for x86
+# for x86
+#FROM golang:1.21 as builder
+# for arm64
 FROM arm64v8/golang:1.21 as builder
 
 WORKDIR /app

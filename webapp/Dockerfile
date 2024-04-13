@@ -1,5 +1,7 @@
 # build environment
-#FROM node:14-alpine as builder # for x86
+# for x86
+#FROM node:14-alpine as builder
+# for arm64
 FROM arm64v8/node:14-alpine as builder
 
 WORKDIR /app
