@@ -22,7 +22,7 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
    ```
 7. Create the database by manually executing the following command in the `server` folder *(make sure to adjust the statement according to your environment variables and docker container names)*
    ```
-      make create_db
+   make create_db
    ```
 8. install [migrate](https://github.com/golang-migrate/migrate/blob/master/cmd/migrate/README.md) for database migrations
    1. Find the [release that fits your environment]((https://github.com/golang-migrate/migrate/releases))
@@ -38,7 +38,7 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
    4. You have installed migrate :raised_hands:
 9. Execute the database migration in the folder `server` *(make sure to adjust the migrate_up command according to your environment variables and docker container names)*
    ```
-      make migrate_up
+   make migrate_up
    ```
 10. The service should be up and running, checkout your domain!
 11. Create a user by navigating to your client URL and registering as user
@@ -58,24 +58,24 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
     4. Update the `role` of your user with SQL to `admin`
        1. List the available tables
             ```
-                \dt
+            \dt
             ```
        2. View the entry of your user in the database
             ```
-                SELECT * FROM users;
+            SELECT * FROM users;
             ```
        3.  Update the role of your user
             ```
-                UPDATE users SET role = 'admin' WHERE id = '<your-user-id>';
+            UPDATE users SET role = 'admin' WHERE id = '<your-user-id>';
             ```
        4.  Check if the role has been updated properly
-             ```
-                   SELECT * FROM users;
-             ```
-        5.  Exit the psql shell
             ```
-                \q
+            SELECT * FROM users;
             ```
+       5.  Exit the psql shell
+           ```
+           \q
+           ```
 
 Your instance is running and ready to be used by your and your colleagues! :tada:
 
