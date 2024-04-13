@@ -28,14 +28,29 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
    1. Find the [release that fits your environment]((https://github.com/golang-migrate/migrate/releases))
    2. Adjust the download command accordingly *(`$version`, `$os` and `$arch` need to be adjusted according to the fitting release from the previous step)*
       ```
-      curl -L https://github.com/golang-migrate/migrate/releases/download/$version/migrate.$os-$arch.tar.gz | tar xvz
+      curl -L https://github.com/golang-migrate/migrate/releases/download/$version/migrate.$os-$arch.tar.gz
       ```
-      *e.g. this could look like this for an ubuntu VM:*
+      *e.g. this could look like this for an amd ubuntu VM:*
       ```
-      curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.2/migrate.linux-amd64.tar.gz | tar xvz
+      curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.2/migrate.linux-amd64.tar.gz
       ```
-   3. Execute the adjusted command in the directory `/$usr/bin`
-   4. You have installed migrate :raised_hands:
+   3. Extract the downloaded archive
+      ```
+      tar xvzf migrate.$os-$arch.tar.gz
+       ```
+      *e.g. this could look like this for an amd ubuntu VM:*
+       ```
+       tar xvzf migrate.linux-amd64.tar.gz
+       ```
+   4. Make the command usable by moving it to the `bin` folder
+      ```
+      sudo mv migrate /usr/local/bin/
+      ```
+   5. You have installed migrate :raised_hands:
+      *Execute the following to double-check the installation was successfull*
+      ```
+      migrate -version
+      ```
 9. Execute the database migration in the folder `server` *(make sure to adjust the migrate_up command according to your environment variables and docker container names)*
    ```
    make migrate_up
