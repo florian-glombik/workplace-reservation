@@ -24,6 +24,8 @@ RUN npm run build
 #FROM nginx:1.16.0-alpine for x86
 FROM arm64v8/nginx:1.16.0-alpine
 
+# Copy the build output to replace the default nginx contents.
+COPY --from=builder /app/build /usr/share/nginx/html
 ## Copy custom nginx configuration
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
