@@ -18,7 +18,7 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
    ```
 6. Execute the docker-compose file in the folder `infra`
    ```
-   docker-compose up
+   docker-compose up -d
    ```
 7. Create the database by manually executing the following command in the `server` folder *(make sure to adjust the statement according to your environment variables and docker container names)*
    ```
