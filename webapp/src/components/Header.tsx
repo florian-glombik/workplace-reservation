@@ -133,11 +133,11 @@ export const Header = () => {
                 onClose={handleClose}
               >
                 <MenuItem onClick={handleLogout}>Logout</MenuItem>
-                {isAdmin && (
-                  <MenuItem onClick={handleFixedOccupancySchedule} disabled>
-                    Fixed occupancy schedule
-                  </MenuItem>
-                )}
+                {/*{isAdmin && (*/}
+                {/*  <MenuItem onClick={handleFixedOccupancySchedule} disabled>*/}
+                {/*    Fixed occupancy schedule*/}
+                {/*  </MenuItem>*/}
+                {/*)}*/}
                 <MenuItem onClick={handleRecurringReservations}>
                   Recurring Reservations
                 </MenuItem>
