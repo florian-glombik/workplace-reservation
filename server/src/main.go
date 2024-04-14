@@ -39,7 +39,9 @@ func main() {
 	if !isUserSet {
 		log.Fatal(fmt.Sprintf("Environment variable '%s' is not defined", EnvDatabaseUser))
 	}
-	databaseSource := fmt.Sprintf("postgresql://%s:%s@0.0.0.0:5432/workplace_reservation?sslmode=disable", databaseUser, databasePassword)
+	// database is not found with 0.0.0.0 on VM
+	databaseSource := fmt.Sprintf("postgresql://%s:%s@database:5432/workplace_reservation?sslmode=disable", databaseUser, databasePassword)
+	//databaseSource := fmt.Sprintf("postgresql://%s:%s@0.0.0.0:5432/workplace_reservation?sslmode=disable", databaseUser, databasePassword)
 
 	// TODO remove log
 	log.Println(databaseSource)
