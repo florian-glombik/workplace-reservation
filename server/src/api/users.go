@@ -114,7 +114,7 @@ func (server *Server) createUser(context *gin.Context) {
 			return
 		}
 		if strings.Contains(err.Error(), CanNotConnectToDatabase) || strings.Contains(err.Error(), WrongDatabasePassword) {
-			context.JSON(http.StatusInternalServerError, errorResponse("The user could not be created - can not connect to database", err))
+			context.JSON(http.StatusInternalServerError, errorResponse("The user could not be created - cannot connect to database", err))
 			return
 		}
 
@@ -190,7 +190,7 @@ func (server *Server) loginUser(context *gin.Context) {
 			return
 		}
 		if strings.Contains(err.Error(), CanNotConnectToDatabase) || strings.Contains(err.Error(), WrongDatabasePassword) {
-			context.JSON(http.StatusInternalServerError, errorResponse("Login not possible - can not connect to database", err))
+			context.JSON(http.StatusInternalServerError, errorResponse("Login not possible - cannot connect to database", err))
 			return
 		}
 		if strings.Contains(err.Error(), DatabaseNotCreated) {

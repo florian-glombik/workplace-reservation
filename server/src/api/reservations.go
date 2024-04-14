@@ -47,7 +47,7 @@ func (server *Server) handleCreateReservation(context *gin.Context) {
 func createReservation(server *Server, context *gin.Context, request ReserveWorkplaceRequest) (*db.Reservation, error) {
 	now := time.Now()
 	if now.After(request.EndReservation) && !isAdmin(context) {
-		err := errors.New("you can not make workplace reservations in the past")
+		err := errors.New("you cannot make workplace reservations in the past")
 		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
 		return nil, err
 	}
@@ -208,7 +208,7 @@ func deleteReservation(server *Server, context *gin.Context, reservationId uuid.
 			reservedWorkplaceId := uuid.UUID(parsedWorkplaceId)
 
 			if now.After(endDate) && !isAdmin(context) {
-				err := errors.New("you can not cancel reservations that are in the past")
+				err := errors.New("you cannot cancel reservations that are in the past")
 				context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
 				return nil, err
 			}
@@ -226,7 +226,7 @@ func deleteReservation(server *Server, context *gin.Context, reservationId uuid.
 	}
 
 	if now.After(reservationToBeDeleted.EndDate) && !isAdmin(context) {
-		err := errors.New("you can not cancel reservations that are in the past")
+		err := errors.New("you cannot cancel reservations that are in the past")
 		context.JSON(http.StatusForbidden, errorResponse(err.Error(), err))
 		return nil, err
 	}
