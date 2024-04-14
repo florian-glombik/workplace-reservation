@@ -95,6 +95,7 @@ Test the features with the [live-demo](https://workplace-reservation-frontend.fl
            ```
            \q
            ```
+13. Logout and Login again to make sure that the admin rights are taking effect
 
 Your instance is running and ready to be used by your and your colleagues! :tada:
 
