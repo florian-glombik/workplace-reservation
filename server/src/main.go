@@ -20,6 +20,7 @@ const (
 	databaseDriver      = "postgres"
 	serverAddress       = "0.0.0.0:8080"
 	EnvDatabasePassword = "POSTGRES_PASSWORD"
+	EnvDatabaseUser     = "POSTGRES_USER"
 )
 
 // @title           Workplace Reservation API
@@ -31,10 +32,14 @@ const (
 // @BasePath  /api/v1
 func main() {
 	databasePassword, isSet := os.LookupEnv(EnvDatabasePassword)
+	databaseUser, isUserSet := os.LookupEnv(EnvDatabaseUser)
 	if !isSet {
 		log.Fatal(fmt.Sprintf("Environment variable '%s' is not defined", EnvDatabasePassword))
 	}
-	databaseSource := fmt.Sprintf("postgresql://root:%s@0.0.0.0:5432/workplace_reservation?sslmode=disable", databasePassword)
+	if !isUserSet {
+		log.Fatal(fmt.Sprintf("Environment variable '%s' is not defined", EnvDatabaseUser))
+	}
+	databaseSource := fmt.Sprintf("postgresql://%s:%s@0.0.0.0:5432/workplace_reservation?sslmode=disable", databaseUser, databasePassword)
 
 	// TODO remove log
 	log.Println(databaseSource)
