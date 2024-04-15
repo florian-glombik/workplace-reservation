@@ -21,18 +21,35 @@ These habits led to the problem that we had days on which the office was empty a
 ## Get Started (~15 min)
 
 1. Install Docker and docker-compose on the VM *(e.g. linux:ubuntu)*
-2. Clone this Repository on your VM 
+2. Clone this Repository on your VM, and change into the directory
+   ```
+   git clone https://github.com/florian-glombik/workplace-reservation.git
+   ```
+   and
+   ```
+   cd workplace-reservation
+   ```
 3. Fill in your custom data in `/infra/.env` *(client and server need to have different domains for the reverse proxy caddy to work)*
+   ```
+   vi infra/.env
+   ```
 4. Adjust your primary server URL in the config file `webapp/.env`
+   ```
+    vi webapp/.env
+   ```
 5. Create the network `web`
    ```
    docker network create web
    ```
-6. Execute the docker-compose file in the folder `infra` :warning:
+6. Execute the docker-compose file in the folder `infra`
    ```
-   docker-compose up -d
+   docker-compose -f /infra/docker-compose.yml up -d
    ```
 7. Create the database by manually executing the following command in the `server` folder *(make sure to adjust the statement according to your environment variables and docker container names)*
+   ```
+   cd server
+   ``` 
+   and
    ```
    make create_db
    ```
