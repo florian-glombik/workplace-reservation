@@ -84,7 +84,7 @@ func (server *Server) setupRouter() {
 	ClientAddress := "http://0.0.0.0:80"
 
 	// TODO move client address to config file
-	corsConfig.AllowOrigins = []string{ClientAddress, "https://0.0.0.0:80", "http://0.0.0.0:3000", "https://0.0.0.0:3000", "http://localhost:3000", "http://localhost:3000", "*"}
+	corsConfig.AllowOrigins = []string{ClientAddress, "https://0.0.0.0:80", "http://0.0.0.0:3000", "https://0.0.0.0:3000", "http://localhost:3000", "*"}
 	// To be able to send tokens to the server.
 	corsConfig.AllowCredentials = true
 	// OPTIONS method for ReactJS
