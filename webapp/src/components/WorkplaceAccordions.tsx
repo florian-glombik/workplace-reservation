@@ -1,13 +1,13 @@
 import { MultipleWorkplaces } from './MultipleWorkplaces'
 import { addDays, endOfWeek, nextMonday, startOfWeek } from 'date-fns'
-import { Workplace, Workplaces } from './Workplace'
+import { Workplaces } from './Workplace'
 import React, { useEffect, useState } from 'react'
 import { Box } from '@mui/material'
 import { Account, useAuth } from '../utils/AuthProvider'
 import axios from 'axios'
-import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
+import { composeServerUrl } from '../utils/accessServer'
 
 export const MONDAY_NUMBER_CODE = 1
 export const WEEK_STARTS_ON_MONDAY: {
@@ -21,7 +21,7 @@ const WEEKS_AFTER_DEFAULT = 4
 export const DAYS_PER_WEEK = 7
 
 export const WorkplaceAccordions = () => {
-  const { user, jwtToken, isAdmin } = useAuth()
+  const { jwtToken, isAdmin } = useAuth()
 
   const [today] = useState(Date.now())
   const startOfTheWeek = startOfWeek(today, WEEK_STARTS_ON_MONDAY)
@@ -44,7 +44,7 @@ export const WorkplaceAccordions = () => {
 
     try {
       const availableUsersResponse = await axios.get(
-        BASE_URL + 'users/all-available',
+        composeServerUrl('users/all-available'),
         requestConfig
       )
       setAvailableUsers(availableUsersResponse.data)

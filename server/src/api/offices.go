@@ -149,7 +149,6 @@ func (server *Server) editOffice(context *gin.Context) {
 	context.JSON(http.StatusOK, updateOfficeSqlParams)
 }
 
-// TODO add on delete cascade to workplaces
 // DeleteOffice
 // @Summary
 // @Tags         offices

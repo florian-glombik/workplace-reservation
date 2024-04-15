@@ -4,9 +4,9 @@ import { useLocalStorage } from './LocalStorageUtil'
 import { NullString } from '../components/Workplace'
 import jwtDecode from 'jwt-decode'
 import axios from 'axios'
-import { BASE_URL } from '../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from './NotificationUtil'
+import { composeServerUrl } from './accessServer'
 
 const DEFAULT_USER: Account = {
   id: '',
@@ -96,7 +96,7 @@ export const AuthProvider = ({ children }: any) => {
 
     try {
       const availableUsersResponse = await axios.get(
-        BASE_URL + 'users/all-available',
+        composeServerUrl('users/all-available'),
         requestConfig
       )
       setAvailableUsers(availableUsersResponse.data)

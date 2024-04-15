@@ -40,11 +40,28 @@ const docTemplate = `{
                 "responses": {}
             }
         },
-        "/offices/edit": {
+        "/offices/delete": {
+            "delete": {
+                "tags": [
+                    "offices"
+                ],
+                "responses": {}
+            }
+        },
+        "/offices/edit/:officeId": {
             "patch": {
                 "tags": [
                     "offices"
                 ],
+                "responses": {}
+            }
+        },
+        "/offices/office-id": {
+            "get": {
+                "tags": [
+                    "offices"
+                ],
+                "summary": "Returns office for supplied ID",
                 "responses": {}
             }
         },
@@ -150,6 +167,15 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/workplace/:workplaceId": {
+            "patch": {
+                "tags": [
+                    "workplaces"
+                ],
+                "summary": "Updating a workplace",
+                "responses": {}
+            }
+        },
         "/workplace/create": {
             "post": {
                 "tags": [
@@ -186,6 +212,14 @@ const docTemplate = `{
                 "responses": {}
             }
         },
+        "/workplaces/:workplaceId": {
+            "delete": {
+                "tags": [
+                    "workplaces"
+                ],
+                "responses": {}
+            }
+        },
         "/workplaces/names": {
             "get": {
                 "tags": [
@@ -201,7 +235,7 @@ const docTemplate = `{
 // SwaggerInfo holds exported Swagger Info so clients can modify it
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
-	Host:             "localhost:8080",
+	Host:             "0.0.0.0:8080",
 	BasePath:         "/api/v1",
 	Schemes:          []string{},
 	Title:            "Workplace Reservation API",

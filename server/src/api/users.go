@@ -3,6 +3,7 @@ package api
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	db "github.com/florian-glombik/workplace-reservation/db/sqlc"
 	"github.com/florian-glombik/workplace-reservation/src/token"
 	"github.com/florian-glombik/workplace-reservation/src/util"
@@ -10,20 +11,32 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 	"github.com/lib/pq"
+	"log"
 	"net/http"
+	"strings"
 	"time"
 )
 
 // User Roles
 
-const admin = "admin"
-const staticReservationPlanner = "static-reservation-planner"
-const user = "user"
+const (
+	admin                    = "admin"
+	staticReservationPlanner = "static-reservation-planner"
+	user                     = "user"
+)
 
-const ErrRequestCouldNotBeParsed = "The request could not be parsed."
-const UnexpectedErrContactMessage = "An unexpected error has occurred. Please contact CONTACT_PERSON to contribute in resolving the problem as soon as possible."
+const (
+	ErrRequestCouldNotBeParsed = "The request could not be parsed."
+	// TODO add mail of admin to error message
+	UnexpectedErrContactMessage = "An unexpected error has occurred. Please contact the admin to contribute in resolving the problem as soon as possible."
+)
 
-const DuplicateKeyValueViolatesUniqueConstraint = "23505"
+const (
+	DuplicateKeyValueViolatesUniqueConstraint = "23505"
+	CanNotConnectToDatabase                   = "connection refused"
+	WrongDatabasePassword                     = "password authentication failed"
+	DatabaseNotCreated                        = "does not exist"
+)
 
 type CreateUserRequest struct {
 	Username string `json:"username" binding:"omitempty"`
@@ -61,6 +74,8 @@ func (server *Server) createUser(context *gin.Context) {
 	var request CreateUserRequest
 
 	if err := context.ShouldBindJSON(&request); err != nil {
+		log.Println(err.Error())
+
 		validationErr := err.(validator.ValidationErrors)
 
 		invalidInputTag := validationErr[0].Tag()
@@ -75,6 +90,7 @@ func (server *Server) createUser(context *gin.Context) {
 
 	hashedPassword, err := util.HashPassword(request.Password)
 	if err != nil {
+		log.Println(err.Error())
 		context.JSON(http.StatusInternalServerError, "Problems occurred on saving the user credential.")
 		return
 	}
@@ -90,10 +106,15 @@ func (server *Server) createUser(context *gin.Context) {
 	newUser, err := server.queries.CreateUser(context, createUserSqlParams)
 
 	if err != nil {
+		log.Println(err.Error())
 		pqErr := err.(*pq.Error)
 
 		if pqErr.Code == DuplicateKeyValueViolatesUniqueConstraint {
 			context.JSON(http.StatusForbidden, errorResponse("E-Mail is already in use!", err))
+			return
+		}
+		if strings.Contains(err.Error(), CanNotConnectToDatabase) || strings.Contains(err.Error(), WrongDatabasePassword) {
+			context.JSON(http.StatusInternalServerError, errorResponse("The user could not be created - cannot connect to database", err))
 			return
 		}
 
@@ -154,16 +175,29 @@ type loginUserResponse struct {
 func (server *Server) loginUser(context *gin.Context) {
 	var request loginUserRequest
 	if err := context.ShouldBindJSON(&request); err != nil {
+		log.Println(err.Error())
 		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
 		return
 	}
 
+	log.Println(fmt.Sprintf("login attempt for email '%s'", request.Email))
+
 	user, err := server.queries.GetUserByMail(context, request.Email)
 	if err != nil {
+		log.Println(err.Error())
 		if err == sql.ErrNoRows {
 			context.JSON(http.StatusNotFound, errorResponse("There is no user with the entered E-Mail.", err))
 			return
 		}
+		if strings.Contains(err.Error(), CanNotConnectToDatabase) || strings.Contains(err.Error(), WrongDatabasePassword) {
+			context.JSON(http.StatusInternalServerError, errorResponse("Login not possible - cannot connect to database", err))
+			return
+		}
+		if strings.Contains(err.Error(), DatabaseNotCreated) {
+			context.JSON(http.StatusInternalServerError, errorResponse("Login not possible - database does not exist", err))
+			return
+		}
+
 		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
 		return
 	}

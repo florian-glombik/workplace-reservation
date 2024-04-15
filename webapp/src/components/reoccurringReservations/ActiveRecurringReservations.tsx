@@ -9,7 +9,6 @@ import {
 import { useEffect, useState } from 'react'
 import axios, { AxiosRequestConfig } from 'axios'
 import { Account, useAuth } from '../../utils/AuthProvider'
-import { BASE_URL } from '../../config'
 import DeleteIcon from '@mui/icons-material/Delete'
 import {
   convertDateRangeToString,
@@ -23,6 +22,7 @@ import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 import { TableHead, TableRow } from '@material-ui/core'
 import { getUserDisplayName } from '../Header'
+import { composeServerUrl } from '../../utils/accessServer'
 
 type ActiveRecurringReservation = {
   ID: string
@@ -36,7 +36,7 @@ type ActiveRecurringReservation = {
 }
 
 export const ActiveRecurringReservations = () => {
-  const { jwtToken, user, isAdmin, availableUsers } = useAuth()
+  const { jwtToken, isAdmin, availableUsers } = useAuth()
   const [activeRecurringReservations, setActiveRecurringReservations] =
     useState<ActiveRecurringReservation[]>([])
 
@@ -52,7 +52,7 @@ export const ActiveRecurringReservations = () => {
     }
 
     try {
-      let requestUrl = BASE_URL
+      let requestUrl = composeServerUrl('')
       if (isAdmin) {
         requestUrl += 'reservations/recurring/all-users'
       } else {
@@ -77,7 +77,7 @@ export const ActiveRecurringReservations = () => {
 
     try {
       await axios.delete(
-        BASE_URL + 'reservations/recurring/' + recurringReservationId,
+        composeServerUrl('reservations/recurring/') + recurringReservationId,
         requestConfig
       )
       toast.success('Reoccurring reservation was deleted!')

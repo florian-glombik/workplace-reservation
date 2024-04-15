@@ -10,14 +10,19 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"log"
 	"net/http"
+	"os"
 	"strings"
 )
 
 const (
-	authorizationHeaderKey  = "authorization"
-	authorizationTypeBearer = "bearer"
-	authorizationPayloadKey = "authorization_payload"
+	authorizationHeaderKey        = "authorization"
+	authorizationTypeBearer       = "bearer"
+	authorizationPayloadKey       = "authorization_payload"
+	EnvJwtTokenGeneratorSecretKey = "JWT_TOKEN_GENERATOR_SECRET_KEY"
+	EnvCertFilePath               = "CERT_FILE_PATH"
+	EnvCertKeyPath                = "CERT_KEY_PATH"
 )
 
 type Server struct {
@@ -28,8 +33,12 @@ type Server struct {
 }
 
 func NewServer(database *sql.DB) *Server {
-	// TODO load secret key from config file
-	tokenGenerator, err := token.NewJWTGenerator("dlgdjflgjsadfjlsjdfljsldjflsjddflkgj")
+	JwtTokenGeneratorSecretKey, isSet := os.LookupEnv(EnvJwtTokenGeneratorSecretKey)
+	if !isSet {
+		errorString, _ := fmt.Printf("Environment variable is not set: %d", EnvJwtTokenGeneratorSecretKey)
+		panic(errorString)
+	}
+	tokenGenerator, err := token.NewJWTGenerator(JwtTokenGeneratorSecretKey)
 	if err != nil {
 		fmt.Println("cannot instantiate token generator: %w", err)
 		return nil
@@ -46,22 +55,40 @@ func NewServer(database *sql.DB) *Server {
 }
 
 func (server *Server) Start(address string) error {
-	return server.router.Run(address)
+	log.Println("starting server ...")
+
+	certFilePath, certFileIsSet := os.LookupEnv(EnvCertFilePath)
+	certKeyPath, certKeyIsSet := os.LookupEnv(EnvCertKeyPath)
+
+	log.Println("\t certFilePath: &d", certFilePath)
+	log.Println("\t certKeyPath: &d", certKeyPath)
+
+	if certFileIsSet && certKeyIsSet {
+		return server.router.RunTLS(":8080", certFilePath, certKeyPath)
+	} else {
+		log.Println("\t starting server without TLS due to unset certFile/certKey path")
+		return server.router.Run(address)
+	}
 }
 
 func (server *Server) setupRouter() {
 	router := gin.Default()
 
+	//err := router.SetTrustedProxies(nil)
+	//if err != nil {
+	//	log.Fatal(err.Error())
+	//}
+
 	corsConfig := cors.DefaultConfig()
 
-	ClientAddress := "http://localhost:3000"
+	ClientAddress := "http://0.0.0.0:80"
 
 	// TODO move client address to config file
-	corsConfig.AllowOrigins = []string{ClientAddress}
+	corsConfig.AllowOrigins = []string{ClientAddress, "https://0.0.0.0:80", "http://0.0.0.0:3000", "https://0.0.0.0:3000", "http://localhost:3000", "*"}
 	// To be able to send tokens to the server.
 	corsConfig.AllowCredentials = true
 	// OPTIONS method for ReactJS
-	corsConfig.AddAllowMethods("OPTIONS, GET")
+	corsConfig.AddAllowMethods("OPTIONS, GET, POST")
 	corsConfig.AddAllowHeaders("Access-Control-Allow-Headers", "*")
 	// Register the middleware
 	router.Use(cors.New(corsConfig))

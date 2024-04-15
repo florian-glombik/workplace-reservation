@@ -10,14 +10,14 @@ import {
 } from '@mui/material'
 import { useEffect, useState } from 'react'
 import axios, { AxiosRequestConfig } from 'axios'
-import { BASE_URL } from '../../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
-import { NullString, WorkplaceWithoutReservations } from '../Workplace'
+import { NullString } from '../Workplace'
 import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import { TableHead, TableRow } from '@material-ui/core'
 import { useNavigate } from 'react-router-dom'
+import { composeServerUrl } from '../../utils/accessServer'
 
 export type Office = {
   ID: string
@@ -44,7 +44,7 @@ export function OfficeList() {
     }
 
     try {
-      const requestUrl = BASE_URL + 'offices'
+      const requestUrl = composeServerUrl('offices')
       const offices = (await axios.get(requestUrl, requestConfig)).data
       setOffices(offices ?? [])
     } catch (error) {
@@ -63,7 +63,7 @@ export function OfficeList() {
       },
     }
     try {
-      const requestUrl = BASE_URL + 'offices/' + office.ID
+      const requestUrl = composeServerUrl('offices/' + office.ID)
       await axios.delete(requestUrl, requestConfig)
 
       setOffices(

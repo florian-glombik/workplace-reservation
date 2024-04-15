@@ -1,5 +1,5 @@
 basePath: /api/v1
-host: localhost:8080
+host: 0.0.0.0:8080
 info:
   contact:
     name: API Support
@@ -21,9 +21,20 @@ paths:
       summary: Create a new office
       tags:
       - offices
-  /offices/edit:
+  /offices/delete:
+    delete:
+      responses: {}
+      tags:
+      - offices
+  /offices/edit/:officeId:
     patch:
       responses: {}
+      tags:
+      - offices
+  /offices/office-id:
+    get:
+      responses: {}
+      summary: Returns office for supplied ID
       tags:
       - offices
   /reservations/recurring:
@@ -95,6 +106,12 @@ paths:
       summary: Login with existing user
       tags:
       - accounts
+  /workplace/:workplaceId:
+    patch:
+      responses: {}
+      summary: Updating a workplace
+      tags:
+      - workplaces
   /workplace/create:
     post:
       responses: {}
@@ -118,6 +135,11 @@ paths:
       responses: {}
       summary: Returns all workplaces with reservations in the requested timespan
         and the linked office
+      tags:
+      - workplaces
+  /workplaces/:workplaceId:
+    delete:
+      responses: {}
       tags:
       - workplaces
   /workplaces/names:

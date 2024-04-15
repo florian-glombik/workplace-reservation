@@ -1,0 +1,36 @@
+version: '3.9'
+services:
+  database:
+    image: postgres:14-alpine
+    restart: always
+    user: root
+    container_name: "database"
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+    ports:
+      - "5432:5432"
+  server:
+    build:
+      context: ./server
+    container_name: "server"
+    environment:
+      - JWT_TOKEN_GENERATOR_SECRET_KEY=dlgdjflgjsadfjlsjdfljsldjflsjddflkgj
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+  client:
+    build:
+      context: ./webapp
+    container_name: "client"
+    ports:
+      - "80:80"
+    depends_on:
+      - server
+volumes:
+  postgres-db:
+networks:
+  workplace-reservation-network:

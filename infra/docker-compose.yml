@@ -1,0 +1,71 @@
+version: "3.9"
+
+services:
+  database:
+    image: postgres:14-alpine
+    restart: always
+    user: root
+    container_name: "database"
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+    env_file:
+      - .env
+# TODO configure server -> database connection to work without exposed port outside of network
+    ports:
+      - "5432:5432"
+    expose: # Exposing port to be able to run database migrations
+      - 5432
+    networks:
+      - web
+  server:
+    build:
+      context: ../server
+    container_name: server
+    depends_on:
+      - database
+    restart: always
+    env_file:
+      - .env
+    expose:
+      - 8080
+    labels:
+      caddy: ${SERVER_DOMAINS}
+      caddy.reverse_proxy: "{{upstreams 8080}}"
+    networks:
+      - web
+  client:
+    build:
+      context: ../webapp
+    container_name: client
+    restart: always
+    env_file:
+      - .env
+    expose:
+      - 80
+    labels:
+      caddy: ${CLIENT_DOMAINS}
+      caddy.reverse_proxy: "{{upstreams 80}}"
+    networks:
+      - web
+  caddy:
+    image: lucaslorentz/caddy-docker-proxy:alpine
+    container_name: caddy
+    restart: always
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /srv/workplace-reservation/data/caddy
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      caddy.email: ${ADMIN_EMAIL}
+      caddy.log.output: "stdout"
+    environment:
+      CADDY_INGRESS_NETWORKS: "web"
+    networks:
+      - web
+volumes:
+  postgres-db:
+networks:
+  web:
+    external: true

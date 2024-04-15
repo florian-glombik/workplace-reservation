@@ -30,11 +30,11 @@ import {
   nextWednesday,
   startOfDay,
 } from 'date-fns'
-import { BASE_URL } from '../../config'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 import { Account, useAuth } from '../../utils/AuthProvider'
 import { getUserDisplayName } from '../Header'
+import {composeServerUrl} from "../../utils/accessServer";
 
 export enum RepetitionInterval {
   weekly = DAYS_PER_WEEK,
@@ -139,7 +139,7 @@ export const RecurringReservationsForm = () => {
 
     try {
       const response = (
-        await axios.get(BASE_URL + 'workplaces/names', requestConfig)
+        await axios.get(composeServerUrl('workplaces/names'), requestConfig)
       ).data
 
       setWorkplaces(response)
@@ -204,7 +204,7 @@ export const RecurringReservationsForm = () => {
 
     try {
       await axios.post(
-        BASE_URL + 'reservations/recurring',
+        composeServerUrl('reservations/recurring'),
         requestData,
         requestConfig
       )
