@@ -43,7 +43,7 @@ These habits led to the problem that we had days on which the office was empty a
    ```
 6. Execute the docker-compose file in the folder `infra`
    ```
-   docker-compose -f /infra/docker-compose.yml up -d
+   docker-compose -f infra/docker-compose.yml up -d
    ```
 7. Create the database by manually executing the following command in the `server` folder *(make sure to adjust the statement according to your environment variables and docker container names)*
    ```
