@@ -12,24 +12,24 @@ services:
       - POSTGRES_PASSWORD=root
     ports:
       - "5432:5432"
-  backend:
+  server:
     build:
       context: ./server
-    container_name: "backend"
+    container_name: "server"
     environment:
       - JWT_TOKEN_GENERATOR_SECRET_KEY=dlgdjflgjsadfjlsjdfljsldjflsjddflkgj
     ports:
       - "8080:8080"
     depends_on:
       - database
-  frontend:
+  client:
     build:
       context: ./webapp
-    container_name: "frontend"
+    container_name: "client"
     ports:
       - "80:80"
     depends_on:
-      - backend
+      - server
 volumes:
   postgres-db:
 networks:

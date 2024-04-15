@@ -5,7 +5,7 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useNavigate } from 'react-router-dom'
-import {composeBackendUrl} from "../utils/accessBackend";
+import {composeServerUrl} from "../utils/accessServer";
 
 export const Registration = () => {
   const [details, setDetails] = useState({
@@ -22,7 +22,7 @@ export const Registration = () => {
     e.preventDefault() // page shall not re-render
 
     try {
-      await axios.post(composeBackendUrl('users'), details)
+      await axios.post(composeServerUrl('users'), details)
     } catch (error: any) {
       toast.error(getDisplayResponseMessage(error))
       return

@@ -8,7 +8,7 @@ import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useAuth } from '../utils/AuthProvider'
 import { CreateOrEditOffice } from '../components/offices/CreateOrEditOffice'
 import { WorkplaceWithoutReservations } from '../components/Workplace'
-import { composeBackendUrl } from '../utils/accessBackend'
+import { composeServerUrl } from '../utils/accessServer'
 
 export type OfficeWithWorkplaces = {
   Office: Office
@@ -34,7 +34,7 @@ export function EditOfficePage() {
     }
 
     try {
-      let requestUrl = composeBackendUrl(`offices/${officeId}`)
+      let requestUrl = composeServerUrl(`offices/${officeId}`)
       const officeWithWorkplaces: OfficeWithWorkplaces = (
         await axios.get(requestUrl, requestConfig)
       ).data

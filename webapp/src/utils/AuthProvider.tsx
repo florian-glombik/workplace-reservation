@@ -6,7 +6,7 @@ import jwtDecode from 'jwt-decode'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from './NotificationUtil'
-import { composeBackendUrl } from './accessBackend'
+import { composeServerUrl } from './accessServer'
 
 const DEFAULT_USER: Account = {
   id: '',
@@ -96,7 +96,7 @@ export const AuthProvider = ({ children }: any) => {
 
     try {
       const availableUsersResponse = await axios.get(
-        composeBackendUrl('users/all-available'),
+        composeServerUrl('users/all-available'),
         requestConfig
       )
       setAvailableUsers(availableUsersResponse.data)

@@ -17,7 +17,7 @@ import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 import { TableHead, TableRow } from '@material-ui/core'
 import { useNavigate } from 'react-router-dom'
-import { composeBackendUrl } from '../../utils/accessBackend'
+import { composeServerUrl } from '../../utils/accessServer'
 
 export type Office = {
   ID: string
@@ -44,7 +44,7 @@ export function OfficeList() {
     }
 
     try {
-      const requestUrl = composeBackendUrl('offices')
+      const requestUrl = composeServerUrl('offices')
       const offices = (await axios.get(requestUrl, requestConfig)).data
       setOffices(offices ?? [])
     } catch (error) {
@@ -63,7 +63,7 @@ export function OfficeList() {
       },
     }
     try {
-      const requestUrl = composeBackendUrl('offices/' + office.ID)
+      const requestUrl = composeServerUrl('offices/' + office.ID)
       await axios.delete(requestUrl, requestConfig)
 
       setOffices(

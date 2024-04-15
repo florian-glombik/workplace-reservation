@@ -17,10 +17,10 @@ services:
       - 5432
     networks:
       - web
-  backend:
+  server:
     build:
       context: ../server
-    container_name: backend
+    container_name: server
     depends_on:
       - database
     restart: always
@@ -29,21 +29,21 @@ services:
     expose:
       - 8080
     labels:
-      caddy: ${BACKEND_DOMAINS}
+      caddy: ${SERVER_DOMAINS}
       caddy.reverse_proxy: "{{upstreams 8080}}"
     networks:
       - web
-  frontend:
+  client:
     build:
       context: ../webapp
-    container_name: frontend
+    container_name: client
     restart: always
     env_file:
       - .env
     expose:
       - 80
     labels:
-      caddy: ${FRONTEND_DOMAINS}
+      caddy: ${CLIENT_DOMAINS}
       caddy.reverse_proxy: "{{upstreams 80}}"
     networks:
       - web

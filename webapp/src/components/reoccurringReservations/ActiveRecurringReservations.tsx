@@ -22,7 +22,7 @@ import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 import { TableHead, TableRow } from '@material-ui/core'
 import { getUserDisplayName } from '../Header'
-import { composeBackendUrl } from '../../utils/accessBackend'
+import { composeServerUrl } from '../../utils/accessServer'
 
 type ActiveRecurringReservation = {
   ID: string
@@ -52,7 +52,7 @@ export const ActiveRecurringReservations = () => {
     }
 
     try {
-      let requestUrl = composeBackendUrl('')
+      let requestUrl = composeServerUrl('')
       if (isAdmin) {
         requestUrl += 'reservations/recurring/all-users'
       } else {
@@ -77,7 +77,7 @@ export const ActiveRecurringReservations = () => {
 
     try {
       await axios.delete(
-        composeBackendUrl('reservations/recurring/') + recurringReservationId,
+        composeServerUrl('reservations/recurring/') + recurringReservationId,
         requestConfig
       )
       toast.success('Reoccurring reservation was deleted!')

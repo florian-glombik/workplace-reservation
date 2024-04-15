@@ -20,7 +20,7 @@ import SaveIcon from '@mui/icons-material/Save'
 import { OfficeWithWorkplaces } from '../../pages/EditOfficePage'
 import { CreateOrEditWorkplace } from './CreateOrEditWorkplace'
 import { useEffect, useState } from 'react'
-import {composeBackendUrl} from "../../utils/accessBackend";
+import {composeServerUrl} from "../../utils/accessServer";
 
 export function CreateOrEditOffice({
   officeWithWorkplaces,
@@ -89,12 +89,12 @@ export function CreateOrEditOffice({
     try {
       let createdOrEditedOffice: Office | undefined = undefined
       if (isEdit) {
-        const requestUrl = composeBackendUrl('offices/' + officeWithWorkplaces!.Office.ID)
+        const requestUrl = composeServerUrl('offices/' + officeWithWorkplaces!.Office.ID)
         createdOrEditedOffice = (
           await axios.patch(requestUrl, values, requestConfig)
         ).data
       } else {
-        const requestUrl = composeBackendUrl('offices')
+        const requestUrl = composeServerUrl('offices')
         createdOrEditedOffice = (
           await axios.post(requestUrl, values, requestConfig)
         ).data

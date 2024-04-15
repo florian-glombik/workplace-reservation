@@ -7,7 +7,7 @@
 
 ## Demo
 
-Test the features with the [live-demo](https://workplace-reservation-frontend.florian-glombik.de/)! 
+Test the features with the [live-demo](https://workplace-reservation.florian-glombik.de/)! 
 
 ## Get Started (~15 min)
 

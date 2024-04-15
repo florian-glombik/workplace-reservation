@@ -11,7 +11,7 @@ import SaveIcon from '@mui/icons-material/Save'
 import { WorkplaceWithoutReservations } from '../Workplace'
 import { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete'
-import {composeBackendUrl} from "../../utils/accessBackend";
+import {composeServerUrl} from "../../utils/accessServer";
 
 export function CreateOrEditWorkplace({
   officeId,
@@ -73,12 +73,12 @@ export function CreateOrEditWorkplace({
       let createdOrEditedWorkplace: WorkplaceWithoutReservations | undefined =
         undefined
       if (isEdit) {
-        const requestUrl = composeBackendUrl('workplaces/' + workplace!.ID)
+        const requestUrl = composeServerUrl('workplaces/' + workplace!.ID)
         createdOrEditedWorkplace = (
           await axios.patch(requestUrl, values, requestConfig)
         ).data
       } else {
-        const requestUrl = composeBackendUrl('workplaces')
+        const requestUrl = composeServerUrl('workplaces')
         createdOrEditedWorkplace = (
           await axios.post(requestUrl, values, requestConfig)
         ).data
@@ -149,7 +149,7 @@ function DeleteWorkplaceButton({
     }
 
     try {
-      const requestUrl = composeBackendUrl('workplaces/' + workplace.ID)
+      const requestUrl = composeServerUrl('workplaces/' + workplace.ID)
       await axios.delete(requestUrl, requestConfig)
       toast.success(
         `Workplace ${workplace?.Name.String} and associated reservations have been deleted!`

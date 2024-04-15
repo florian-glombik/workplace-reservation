@@ -5,7 +5,7 @@ import Button from '@mui/material/Button'
 import { Box, TextField } from '@material-ui/core'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
-import { composeBackendUrl } from '../utils/accessBackend'
+import { composeServerUrl } from '../utils/accessServer'
 
 export const Login = () => {
   const { login } = useAuth()
@@ -15,7 +15,7 @@ export const Login = () => {
     e.preventDefault() // page shall not re-render
     try {
       const response = await axios.post(
-        composeBackendUrl('users/login'),
+        composeServerUrl('users/login'),
         details
       )
       login(response.data.accessToken, response.data.user)

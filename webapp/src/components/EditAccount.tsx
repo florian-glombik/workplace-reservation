@@ -5,7 +5,7 @@ import axios, { AxiosRequestConfig } from 'axios'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useAuth } from '../utils/AuthProvider'
-import { composeBackendUrl } from '../utils/accessBackend'
+import { composeServerUrl } from '../utils/accessServer'
 
 export const EditAccount = () => {
   const { jwtToken, user, setUser } = useAuth()
@@ -41,7 +41,7 @@ export const EditAccount = () => {
     try {
       const updatedUser = (
         await axios.patch(
-          composeBackendUrl('users/edit'),
+          composeServerUrl('users/edit'),
           details,
           requestConfig
         )
