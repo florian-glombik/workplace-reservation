@@ -43,12 +43,12 @@ func main() {
 	databaseSource := fmt.Sprintf("postgresql://%s:%s@database:5432/workplace_reservation?sslmode=disable", databaseUser, databasePassword)
 	//databaseSource := fmt.Sprintf("postgresql://%s:%s@0.0.0.0:5432/workplace_reservation?sslmode=disable", databaseUser, databasePassword)
 
-	log.Println("attempting to open database connection ...")
+	log.Println("opening database connection ...")
 	databaseConnection, err := sql.Open(databaseDriver, databaseSource)
 	if err != nil {
-		log.Fatal("cannot establish database connection:", err)
+		log.Fatal("cannot open database connection:", err)
 	}
-	log.Println("established connection to database")
+	log.Println("opened and configured database connection")
 
 	server := api.NewServer(databaseConnection)
 
