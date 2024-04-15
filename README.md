@@ -41,10 +41,19 @@ These habits led to the problem that we had days on which the office was empty a
    ```
    docker network create web
    ```
-6. Execute the docker-compose file in the folder `infra`
-   ```
-   docker-compose -f infra/docker-compose.yml up -d
-   ```
+6. Build and start the containers of the services needed
+   1. Make sure the Dockerfiles match your VM architecture _(ARM vs AMD, you will only need to comment/uncomment a few lines)_
+      ```
+      vi ~/workplace-reservation/server/Dockerfile
+      ```
+      and
+      ```
+      vi ~/workplace-reservation/webapp/Dockerfile
+      ```
+   2. Execute the docker-compose file in the folder `infra`
+      ```
+      docker-compose -f infra/docker-compose.yml up -d
+      ```
 7. Create the database by manually executing the following command in the `server` folder *(make sure to adjust the statement according to your environment variables and docker container names)*
    ```
    cd server
