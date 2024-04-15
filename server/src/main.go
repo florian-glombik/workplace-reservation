@@ -17,10 +17,11 @@ import (
 )
 
 const (
-	databaseDriver      = "postgres"
-	serverAddress       = "0.0.0.0:8080"
-	EnvDatabasePassword = "POSTGRES_PASSWORD"
-	EnvDatabaseUser     = "POSTGRES_USER"
+	databaseDriver              = "postgres"
+	serverAddress               = "0.0.0.0:8080"
+	EnvDatabasePassword         = "POSTGRES_PASSWORD"
+	EnvDatabaseUser             = "POSTGRES_USER"
+	EnvIsDevelopmentEnvironment = "IS_DEVELOPMENT"
 )
 
 // @title           Workplace Reservation API
@@ -33,15 +34,22 @@ const (
 func main() {
 	databasePassword, isSet := os.LookupEnv(EnvDatabasePassword)
 	databaseUser, isUserSet := os.LookupEnv(EnvDatabaseUser)
+	isDevelopmentEnvironment, _ := os.LookupEnv(EnvIsDevelopmentEnvironment)
 	if !isSet {
 		log.Fatal(fmt.Sprintf("Environment variable '%s' is not defined", EnvDatabasePassword))
 	}
 	if !isUserSet {
 		log.Fatal(fmt.Sprintf("Environment variable '%s' is not defined", EnvDatabaseUser))
 	}
-	// database is not found with 0.0.0.0 on VM
-	databaseSource := fmt.Sprintf("postgresql://%s:%s@database:5432/workplace_reservation?sslmode=disable", databaseUser, databasePassword)
-	//databaseSource := fmt.Sprintf("postgresql://%s:%s@0.0.0.0:5432/workplace_reservation?sslmode=disable", databaseUser, databasePassword)
+
+	databaseIp := ""
+	if isDevelopmentEnvironment == "true" {
+		databaseIp = "0.0.0.0"
+	} else {
+		databaseIp = "database"
+	}
+
+	databaseSource := fmt.Sprintf("postgresql://%s:%s@%s:5432/workplace_reservation?sslmode=disable", databaseUser, databasePassword, databaseIp)
 
 	log.Println("opening database connection ...")
 	databaseConnection, err := sql.Open(databaseDriver, databaseSource)
