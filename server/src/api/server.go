@@ -8,7 +8,6 @@ import (
 	"github.com/florian-glombik/workplace-reservation/src/token"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"log"
@@ -55,27 +54,8 @@ func NewServer(database *sql.DB) *Server {
 	return server
 }
 
-func (server *Server) testDatabaseConnection(context *gin.Context) error {
-	getUserByIdSqlParams, err := uuid.Parse("00000000-0000-0000-0000-000000000000")
-	if err != nil {
-		return fmt.Errorf("error parsing UUID: %w", err)
-	}
-
-	_, err = server.queries.GetUserById(context, getUserByIdSqlParams)
-	if err != nil {
-		return fmt.Errorf("error querying database: %w", err)
-	}
-
-	return nil
-}
-
 func (server *Server) Start(address string) error {
 	log.Println("starting server ...")
-
-	err := server.testDatabaseConnection(nil)
-	if err != nil {
-		return fmt.Errorf("error testing database connection: %w", err)
-	}
 
 	certFilePath, certFileIsSet := os.LookupEnv(EnvCertFilePath)
 	certKeyPath, certKeyIsSet := os.LookupEnv(EnvCertKeyPath)
