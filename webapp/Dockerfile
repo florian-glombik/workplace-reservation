@@ -1,5 +1,5 @@
 # build environment
-# for x86
+# for x86 (amd)
 #FROM node:14-alpine as builder
 # for arm64
 FROM arm64v8/node:14-alpine as builder
@@ -18,7 +18,7 @@ COPY . ./
 RUN npm run build
 
 # production environment
-# for x86
+# for x86 (amd)
 #FROM nginx:1.16.0-alpine
 # for arm64
 FROM arm64v8/nginx:1.16.0-alpine
