@@ -69,9 +69,6 @@ export function UserList() {
           requestConfig
         )
       ).data
-      toast.success(
-        `The access rights for user '${userToBeUpdated.email}' have been updated!`
-      )
 
       setAvailableUsers(
         availableUsers.map((user) =>
