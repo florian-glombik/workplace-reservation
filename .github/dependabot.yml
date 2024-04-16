@@ -5,7 +5,11 @@
 
 version: 2
 updates:
-  - package-ecosystem: "" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "golang"
+    directory: "/server" 
     schedule:
-      interval: "weekly"
+      interval: "monthly"
+  - package-ecosystem: "npm"
+    directory: "/client" 
+    schedule:
+      interval: "monthly"
