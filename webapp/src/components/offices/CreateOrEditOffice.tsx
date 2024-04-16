@@ -20,7 +20,7 @@ import SaveIcon from '@mui/icons-material/Save'
 import { OfficeWithWorkplaces } from '../../pages/EditOfficePage'
 import { CreateOrEditWorkplace } from './CreateOrEditWorkplace'
 import { useEffect, useState } from 'react'
-import {composeServerUrl} from "../../utils/accessServer";
+import { composeServerUrl } from '../../utils/accessServer'
 
 export function CreateOrEditOffice({
   officeWithWorkplaces,
@@ -89,7 +89,9 @@ export function CreateOrEditOffice({
     try {
       let createdOrEditedOffice: Office | undefined = undefined
       if (isEdit) {
-        const requestUrl = composeServerUrl('offices/' + officeWithWorkplaces!.Office.ID)
+        const requestUrl = composeServerUrl(
+          'offices/' + officeWithWorkplaces!.Office.ID
+        )
         createdOrEditedOffice = (
           await axios.patch(requestUrl, values, requestConfig)
         ).data
@@ -157,9 +159,12 @@ export function CreateOrEditOffice({
           </Grid>
         </Form>
       </FormikProvider>
-      <Typography sx={{ mt: 3 }} variant={'h6'}>
-        Associated Workplaces
-      </Typography>
+      {isEdit && (
+        <Typography sx={{ mt: 3 }} variant={'h6'}>
+          Associated Workplaces
+        </Typography>
+      )}
+
       {officeWithWorkplaces && (
         <CreateOrEditWorkplace officeId={officeWithWorkplaces.Office.ID} />
       )}
