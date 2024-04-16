@@ -2,6 +2,7 @@ import { useAuth } from '../../utils/AuthProvider'
 import {
   Box,
   IconButton,
+  Link,
   Table,
   TableBody,
   TableCell,
@@ -87,6 +88,8 @@ export function OfficeList(props: {
           <TableHead>
             <TableRow>
               <TableCell>Office</TableCell>
+              <TableCell>Description</TableCell>
+              <TableCell>Location</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
@@ -95,6 +98,15 @@ export function OfficeList(props: {
               return (
                 <TableRow key={office.ID}>
                   <TableCell>{office.Name.String}</TableCell>
+                  <TableCell>{office.Description.String}</TableCell>
+                  <TableCell>
+                    {office.LocationUrl?.String && (
+                      <Link href={office.LocationUrl.String}>
+                        {office.Location}
+                      </Link>
+                    )}
+                    {!office.LocationUrl?.String && <>{office.Location}</>}
+                  </TableCell>
                   <TableCell>
                     <Tooltip title={'Edit office and associated workplaces'}>
                       <IconButton
