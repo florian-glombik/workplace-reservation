@@ -113,6 +113,7 @@ export function UserList() {
                         {user.accessGranted ? (
                           <Tooltip title={'Revoke access'}>
                             <IconButton
+                              color={'primary'}
                               onClick={() =>
                                 handleAccessRightChange(user, false)
                               }
@@ -124,6 +125,7 @@ export function UserList() {
                         ) : (
                           <Tooltip title={'Grant access'}>
                             <IconButton
+                              color={'primary'}
                               onClick={() =>
                                 handleAccessRightChange(user, true)
                               }
