@@ -5,7 +5,7 @@
 
 version: 2
 updates:
-  - package-ecosystem: "golang"
+  - package-ecosystem: "gomod"
     directory: "/server" 
     schedule:
       interval: "monthly"
