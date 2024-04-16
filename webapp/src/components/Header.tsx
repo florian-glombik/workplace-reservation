@@ -13,6 +13,7 @@ import { AccountCircle } from '@mui/icons-material'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import GitHubIcon from '@mui/icons-material/GitHub'
+import GroupIcon from '@mui/icons-material/Group'
 
 export function getUserDisplayName(user?: Account): string {
   if (!user) {
@@ -155,7 +156,7 @@ export const Header = () => {
                 )}
                 {isAdmin && (
                   <MenuItem onClick={handleUserManagementClicked}>
-                    {USER_MANAGEMENT_MENU_ENTRY}
+                    {USER_MANAGEMENT_MENU_ENTRY} &nbsp; <GroupIcon />
                   </MenuItem>
                 )}
                 <MenuItem onClick={handleLinkToRepo}>

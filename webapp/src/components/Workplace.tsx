@@ -35,6 +35,7 @@ import NoAccountsIcon from '@mui/icons-material/NoAccounts'
 import { WEEK_STARTS_ON_MONDAY } from './WorkplaceAccordions'
 import { useNavigate } from 'react-router-dom'
 import { composeServerUrl } from '../utils/accessServer'
+import BlockIcon from '@mui/icons-material/Block'
 
 const IconLeftAccordionSummary = withStyles({
   expandIcon: {
@@ -266,6 +267,14 @@ function WorkplaceReservationTable(props: {
                               {user.username.String
                                 ? user.username.String
                                 : user.email}
+                              {!user.accessGranted && (
+                                <>
+                                  <BlockIcon sx={{ ml: 1 }}></BlockIcon>
+                                  <Typography>
+                                    No access granted to user
+                                  </Typography>
+                                </>
+                              )}
                             </MenuItem>
                           ))}
                         </Select>
