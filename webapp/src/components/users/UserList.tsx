@@ -9,7 +9,7 @@ import {
   Typography,
 } from '@mui/material'
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 import { TableHead, TableRow } from '@material-ui/core'
@@ -45,10 +45,43 @@ export function UserList() {
     loadUsers()
   }, [])
 
-  const handleAccessRightChange = (
-    user: Account,
+  const handleAccessRightChange = async (
+    userToBeUpdated: Account,
     newAccessGrantedValue: boolean
-  ) => {}
+  ) => {
+    const requestConfig: AxiosRequestConfig = {
+      headers: {
+        Authorization: 'Bearer ' + jwtToken,
+      },
+    }
+
+    userToBeUpdated.accessGranted = newAccessGrantedValue
+
+    try {
+      const updatedUser = (
+        await axios.patch(
+          composeServerUrl('users/edit'),
+          {
+            id: userToBeUpdated.id,
+            email: userToBeUpdated.email,
+            accessGranted: newAccessGrantedValue,
+          },
+          requestConfig
+        )
+      ).data
+      toast.success(
+        `The access rights for user '${userToBeUpdated.email}' have been updated!`
+      )
+
+      setAvailableUsers(
+        availableUsers.map((user) =>
+          user.id === updatedUser.id ? updatedUser : user
+        )
+      )
+    } catch (error) {
+      toast.error(getDisplayResponseMessage(error))
+    }
+  }
 
   const noUsersLoaded = availableUsers.length == 0
   return (
