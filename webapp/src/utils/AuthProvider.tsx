@@ -16,6 +16,7 @@ const DEFAULT_USER: Account = {
     Valid: false,
   },
   role: 'notAuthenticated',
+  accessGranted: false,
 }
 
 // TODO use Redux store instead
@@ -52,6 +53,7 @@ export type Account = {
   email: string
   username: NullString
   role: Role
+  accessGranted: boolean
 }
 
 export type Role = 'user' | 'admin' | 'notAuthenticated'

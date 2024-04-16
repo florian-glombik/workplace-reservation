@@ -10,6 +10,7 @@ import { PageNotFound } from './components/PageNotFound'
 import React from 'react'
 import { OfficePage } from './pages/OfficePage'
 import { EditOfficePage } from './pages/EditOfficePage'
+import { UsersPage } from './pages/UsersPage'
 
 export function Router() {
   return (
@@ -59,6 +60,14 @@ export function Router() {
         element={
           <ProtectedRoute isAdminRoute={true}>
             <EditOfficePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path={'/users'}
+        element={
+          <ProtectedRoute isAdminRoute={true}>
+            <UsersPage />
           </ProtectedRoute>
         }
       />

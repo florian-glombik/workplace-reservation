@@ -11,13 +11,16 @@ import SaveIcon from '@mui/icons-material/Save'
 import { WorkplaceWithoutReservations } from '../Workplace'
 import { useEffect, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete'
-import {composeServerUrl} from "../../utils/accessServer";
+import { composeServerUrl } from '../../utils/accessServer'
+import { OfficeWithWorkplaces } from '../../pages/EditOfficePage'
 
 export function CreateOrEditWorkplace({
-  officeId,
+  officeWithWorkplaces,
+  setOfficeWithWorkplaces,
   workplace,
 }: {
-  officeId: string
+  officeWithWorkplaces: OfficeWithWorkplaces
+  setOfficeWithWorkplaces?: (updatedOffice: OfficeWithWorkplaces) => void
   workplace?: WorkplaceWithoutReservations
 }) {
   const { jwtToken } = useAuth()
@@ -31,7 +34,7 @@ export function CreateOrEditWorkplace({
     initialValues: {
       Name: workplace?.Name.String ?? '',
       Description: workplace?.Description.String ?? '',
-      OfficeID: officeId,
+      OfficeID: officeWithWorkplaces.Office.ID,
     },
     validationSchema: WorkplaceValidationSchema,
     onSubmit: async () => {
@@ -94,6 +97,16 @@ export function CreateOrEditWorkplace({
       if (isEdit) {
         workplace!.Name.String = values.Name
         workplace!.Description.String = values.Description
+      } else {
+        officeWithWorkplaces.Workplaces = [
+          ...officeWithWorkplaces.Workplaces!,
+          createdOrEditedWorkplace!,
+        ]
+
+        setOfficeWithWorkplaces!({
+          Office: officeWithWorkplaces.Office,
+          Workplaces: officeWithWorkplaces.Workplaces,
+        })
       }
     } catch (error: any) {
       console.error(error)
@@ -125,7 +138,13 @@ export function CreateOrEditWorkplace({
             </Grid>
             <Grid item>
               <SubmitButton isEdit={isEdit} isDisabled={!changesWereMade} />
-              {isEdit && <DeleteWorkplaceButton workplace={workplace!} />}
+              {isEdit && (
+                <DeleteWorkplaceButton
+                  workplace={workplace!}
+                  officeWithWorkplaces={officeWithWorkplaces}
+                  setOfficeWithWorkplaces={setOfficeWithWorkplaces}
+                />
+              )}
             </Grid>
           </Grid>
         </Form>
@@ -136,8 +155,12 @@ export function CreateOrEditWorkplace({
 
 function DeleteWorkplaceButton({
   workplace,
+  officeWithWorkplaces,
+  setOfficeWithWorkplaces,
 }: {
   workplace: WorkplaceWithoutReservations
+  officeWithWorkplaces: OfficeWithWorkplaces
+  setOfficeWithWorkplaces?: (updatedOffice: OfficeWithWorkplaces) => void
 }) {
   const { jwtToken } = useAuth()
 
@@ -154,6 +177,15 @@ function DeleteWorkplaceButton({
       toast.success(
         `Workplace ${workplace?.Name.String} and associated reservations have been deleted!`
       )
+
+      const updatedWorkplaces = officeWithWorkplaces.Workplaces?.filter(
+        (wp) => wp.ID !== workplace.ID
+      )
+      officeWithWorkplaces.Workplaces = updatedWorkplaces
+      setOfficeWithWorkplaces!({
+        Office: officeWithWorkplaces.Office,
+        Workplaces: updatedWorkplaces,
+      })
     } catch (error: any) {
       console.error(error)
       toast.error(getDisplayResponseMessage(error))

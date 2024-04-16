@@ -13,6 +13,7 @@ import { AccountCircle } from '@mui/icons-material'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import GitHubIcon from '@mui/icons-material/GitHub'
+import GroupIcon from '@mui/icons-material/Group'
 
 export function getUserDisplayName(user?: Account): string {
   if (!user) {
@@ -25,6 +26,7 @@ export function getUserDisplayName(user?: Account): string {
 }
 
 export const OFFICE_MENU_ENTRY = 'Offices & Workplaces'
+export const USER_MANAGEMENT_MENU_ENTRY = 'User Management'
 
 const WORKPLACE_RESERVATION_BUG_OR_FEATURE_REQUEST_LINK =
   'https://github.com/florian-glombik/workplace-reservation/issues/new/choose'
@@ -67,6 +69,11 @@ export const Header = () => {
   const handleEditAccount = () => {
     handleClose()
     navigate('/account/edit')
+  }
+
+  const handleUserManagementClicked = () => {
+    handleClose()
+    navigate('/users')
   }
 
   const handleLinkToRepo = () => {
@@ -145,6 +152,11 @@ export const Header = () => {
                 {isAdmin && (
                   <MenuItem onClick={handleManageOfficesClicked}>
                     {OFFICE_MENU_ENTRY}
+                  </MenuItem>
+                )}
+                {isAdmin && (
+                  <MenuItem onClick={handleUserManagementClicked}>
+                    {USER_MANAGEMENT_MENU_ENTRY} &nbsp; <GroupIcon />
                   </MenuItem>
                 )}
                 <MenuItem onClick={handleLinkToRepo}>

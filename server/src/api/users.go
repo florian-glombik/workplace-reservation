@@ -45,18 +45,20 @@ type CreateUserRequest struct {
 }
 
 type userWithoutHashedPassword struct {
-	ID       uuid.UUID      `json:"id"`
-	Email    string         `json:"email"`
-	Username sql.NullString `json:"username"`
-	Role     string         `json:"role"`
+	ID            uuid.UUID      `json:"id"`
+	Email         string         `json:"email"`
+	Username      sql.NullString `json:"username"`
+	Role          string         `json:"role"`
+	AccessGranted bool           `json:"accessGranted"`
 }
 
 func getUserResponse(user db.User) userWithoutHashedPassword {
 	return userWithoutHashedPassword{
-		ID:       user.ID,
-		Username: user.Username,
-		Email:    user.Email,
-		Role:     user.Role,
+		ID:            user.ID,
+		Username:      user.Username,
+		Email:         user.Email,
+		Role:          user.Role,
+		AccessGranted: user.AccessGranted,
 	}
 }
 
@@ -202,6 +204,12 @@ func (server *Server) loginUser(context *gin.Context) {
 		return
 	}
 
+	if !user.AccessGranted {
+		log.Printf("User '%s' tried to login but access was not granted by admin yet\n", user.Email)
+		context.JSON(http.StatusUnauthorized, errorResponse("The access was not granted to your account yet, forward the email address used for registration to your admin to resolve the issue.", errors.New("401 Unauthorized: Access not granted")))
+		return
+	}
+
 	err = util.CheckPassword(user.Password, request.Password)
 	if err != nil {
 		context.JSON(http.StatusUnauthorized, errorResponse("Login was not successful, make sure to double check the E-Mail and password!", err))
@@ -229,11 +237,12 @@ func (server *Server) loginUser(context *gin.Context) {
 }
 
 type editUserRequest struct {
-	ID       uuid.UUID `json:"id" binding:"required"`
-	Email    string    `json:"email" binding:"required,email"`
-	Username string    `json:"username" binding:"omitempty"`
-	Password string    `json:"password" binding:"omitempty,min=3"`
-	Role     string    `json:"role" binding:"omitempty,min=4"`
+	ID            uuid.UUID `json:"id" binding:"required"`
+	Email         string    `json:"email" binding:"required,email"`
+	Username      string    `json:"username" binding:"omitempty"`
+	Password      string    `json:"password" binding:"omitempty,min=3"`
+	Role          string    `json:"role" binding:"omitempty,min=4"`
+	AccessGranted bool      `json:"accessGranted" binding:"omitempty"`
 }
 
 func isAdmin(context *gin.Context) bool {
@@ -291,12 +300,19 @@ func (server *Server) editUser(context *gin.Context) {
 		return
 	}
 
+	isAccessGrantedUpdated := userToBeUpdated.AccessGranted != request.AccessGranted
+	if isAccessGrantedUpdated && !isAdmin(context) {
+		context.JSON(http.StatusForbidden, errorResponse("You are not allowed to update the access granted status", err))
+		return
+	}
+
 	updateUserSqlParams := db.UpdateUserParams{
-		ID:       request.ID,
-		Username: sql.NullString{String: request.Username, Valid: true},
-		Email:    request.Email,
-		Password: userToBeUpdated.Password,
-		Role:     request.Role,
+		ID:            request.ID,
+		Username:      sql.NullString{String: request.Username, Valid: true},
+		Email:         request.Email,
+		Password:      userToBeUpdated.Password,
+		Role:          request.Role,
+		AccessGranted: request.AccessGranted,
 	}
 	err = server.queries.UpdateUser(context, updateUserSqlParams)
 	if err != nil {

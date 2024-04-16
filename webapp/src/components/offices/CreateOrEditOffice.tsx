@@ -20,12 +20,18 @@ import SaveIcon from '@mui/icons-material/Save'
 import { OfficeWithWorkplaces } from '../../pages/EditOfficePage'
 import { CreateOrEditWorkplace } from './CreateOrEditWorkplace'
 import { useEffect, useState } from 'react'
-import {composeServerUrl} from "../../utils/accessServer";
+import { composeServerUrl } from '../../utils/accessServer'
 
 export function CreateOrEditOffice({
   officeWithWorkplaces,
+  setOfficeWithWorkplaces,
+  setOffices,
+  offices,
 }: {
   officeWithWorkplaces?: OfficeWithWorkplaces
+  setOfficeWithWorkplaces?: (updatedOffice: OfficeWithWorkplaces) => void
+  setOffices?: (offices: Office[]) => void
+  offices?: Office[]
 }) {
   const { jwtToken } = useAuth()
   const navigate = useNavigate()
@@ -89,7 +95,9 @@ export function CreateOrEditOffice({
     try {
       let createdOrEditedOffice: Office | undefined = undefined
       if (isEdit) {
-        const requestUrl = composeServerUrl('offices/' + officeWithWorkplaces!.Office.ID)
+        const requestUrl = composeServerUrl(
+          'offices/' + officeWithWorkplaces!.Office.ID
+        )
         createdOrEditedOffice = (
           await axios.patch(requestUrl, values, requestConfig)
         ).data
@@ -107,6 +115,15 @@ export function CreateOrEditOffice({
           : `Office ${createdOrEditedOffice?.Name.String} created!`
       )
       navigate('/offices', { replace: true })
+      if (setOffices) {
+        const updatedOffice = offices?.find(
+          (office) => office.ID === createdOrEditedOffice?.ID
+        )
+
+        if (!updatedOffice) {
+          setOffices([...(offices ?? []), createdOrEditedOffice!])
+        }
+      }
     } catch (error: any) {
       console.error(error)
       setSubmitting(false)
@@ -157,16 +174,23 @@ export function CreateOrEditOffice({
           </Grid>
         </Form>
       </FormikProvider>
-      <Typography sx={{ mt: 3 }} variant={'h6'}>
-        Associated Workplaces
-      </Typography>
+      {isEdit && (
+        <Typography sx={{ mt: 3 }} variant={'h6'}>
+          Associated Workplaces
+        </Typography>
+      )}
+
       {officeWithWorkplaces && (
-        <CreateOrEditWorkplace officeId={officeWithWorkplaces.Office.ID} />
+        <CreateOrEditWorkplace
+          officeWithWorkplaces={officeWithWorkplaces}
+          setOfficeWithWorkplaces={setOfficeWithWorkplaces}
+        />
       )}
       {officeWithWorkplaces?.Workplaces?.map((workplace) => (
         <CreateOrEditWorkplace
           key={`create-or-edit-workplace-${workplace.ID}`}
-          officeId={officeWithWorkplaces.Office.ID}
+          officeWithWorkplaces={officeWithWorkplaces}
+          setOfficeWithWorkplaces={setOfficeWithWorkplaces}
           workplace={workplace}
         />
       ))}

@@ -62,7 +62,7 @@ export const WorkplaceAccordions = () => {
         )}
         endDate={addDays(endOfTheWeek, -DAYS_PER_WEEK)}
         availableUsers={availableUsers}
-      ></MultipleWorkplaces>
+      />
       <Workplaces
         startOfTheWeek={startOfTheWeek}
         endOfTheWeek={endOfTheWeek}
@@ -73,7 +73,7 @@ export const WorkplaceAccordions = () => {
         startDate={nextMonday(startOfTheWeek)}
         endDate={addDays(endOfTheWeek, WEEKS_AFTER_DEFAULT * DAYS_PER_WEEK)}
         availableUsers={availableUsers}
-      ></MultipleWorkplaces>
+      />
     </Box>
   )
 }

@@ -2,13 +2,14 @@ import { useAuth } from '../../utils/AuthProvider'
 import {
   Box,
   IconButton,
+  Link,
   Table,
   TableBody,
   TableCell,
   Tooltip,
   Typography,
 } from '@mui/material'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import axios, { AxiosRequestConfig } from 'axios'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
@@ -27,9 +28,13 @@ export type Office = {
   LocationUrl?: NullString
 }
 
-export function OfficeList() {
+export function OfficeList(props: {
+  setOffices: (offices: Office[]) => void
+  offices: Office[]
+}) {
+  const { setOffices, offices } = props
+
   const { jwtToken } = useAuth()
-  const [offices, setOffices] = useState<Office[]>([])
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -83,6 +88,8 @@ export function OfficeList() {
           <TableHead>
             <TableRow>
               <TableCell>Office</TableCell>
+              <TableCell>Description</TableCell>
+              <TableCell>Location</TableCell>
               <TableCell></TableCell>
             </TableRow>
           </TableHead>
@@ -91,6 +98,15 @@ export function OfficeList() {
               return (
                 <TableRow key={office.ID}>
                   <TableCell>{office.Name.String}</TableCell>
+                  <TableCell>{office.Description.String}</TableCell>
+                  <TableCell>
+                    {office.LocationUrl?.String && (
+                      <Link href={office.LocationUrl.String}>
+                        {office.Location}
+                      </Link>
+                    )}
+                    {!office.LocationUrl?.String && <>{office.Location}</>}
+                  </TableCell>
                   <TableCell>
                     <Tooltip title={'Edit office and associated workplaces'}>
                       <IconButton
