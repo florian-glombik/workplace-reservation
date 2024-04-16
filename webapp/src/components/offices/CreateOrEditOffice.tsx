@@ -24,8 +24,12 @@ import { composeServerUrl } from '../../utils/accessServer'
 
 export function CreateOrEditOffice({
   officeWithWorkplaces,
+  setOffices,
+  offices,
 }: {
   officeWithWorkplaces?: OfficeWithWorkplaces
+  setOffices?: (offices: Office[]) => void
+  offices?: Office[]
 }) {
   const { jwtToken } = useAuth()
   const navigate = useNavigate()
@@ -109,6 +113,15 @@ export function CreateOrEditOffice({
           : `Office ${createdOrEditedOffice?.Name.String} created!`
       )
       navigate('/offices', { replace: true })
+      if (setOffices) {
+        const updatedOffice = offices?.find(
+          (office) => office.ID === createdOrEditedOffice?.ID
+        )
+
+        if (!updatedOffice) {
+          setOffices([...(offices ?? []), createdOrEditedOffice!])
+        }
+      }
     } catch (error: any) {
       console.error(error)
       setSubmitting(false)

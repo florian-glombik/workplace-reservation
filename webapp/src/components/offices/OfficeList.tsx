@@ -27,9 +27,13 @@ export type Office = {
   LocationUrl?: NullString
 }
 
-export function OfficeList() {
+export function OfficeList(props: {
+  setOffices: (offices: Office[]) => void
+  offices: Office[]
+}) {
+  const { setOffices, offices } = props
+
   const { jwtToken } = useAuth()
-  const [offices, setOffices] = useState<Office[]>([])
   const navigate = useNavigate()
 
   useEffect(() => {
