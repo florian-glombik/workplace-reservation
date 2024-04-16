@@ -50,7 +50,10 @@ export function EditOfficePage() {
       <Typography variant={'h4'}>
         Edit office: {officeWithWorkplaces?.Office.Name.String}
       </Typography>
-      <CreateOrEditOffice officeWithWorkplaces={officeWithWorkplaces} />
+      <CreateOrEditOffice
+        officeWithWorkplaces={officeWithWorkplaces}
+        setOfficeWithWorkplaces={setOfficeWithWorkplaces}
+      />
     </Stack>
   )
 }

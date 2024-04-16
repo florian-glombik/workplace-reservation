@@ -24,10 +24,12 @@ import { composeServerUrl } from '../../utils/accessServer'
 
 export function CreateOrEditOffice({
   officeWithWorkplaces,
+  setOfficeWithWorkplaces,
   setOffices,
   offices,
 }: {
   officeWithWorkplaces?: OfficeWithWorkplaces
+  setOfficeWithWorkplaces?: (updatedOffice: OfficeWithWorkplaces) => void
   setOffices?: (offices: Office[]) => void
   offices?: Office[]
 }) {
@@ -179,12 +181,16 @@ export function CreateOrEditOffice({
       )}
 
       {officeWithWorkplaces && (
-        <CreateOrEditWorkplace officeId={officeWithWorkplaces.Office.ID} />
+        <CreateOrEditWorkplace
+          officeWithWorkplaces={officeWithWorkplaces}
+          setOfficeWithWorkplaces={setOfficeWithWorkplaces}
+        />
       )}
       {officeWithWorkplaces?.Workplaces?.map((workplace) => (
         <CreateOrEditWorkplace
           key={`create-or-edit-workplace-${workplace.ID}`}
-          officeId={officeWithWorkplaces.Office.ID}
+          officeWithWorkplaces={officeWithWorkplaces}
+          setOfficeWithWorkplaces={setOfficeWithWorkplaces}
           workplace={workplace}
         />
       ))}
