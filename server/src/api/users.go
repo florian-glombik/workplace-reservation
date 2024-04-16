@@ -202,6 +202,12 @@ func (server *Server) loginUser(context *gin.Context) {
 		return
 	}
 
+	if !user.AccessGranted {
+		log.Printf("User '%s' tried to login but access was not granted by admin yet\n", user.Email)
+		context.JSON(http.StatusUnauthorized, errorResponse("The access was not granted to your account yet, please contact your administrator to resolve this issue.", errors.New("401 Unauthorized: Access not granted")))
+		return
+	}
+
 	err = util.CheckPassword(user.Password, request.Password)
 	if err != nil {
 		context.JSON(http.StatusUnauthorized, errorResponse("Login was not successful, make sure to double check the E-Mail and password!", err))
