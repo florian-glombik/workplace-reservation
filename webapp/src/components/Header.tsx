@@ -25,7 +25,7 @@ export function getUserDisplayName(user?: Account): string {
 }
 
 export const OFFICE_MENU_ENTRY = 'Offices & Workplaces'
-export const USER_MANAGEMENT_MENU_ENRTY = 'User Management'
+export const USER_MANAGEMENT_MENU_ENTRY = 'User Management'
 
 const WORKPLACE_RESERVATION_BUG_OR_FEATURE_REQUEST_LINK =
   'https://github.com/florian-glombik/workplace-reservation/issues/new/choose'
@@ -155,7 +155,7 @@ export const Header = () => {
                 )}
                 {isAdmin && (
                   <MenuItem onClick={handleUserManagementClicked}>
-                    {USER_MANAGEMENT_MENU_ENRTY}
+                    {USER_MANAGEMENT_MENU_ENTRY}
                   </MenuItem>
                 )}
                 <MenuItem onClick={handleLinkToRepo}>

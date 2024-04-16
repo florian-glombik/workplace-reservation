@@ -45,18 +45,20 @@ type CreateUserRequest struct {
 }
 
 type userWithoutHashedPassword struct {
-	ID       uuid.UUID      `json:"id"`
-	Email    string         `json:"email"`
-	Username sql.NullString `json:"username"`
-	Role     string         `json:"role"`
+	ID            uuid.UUID      `json:"id"`
+	Email         string         `json:"email"`
+	Username      sql.NullString `json:"username"`
+	Role          string         `json:"role"`
+	AccessGranted bool           `json:"accessGranted"`
 }
 
 func getUserResponse(user db.User) userWithoutHashedPassword {
 	return userWithoutHashedPassword{
-		ID:       user.ID,
-		Username: user.Username,
-		Email:    user.Email,
-		Role:     user.Role,
+		ID:            user.ID,
+		Username:      user.Username,
+		Email:         user.Email,
+		Role:          user.Role,
+		AccessGranted: user.AccessGranted,
 	}
 }
 
