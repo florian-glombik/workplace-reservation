@@ -120,7 +120,7 @@ These habits led to the problem that we had days on which the office was empty a
             ```
        3.  Update the role of your user
             ```
-            UPDATE users SET role = 'admin' WHERE id = '<your-user-id>';
+            UPDATE users SET role = 'admin', access_granted = true WHERE id = '<your-user-id>';
             ```
        4.  Check if the role has been updated properly
             ```
