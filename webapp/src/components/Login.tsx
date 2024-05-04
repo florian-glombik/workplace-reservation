@@ -96,7 +96,7 @@ export const Login = () => {
 
           <Stack ml={8}>
             <Typography variant={'h5'}>Demo Users</Typography>
-            <Typography>
+            <Typography component={'div'}>
               <ul>
                 <li>
                   Normal User:
