@@ -1,11 +1,13 @@
 import { Box, TextField } from '@material-ui/core'
 import {
+  Button,
   FormControl,
   IconButton,
   InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
+  Stack,
   Typography,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
@@ -35,6 +37,7 @@ import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 import { Account, useAuth } from '../../utils/AuthProvider'
 import { getUserDisplayName } from '../Header'
 import { composeServerUrl } from '../../utils/accessServer'
+import { useNavigate } from 'react-router-dom'
 
 export enum RepetitionInterval {
   weekly = DAYS_PER_WEEK,
@@ -109,6 +112,8 @@ export function getWorkplaceName(
 export const RecurringReservationsForm = () => {
   const { jwtToken, user, isAdmin, availableUsers } = useAuth()
   const [open, setOpen] = useState(false)
+  const navigate = useNavigate()
+
   const [workplaces, setWorkplaces] = useState<
     WorkplaceWithoutReservations[] | undefined
   >([])
@@ -220,6 +225,23 @@ export const RecurringReservationsForm = () => {
 
   const isSubmitButtonDisabled = (dateRange: DateRange) => {
     return !(!!dateRange.startDate && !!dateRange.endDate)
+  }
+
+  if (!workplaces || workplaces.length === 0) {
+    return (
+      <Stack>
+        <Typography ml={2}>
+          No workplaces found, please define the workplaces first!
+        </Typography>
+        <Button
+          onClick={() => navigate('/offices', { replace: true })}
+          variant={'contained'}
+          sx={{ m: 2, width: 'fit-content' }}
+        >
+          Create Offices & Workplaces
+        </Button>
+      </Stack>
+    )
   }
 
   return (
