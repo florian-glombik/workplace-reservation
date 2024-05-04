@@ -99,7 +99,7 @@ export function CreateOrEditWorkplace({
         workplace!.Description.String = values.Description
       } else {
         officeWithWorkplaces.Workplaces = [
-          ...officeWithWorkplaces.Workplaces!,
+          ...(officeWithWorkplaces?.Workplaces ?? []),
           createdOrEditedWorkplace!,
         ]
 
