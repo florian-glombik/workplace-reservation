@@ -1,9 +1,11 @@
 # :calendar: workplace-reservation :computer:
 ## Features
-* Full day workplace reservations _(only 1 click needed)_
-* Recurring reservations
-* Admin panel for managing reservations, offices and workplaces
-* Overview of office occupancy
+
+✅ Full day workplace reservations _(only 1 click needed)_
+✅ Recurring reservations
+✅ Admin panel for managing reservations, offices and workplaces
+✅ Overview of office occupancy
+❌ EMail Verification _(take care when granting access to users as admin)_
 
 ## Demo
 
