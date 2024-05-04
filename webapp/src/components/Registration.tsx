@@ -5,7 +5,7 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../utils/NotificationUtil'
 import { useNavigate } from 'react-router-dom'
-import {composeServerUrl} from "../utils/accessServer";
+import { composeServerUrl } from '../utils/accessServer'
 
 export const Registration = () => {
   const [details, setDetails] = useState({
@@ -34,7 +34,7 @@ export const Registration = () => {
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-      <Box>
+      <Box minWidth={'20rem'}>
         <form onSubmit={handleRegistration}>
           <h1>Registration</h1>
           <Box mt={2}>
