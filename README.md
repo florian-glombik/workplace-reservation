@@ -7,6 +7,8 @@
 ✅ Overview of office occupancy
 ❌ EMail Verification _(take care when granting access to users as admin)_
 
+![Workplace Reservation Demo Screenshot](workplace-reservation-demo-recording.gif)
+
 ## Demo
 
 Test the features with the [live-demo](https://workplace-reservation.florian-glombik.de/)! 
