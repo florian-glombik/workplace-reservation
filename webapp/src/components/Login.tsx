@@ -30,7 +30,7 @@ export const Login = () => {
 
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-      <Stack>
+      <Stack m={2}>
         {IS_DEMO_PAGE && (
           <Box pb={4} pt={4}>
             <Typography variant={'h3'}>Workplace Reservation Demo</Typography>
@@ -56,8 +56,14 @@ export const Login = () => {
           </Box>
         )}
 
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-          <Stack minWidth={'20rem'}>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            flexDirection: { xs: 'column', md: 'row' },
+          }}
+        >
+          <Stack minWidth={'15rem'}>
             <form onSubmit={handleLogin}>
               <Typography variant={'h4'}>Sign In</Typography>
               <Box mt={2}>
@@ -94,27 +100,29 @@ export const Login = () => {
             </a>
           </Stack>
 
-          <Stack ml={8}>
-            <Typography variant={'h5'}>Demo Users</Typography>
-            <Typography component={'div'}>
-              <ul>
-                <li>
-                  Normal User:
-                  <ul>
-                    <li>E-Mail: admin@workplace-reservation.de</li>
-                    <li>Password: S9Ao6PAfh6qA8N</li>
-                  </ul>
-                </li>
-                <li>
-                  Admin User:
-                  <ul>
-                    <li>E-Mail: normalUser@workplace-reservation.de</li>
-                    <li>Password: 649dWPVp9JJKLC</li>
-                  </ul>
-                </li>
-              </ul>
-            </Typography>
-          </Stack>
+          {IS_DEMO_PAGE && (
+            <Stack ml={{ xs: 0, md: 8 }} mt={4}>
+              <Typography variant={'h5'}>Demo Users</Typography>
+              <Typography component={'div'}>
+                <ul>
+                  <li>
+                    Normal User:
+                    <ul>
+                      <li>E-Mail: admin@workplace-reservation.de</li>
+                      <li>Password: S9Ao6PAfh6qA8N</li>
+                    </ul>
+                  </li>
+                  <li>
+                    Admin User:
+                    <ul>
+                      <li>E-Mail: normalUser@workplace-reservation.de</li>
+                      <li>Password: 649dWPVp9JJKLC</li>
+                    </ul>
+                  </li>
+                </ul>
+              </Typography>
+            </Stack>
+          )}
         </Box>
       </Stack>
     </Box>
