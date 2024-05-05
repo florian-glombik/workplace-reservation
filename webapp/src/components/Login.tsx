@@ -32,7 +32,7 @@ export const Login = () => {
     <Box sx={{ display: 'flex', justifyContent: 'center' }}>
       <Stack>
         {IS_DEMO_PAGE && (
-          <Box pb={4}>
+          <Box pb={4} pt={4}>
             <Typography variant={'h3'}>Workplace Reservation Demo</Typography>
             <Typography>
               Welcome to the demo page for the open-source project&nbsp;
