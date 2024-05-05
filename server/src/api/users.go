@@ -242,7 +242,7 @@ type editUserRequest struct {
 	Username      string    `json:"username" binding:"omitempty"`
 	Password      string    `json:"password" binding:"omitempty,min=3"`
 	Role          string    `json:"role" binding:"omitempty,min=4"`
-	AccessGranted bool      `json:"accessGranted" binding:"omitempty"`
+	AccessGranted bool      `json:"accessGranted" binding:"required"`
 }
 
 func isAdmin(context *gin.Context) bool {

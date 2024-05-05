@@ -1,11 +1,13 @@
 import { Box, TextField } from '@material-ui/core'
 import {
+  Button,
   FormControl,
   IconButton,
   InputLabel,
   MenuItem,
   Select,
   SelectChangeEvent,
+  Stack,
   Typography,
 } from '@mui/material'
 import AddIcon from '@mui/icons-material/Add'
@@ -34,7 +36,8 @@ import { toast } from 'react-toastify'
 import { getDisplayResponseMessage } from '../../utils/NotificationUtil'
 import { Account, useAuth } from '../../utils/AuthProvider'
 import { getUserDisplayName } from '../Header'
-import {composeServerUrl} from "../../utils/accessServer";
+import { composeServerUrl } from '../../utils/accessServer'
+import { useNavigate } from 'react-router-dom'
 
 export enum RepetitionInterval {
   weekly = DAYS_PER_WEEK,
@@ -109,9 +112,11 @@ export function getWorkplaceName(
 export const RecurringReservationsForm = () => {
   const { jwtToken, user, isAdmin, availableUsers } = useAuth()
   const [open, setOpen] = useState(false)
-  const [workplaces, setWorkplaces] = useState<WorkplaceWithoutReservations[]>(
-    []
-  )
+  const navigate = useNavigate()
+
+  const [workplaces, setWorkplaces] = useState<
+    WorkplaceWithoutReservations[] | undefined
+  >([])
   const [selectedWorkplaceId, setSelectedWorkplaceId] = useState('')
   const [selectedUserId, setSelectedUserId] = useState(user.id)
   const [dayOfTheWeek, setDayOfTheWeek] = useState<Weekday>(
@@ -149,9 +154,9 @@ export const RecurringReservationsForm = () => {
     }
   }
 
-  const setDefaultWorkplace = (workplaces: WorkplaceWithoutReservations[]) => {
-    if (workplaces.length > 0) {
-      setSelectedWorkplaceId(workplaces[0].ID)
+  const setDefaultWorkplace = (workplaces?: WorkplaceWithoutReservations[]) => {
+    if (workplaces?.length ?? 0 > 0) {
+      setSelectedWorkplaceId(workplaces![0].ID)
     }
   }
 
@@ -222,6 +227,23 @@ export const RecurringReservationsForm = () => {
     return !(!!dateRange.startDate && !!dateRange.endDate)
   }
 
+  if (!workplaces || workplaces.length === 0) {
+    return (
+      <Stack>
+        <Typography ml={2}>
+          No workplaces found, please define the workplaces first!
+        </Typography>
+        <Button
+          onClick={() => navigate('/offices', { replace: true })}
+          variant={'contained'}
+          sx={{ m: 2, width: 'fit-content' }}
+        >
+          Create Offices & Workplaces
+        </Button>
+      </Stack>
+    )
+  }
+
   return (
     <Box>
       {isAdmin && (
@@ -256,7 +278,7 @@ export const RecurringReservationsForm = () => {
           required
           sx={{ m: 2, minWidth: '6rem' }}
         >
-          {workplaces.map((workplace) => (
+          {workplaces?.map((workplace) => (
             <MenuItem value={workplace.ID} key={workplace.ID}>
               {getWorkplaceName(workplace)}
             </MenuItem>

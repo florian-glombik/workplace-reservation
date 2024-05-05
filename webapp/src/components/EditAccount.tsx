@@ -15,6 +15,7 @@ export const EditAccount = () => {
     email: user.email,
     username: user.username.String,
     role: user.role,
+    accessGranted: user.accessGranted,
   })
 
   useEffect(() => {
