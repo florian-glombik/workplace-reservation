@@ -17,6 +17,8 @@
 
 Test the features with the [live-demo](https://workplace-reservation.florian-glombik.de/)! 
 
+_As I am using the Oracle Cloud Free Tier to deploy the live demo, the live demo might eventually be unavailable._
+
 ## Motivation
 When working in a start-up with a shared office, meaning there were no fixed working places, we relied on calendar entries to coordinate office utilization. However, this did not work out well due to the following reasons:
 - It was not easy to see who would be in the office, which is interesting, as it ensures you meet your development team when visiting the office.
