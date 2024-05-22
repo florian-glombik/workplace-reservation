@@ -20,9 +20,8 @@ import (
 // User Roles
 
 const (
-	admin                    = "admin"
-	staticReservationPlanner = "static-reservation-planner"
-	user                     = "user"
+	admin = "admin"
+	user  = "user"
 )
 
 const (
@@ -236,15 +235,6 @@ func (server *Server) loginUser(context *gin.Context) {
 	context.JSON(http.StatusOK, response)
 }
 
-type editUserRequest struct {
-	ID            uuid.UUID `json:"id" binding:"required"`
-	Email         string    `json:"email" binding:"required,email"`
-	Username      string    `json:"username" binding:"omitempty"`
-	Password      string    `json:"password" binding:"omitempty,min=3"`
-	Role          string    `json:"role" binding:"omitempty,min=4"`
-	AccessGranted bool      `json:"accessGranted" binding:"required"`
-}
-
 func isAdmin(context *gin.Context) bool {
 	return context.MustGet(authorizationPayloadKey).(*token.Payload).Role == admin
 }
@@ -274,6 +264,15 @@ func (server *Server) loadAvailableUsers(context *gin.Context) {
 	context.JSON(http.StatusOK, usersWithoutSensitiveInformation)
 }
 
+type editUserRequest struct {
+	ID            uuid.UUID `json:"id" binding:"required"`
+	Email         string    `json:"email" binding:"required,email"`
+	Username      string    `json:"username" binding:"omitempty"`
+	Password      string    `json:"password" binding:"omitempty,min=3"`
+	Role          string    `json:"role" binding:"omitempty,min=4"`
+	AccessGranted bool      `json:"accessGranted" binding:"required"` // TODO fix it in library that bool is not ommited here
+}
+
 // EditUser
 // @Summary
 // @Tags         accounts
@@ -281,11 +280,27 @@ func (server *Server) loadAvailableUsers(context *gin.Context) {
 func (server *Server) editUser(context *gin.Context) {
 	var request editUserRequest
 	if err := context.ShouldBindJSON(&request); err != nil {
-		context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
-		return
+		log.Println(err.Error())
+
+		validationErr := err.(validator.ValidationErrors)
+		bindingDroppedAccessGrantedValueThatWasSetToFalse := validationErr[0].Tag() == "required" && validationErr[0].Namespace() == "editUserRequest.AccessGranted" && request.AccessGranted == false
+
+		if !bindingDroppedAccessGrantedValueThatWasSetToFalse {
+			context.JSON(http.StatusBadRequest, errorResponse(ErrRequestCouldNotBeParsed, err))
+			return
+		}
 	}
 
 	userToBeUpdated, err := server.queries.GetUserById(context, request.ID)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			context.JSON(http.StatusNotFound, errorResponse("User not found!", err))
+			return
+		}
+
+		context.JSON(http.StatusInternalServerError, errorResponse(UnexpectedErrContactMessage, err))
+		return
+	}
 	authPayload := context.MustGet(authorizationPayloadKey).(*token.Payload)
 
 	accountOfOtherUser := userToBeUpdated.ID != authPayload.UserId
