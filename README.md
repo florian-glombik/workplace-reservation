@@ -11,13 +11,17 @@
 
 ❌ EMail Verification _(take care when granting access to users as admin)_
 
-![Workplace Reservation Demo Screenshot](workplace-reservation-demo-recording.gif)
-
 ## Demo
 
 Test the features with the [live-demo](https://workplace-reservation.florian-glombik.de/)! 
 
-_As I am using the Oracle Cloud Free Tier to deploy the live demo, the live demo might eventually be unavailable._
+_As I am using the [Oracle Cloud Free Tier](https://www.oracle.com/de/cloud/free/) to deploy the live demo, the live demo might eventually be unavailable._
+
+### Normal User
+![Workplace Reservation Demo Screenshot](workplace-reservation-demo-recording.gif)
+
+### Admin User
+![Workplace Reservation Demo Screenshot](workplace-reservation-demo-recording-admin.gif)
 
 ## Motivation
 When working in a start-up with a shared office, meaning there were no fixed working places, we relied on calendar entries to coordinate office utilization. However, this did not work out well due to the following reasons:
