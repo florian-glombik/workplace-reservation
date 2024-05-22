@@ -108,15 +108,15 @@ export const Login = () => {
                   <li>
                     Normal User:
                     <ul>
-                      <li>E-Mail: admin@workplace-reservation.de</li>
-                      <li>Password: S9Ao6PAfh6qA8N</li>
+                      <li>E-Mail: normalUser@workplace-reservation.de</li>
+                      <li>Password: 649dWPVp9JJKLC</li>
                     </ul>
                   </li>
                   <li>
                     Admin User:
                     <ul>
-                      <li>E-Mail: normalUser@workplace-reservation.de</li>
-                      <li>Password: 649dWPVp9JJKLC</li>
+                      <li>E-Mail: admin@workplace-reservation.de</li>
+                      <li>Password: S9Ao6PAfh6qA8N</li>
                     </ul>
                   </li>
                 </ul>
