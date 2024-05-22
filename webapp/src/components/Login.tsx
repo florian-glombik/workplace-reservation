@@ -106,14 +106,14 @@ export const Login = () => {
               <Typography component={'div'}>
                 <ul>
                   <li>
-                    Normal User:
+                    Normal User (Jane Smith):
                     <ul>
                       <li>E-Mail: normalUser@workplace-reservation.de</li>
                       <li>Password: 649dWPVp9JJKLC</li>
                     </ul>
                   </li>
                   <li>
-                    Admin User:
+                    Admin User (John Doe):
                     <ul>
                       <li>E-Mail: admin@workplace-reservation.de</li>
                       <li>Password: S9Ao6PAfh6qA8N</li>
