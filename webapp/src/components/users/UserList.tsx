@@ -64,6 +64,8 @@ export function UserList() {
           {
             id: userToBeUpdated.id,
             email: userToBeUpdated.email,
+            username: userToBeUpdated.username.String,
+            role: userToBeUpdated.role,
             accessGranted: newAccessGrantedValue,
           },
           requestConfig
