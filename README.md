@@ -1,4 +1,13 @@
 # :calendar: workplace-reservation :computer:
+## Motivation
+When working in a start-up with a shared office, meaning there were no fixed working places, we relied on calendar entries to coordinate office utilization. However, this did not work out well due to the following reasons:
+- It was not easy to see who would be in the office, which is interesting, as it ensures you meet your development team when visiting the office.
+- The entries in the calendar cluttered the whole calendar, leading to the "reservations" not being updated and nobody viewing the entries anymore.
+
+These habits led to the problem that we had days on which the office was empty and other days where more people than workplaces have been in the office. Unfortunately, it happened regularly that multiple people didn't have an actual working place, needed to work in the kitchen or did not find a suitable place to work.
+
+**This project aims to provide a simple solution to manage the capacity of a shared office.**
+
 ## Features
 
 ✅ Full day workplace reservations _(only 1 click needed)_
@@ -22,15 +31,6 @@ _As I am using the [Oracle Cloud Free Tier](https://www.oracle.com/de/cloud/free
 
 ### Admin User
 ![Workplace Reservation Demo Screenshot](workplace-reservation-demo-recording-admin.gif)
-
-## Motivation
-When working in a start-up with a shared office, meaning there were no fixed working places, we relied on calendar entries to coordinate office utilization. However, this did not work out well due to the following reasons:
-- It was not easy to see who would be in the office, which is interesting, as it ensures you meet your development team when visiting the office.
-- The entries in the calendar cluttered the whole calendar, leading to the "reservations" not being updated and nobody viewing the entries anymore.
-
-These habits led to the problem that we had days on which the office was empty and other days where more people than workplaces have been in the office. Unfortunately, it happened regularly that multiple people didn't have an actual working place, needed to work in the kitchen or did not find a suitable place to work.
-
-**This project aims to provide a simple solution to manage the capacity of a shared office.**
 
 ## Get Started (~15 min)
 
