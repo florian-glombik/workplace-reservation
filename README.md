@@ -69,6 +69,11 @@ _As I am using the [Oracle Cloud Free Tier](https://www.oracle.com/de/cloud/free
       docker-compose -f infra/docker-compose.yml up -d
       ```
 7. Create the database by manually executing the following command in the `server` folder *(make sure to adjust the statement according to your environment variables and docker container names)*
+   _(install make if not present)_
+   ```
+   sudo apt-get -y install make
+   ```
+   
    ```
    cd server
    ``` 
