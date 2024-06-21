@@ -18,6 +18,8 @@ services:
     networks:
       - web
   server:
+    # image for live-demo
+    # image: ghcr.io/florian-glombik/workplace-reservation/server:v1.0.0
     build:
       context: ../server
     container_name: server
@@ -34,6 +36,8 @@ services:
     networks:
       - web
   client:
+    # image for live-demo
+    # image: ghcr.io/florian-glombik/workplace-reservation/client:v1.0.0
     build:
       context: ../webapp
     container_name: client
