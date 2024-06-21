@@ -17,10 +17,10 @@ build_and_push_image() {
   local IMAGE_DIR=$2
 
   echo "Building $IMAGE_NAME Docker image..."
-  docker build -t $IMAGE_NAME:$VERSION $IMAGE_DIR
+  docker build -t "$IMAGE_NAME":$VERSION $IMAGE_DIR
 
   echo "Tagging Docker image..."
-  docker tag $IMAGE_NAME:$VERSION ghcr.io/$GITHUB_USERNAME/$REPOSITORY_NAME/$IMAGE_NAME:$VERSION
+  docker tag "$IMAGE_NAME":$VERSION ghcr.io/$GITHUB_USERNAME/$REPOSITORY_NAME/$IMAGE_NAME:$VERSION
 
   echo "Pushing $IMAGE_NAME Docker image to GitHub Container Registry..."
   docker push ghcr.io/$GITHUB_USERNAME/$REPOSITORY_NAME/$IMAGE_NAME:$VERSION
