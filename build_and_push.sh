@@ -6,7 +6,6 @@ REPOSITORY_NAME="workplace-reservation"
 VERSION="v1.0.0"
 DOCKER_REGISTRY="ghcr.io"
 
-
 login_to_docker_registry() {
   echo "Authenticating with GitHub Docker Registry..."
   echo "$GITHUB_TOKEN" | docker login $DOCKER_REGISTRY -u $GITHUB_USERNAME --password-stdin

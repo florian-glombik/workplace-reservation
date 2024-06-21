@@ -1,8 +1,8 @@
 # build environment
 # for x86 (amd)
-#FROM node:14-alpine as builder
+FROM node:14-alpine as builder
 # for arm64
-FROM arm64v8/node:14-alpine as builder
+#FROM arm64v8/node:14-alpine as builder
 
 WORKDIR /app
 
@@ -19,9 +19,9 @@ RUN npm run build
 
 # production environment
 # for x86 (amd)
-#FROM nginx:1.16.0-alpine
+FROM nginx:1.16.0-alpine
 # for arm64
-FROM arm64v8/nginx:1.16.0-alpine
+# FROM arm64v8/nginx:1.16.0-alpine
 
 # Copy the build output to replace the default nginx contents.
 COPY --from=builder /app/build /usr/share/nginx/html
