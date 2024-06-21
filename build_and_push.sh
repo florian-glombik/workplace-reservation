@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# Variables
-# Read variables from environment
 GITHUB_USERNAME="florian-glombik"
 GITHUB_TOKEN="${GITHUB_TOKEN}"
 REPOSITORY_NAME="workplace-reservation"
@@ -9,34 +7,27 @@ SERVER_IMAGE_NAME="server"
 CLIENT_IMAGE_NAME="client"
 VERSION="v1.0.0"
 
-# Authenticate with GitHub Docker Registry
-echo "Authenticating with GitHub Docker Registry..."
-echo "$GITHUB_TOKEN" | docker login ghcr.io -u $GITHUB_USERNAME --password-stdin
+login_to_docker_registry() {
+  echo "Authenticating with GitHub Docker Registry..."
+  echo "$GITHUB_TOKEN" | docker login $DOCKER_REGISTRY -u $GITHUB_USERNAME --password-stdin
+}
 
-# Build the Docker image
-echo "Building server Docker image..."
-docker build -t $SERVER_IMAGE_NAME:$VERSION ./server
+build_and_push_image() {
+  local IMAGE_NAME=$1
+  local IMAGE_DIR=$2
 
-# Tag the Docker image
-echo "Tagging Docker image..."
-docker tag $SERVER_IMAGE_NAME:$VERSION ghcr.io/$GITHUB_USERNAME/$REPOSITORY_NAME/$SERVER_IMAGE_NAME:$VERSION
+  echo "Building $IMAGE_NAME Docker image..."
+  docker build -t $IMAGE_NAME:$VERSION $IMAGE_DIR
 
-# Push the Docker image to GitHub Container Registry
-echo "Pushing server Docker image to GitHub Container Registry..."
-docker push ghcr.io/$GITHUB_USERNAME/$REPOSITORY_NAME/$SERVER_IMAGE_NAME:$VERSION
+  echo "Tagging Docker image..."
+  docker tag $IMAGE_NAME:$VERSION ghcr.io/$GITHUB_USERNAME/$REPOSITORY_NAME/$IMAGE_NAME:$VERSION
 
-echo "Server Docker image pushed successfully to GitHub Container Registry."
+  echo "Pushing $IMAGE_NAME Docker image to GitHub Container Registry..."
+  docker push ghcr.io/$GITHUB_USERNAME/$REPOSITORY_NAME/$IMAGE_NAME:$VERSION
 
-# Build the Docker image
-echo "Building client Docker image..."
-docker build -t $CLIENT_IMAGE_NAME:$VERSION ./webapp
+  echo "$IMAGE_NAME Docker image pushed successfully to GitHub Container Registry."
+}
 
-# Tag the Docker image
-echo "Tagging Docker image..."
-docker tag $CLIENT_IMAGE_NAME:$VERSION ghcr.io/$GITHUB_USERNAME/$REPOSITORY_NAME/$CLIENT_IMAGE_NAME:$VERSION
-
-# Push the Docker image to GitHub Container Registry
-echo "Pushing client Docker image to GitHub Container Registry..."
-docker push ghcr.io/$GITHUB_USERNAME/$REPOSITORY_NAME/$CLIENT_IMAGE_NAME:$VERSION
-
-echo "Client Docker image pushed successfully to GitHub Container Registry."
+login_to_docker_registry
+build_and_push_image $SERVER_IMAGE_NAME ./server
+build_and_push_image $CLIENT_IMAGE_NAME ./webapp
