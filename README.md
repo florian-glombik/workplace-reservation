@@ -84,7 +84,7 @@ _As I am using the [Oracle Cloud Free Tier](https://www.oracle.com/de/cloud/free
       ```
       *e.g. this could look like this for an amd ubuntu VM:*
       ```
-      curl -L https://github.com/golang-migrate/migrate/releases/download/v4.15.2/migrate.linux-amd64.tar.gz
+      curl -L -o migrate.linux-amd64.tar.gz https://github.com/golang-migrate/migrate/releases/download/v4.15.2/migrate.linux-amd64.tar.gz
       ```
    3. Extract the downloaded archive
       ```
