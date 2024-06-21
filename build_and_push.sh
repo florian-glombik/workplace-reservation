@@ -15,14 +15,14 @@ build_image() {
   local SERVICE_NAME=$1
 
   echo "Building $SERVICE_NAME Docker image..."
-  docker-compose build "$SERVICE_NAME"
+  docker-compose build --no-cache "$SERVICE_NAME"
 }
 
 tag_image() {
   local SERVICE_NAME=$1
 
   echo "Tagging Docker image..."
-  docker tag "$SERVICE_NAME" $DOCKER_REGISTRY/$GITHUB_USERNAME/$REPOSITORY_NAME/"$SERVICE_NAME":$VERSION
+  docker tag "$REPOSITORY_NAME-$SERVICE_NAME" $DOCKER_REGISTRY/$GITHUB_USERNAME/$REPOSITORY_NAME/"$SERVICE_NAME":$VERSION
 }
 
 push_image() {
@@ -30,6 +30,13 @@ push_image() {
 
   echo "Pushing $SERVICE_NAME Docker image to GitHub Container Registry..."
   docker push $DOCKER_REGISTRY/$GITHUB_USERNAME/$REPOSITORY_NAME/"$SERVICE_NAME":$VERSION
+
+  # Check the exit code of the docker push command
+  if [ $? -ne 0 ]; then
+    # Error message in red color
+    echo -e "\033[0;31mError: Failed to push $SERVICE_NAME Docker image to GitHub Container Registry.\033[0m"
+    exit 1  # Exit the script with a non-zero status
+  fi
 
   echo "$SERVICE_NAME Docker image pushed successfully to GitHub Container Registry."
 }
