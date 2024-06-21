@@ -1,6 +1,8 @@
 # build environment
 # for x86 (amd)
-FROM node:14-alpine as builder
+FROM --platform=linux/amd64 node:14-alpine as builder
+#FROM node:14-alpine as builder
+
 # for arm64
 #FROM arm64v8/node:14-alpine as builder
 
@@ -19,7 +21,7 @@ RUN npm run build
 
 # production environment
 # for x86 (amd)
-FROM nginx:1.16.0-alpine
+FROM --platform=linux/amd64 nginx:1.16.0-alpine
 # for arm64
 # FROM arm64v8/nginx:1.16.0-alpine
 
