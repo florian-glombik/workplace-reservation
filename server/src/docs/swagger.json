@@ -5,7 +5,7 @@
         "contact": {
             "name": "API Support"
         },
-        "version": "1.0.1"
+        "version": "1.0.2"
     },
     "host": "0.0.0.0:8080",
     "basePath": "/api/v1",
