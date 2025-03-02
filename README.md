@@ -68,6 +68,10 @@ _As I am using the [Oracle Cloud Free Tier](https://www.oracle.com/de/cloud/free
       ```
       docker-compose -f infra/docker-compose.yml up -d
       ```
+   
+    _Note: You can adjust infra/docker-compose.yml to the usage of a registry and use `release.sh` to upload the latest images to your registry easily.  
+           Execute `release.sh` to update webapp and server, `release.sh server` to only update the server, and `release.sh webapp` to only update the webapp.
+           Make sure to adjust the `registryUrl` to your needs in the `release.sh` script._
 7. Create the database by manually executing the following command in the `server` folder *(make sure to adjust the statement according to your environment variables and docker container names)*
    _(install make if not present)_
    ```
