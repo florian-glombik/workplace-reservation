@@ -25,12 +25,12 @@ const (
 )
 
 // @title           Workplace Reservation API
-// @version         1.0.2
+// @version         1.0.3
 
 // @contact.name   API Support
 
 // @host      0.0.0.0:8080
-// @BasePath  /api/v1.0.2
+// @BasePath  /api/v1.0.3
 func main() {
 	databasePassword, isSet := os.LookupEnv(EnvDatabasePassword)
 	databaseUser, isUserSet := os.LookupEnv(EnvDatabaseUser)
