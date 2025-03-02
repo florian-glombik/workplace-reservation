@@ -1,6 +1,6 @@
 # build environment
 # for x86 (amd)
-FROM --platform=linux/amd64 node:14-alpine as builder
+FROM --platform=linux/amd64 node:14-alpine AS builder
 #FROM node:14-alpine as builder
 
 # for arm64

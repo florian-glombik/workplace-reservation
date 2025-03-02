@@ -51,12 +51,12 @@ enter_version
 # -z ensures that if only release.sh is executed webapp and server images are built and uploaded
 if [ "$1" = "webapp" ] || [ -z "$1" ]; then
   echo "Building and pushing webapp image..."
-  build_and_push_image "webapp" "$registryUrl/client:$current_version"
+  build_and_push_image "webapp" "$registryUrl/client:v$current_version"
 fi
 
 if [ "$1" = "server" ] || [ -z "$1" ]; then
   echo "Building and pushing server image..."
-  build_and_push_image "server" "$registryUrl/server:$current_version"
+  build_and_push_image "server" "$registryUrl/server:v$current_version"
 fi
 
 echo "Applying release completed at $(date)"
