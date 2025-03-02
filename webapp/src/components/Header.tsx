@@ -4,6 +4,7 @@ import { Box, Typography } from '@material-ui/core'
 import {
   AppBar,
   Button,
+  Divider,
   IconButton,
   Menu,
   MenuItem,
@@ -14,6 +15,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import GitHubIcon from '@mui/icons-material/GitHub'
 import GroupIcon from '@mui/icons-material/Group'
+import packageJson from '../../package.json'
 
 export function getUserDisplayName(user?: Account): string {
   if (!user) {
@@ -40,6 +42,8 @@ export const Header = () => {
 
   const isLoggedIn = Boolean(user)
   const isLoginPage = currentUrl.includes('/login')
+
+  const appVersion = packageJson.version
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     //@ts-ignore
@@ -163,6 +167,10 @@ export const Header = () => {
                   Found a bug? &nbsp; <GitHubIcon />
                 </MenuItem>
               </Menu>
+              <Divider />
+              <Typography variant={'body2'} noWrap>
+                Version {appVersion}
+              </Typography>
             </Box>
           )}
         </Toolbar>
