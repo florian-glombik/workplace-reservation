@@ -23,7 +23,7 @@ build_and_push_image() {
     handle_error "Could not change directory to '$directory'"
   }
 
-  docker build -t "$image_name" . || {
+  docker build --platform=linux/amd64 -t "$image_name" . || {
     handle_error "Could not build image '$image_name'"
   }
   docker push "$image_name" || {
@@ -51,12 +51,12 @@ enter_version
 # -z ensures that if only release.sh is executed webapp and server images are built and uploaded
 if [ "$1" = "webapp" ] || [ -z "$1" ]; then
   echo "Building and pushing webapp image..."
-  build_and_push_image "webapp" "$registryUrl/client:v$current_version"
+  build_and_push_image "webapp" "$registryUrl/client:$current_version"
 fi
 
 if [ "$1" = "server" ] || [ -z "$1" ]; then
   echo "Building and pushing server image..."
-  build_and_push_image "server" "$registryUrl/server:v$current_version"
+  build_and_push_image "server" "$registryUrl/server:$current_version"
 fi
 
 echo "Applying release completed at $(date)"
