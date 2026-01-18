@@ -1,6 +1,6 @@
 # build stage
 # for x86 (amd)
-FROM --platform=linux/amd64 golang:1.23 AS builder
+FROM --platform=linux/amd64 golang:1.24 AS builder
 # for arm64
 #FROM arm64v8/golang:1.23 AS builder
 
