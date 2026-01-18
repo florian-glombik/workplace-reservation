@@ -35,7 +35,7 @@ build_and_push_image() {
 
 enter_version() {
   while true; do
-    read -p "Enter the current version (e.g. '1.0.3'): " current_version
+    read -p "Enter the current version (e.g. '1.0.4'): " current_version
     read -p "You entered '$current_version'. Is this correct? (y/n): " confirm
     case $confirm in
       [Yy]* ) break;;
