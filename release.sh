@@ -3,7 +3,22 @@
 registryUrl="ghcr.io/florian-glombik/workplace-reservation"
 
 handle_error() {
-  echo "Error: $1"
+  if [[ "$1" == *"403 Forbidden"* ]]; then
+    echo "Error: Authorization failed while trying to push the image."
+    echo "This is likely due to missing or insufficient permissions for the Personal Access Token (PAT)."
+    echo "To resolve this issue, follow these steps:"
+    echo "1. Go to https://github.com/settings/tokens to create a new Personal Access Token."
+    echo "2. Select the following scopes:"
+    echo "   - write:packages (to push packages)"
+    echo "   - read:packages (to pull packages)"
+    echo "   - repo (if the repository is private)"
+    echo "3. Copy the generated token."
+    echo "4. Authenticate Docker with the new token by running:"
+    echo "   echo <YOUR_PERSONAL_ACCESS_TOKEN> | docker login ghcr.io -u <YOUR_GITHUB_USERNAME> --password-stdin"
+    echo "5. Retry the build and push process."
+  else
+    echo "Error: $1"
+  fi
   keep_shell_alive
   exit 1
 }
@@ -27,7 +42,7 @@ build_and_push_image() {
     handle_error "Could not build image '$image_name'"
   }
   docker push "$image_name" || {
-    handle_error "Could not build image '$image_name'"
+    handle_error "$(docker push "$image_name" 2>&1)"
   }
 
   cd ..
