@@ -23,3 +23,7 @@ dataSources.xml
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
+# environment and configuration files
+infra/.env
+webapp/.env
+
